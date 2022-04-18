@@ -5,6 +5,9 @@ from kivy.uix.floatlayout import FloatLayout
 from kivy.storage.jsonstore import JsonStore
 from kivy.uix.label import Label
 from kivy.uix.button import Button
+from kivy.core.window import Window
+
+Window.size = 540, 960
 
 
 class ViewButton(Button):
