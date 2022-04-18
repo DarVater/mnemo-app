@@ -10,7 +10,7 @@ class TestView(unittest.TestCase):
     def setUp(self):
         pass
 
-    # Он рещил попробовать и открыть его в первый раз. Приложение встречало его окном регистрации
+    # Он рещил попробовать и открыть его в первый раз. Приложение поприветствовало и спросило имя
     def test_get_target_view(self):
         answer = 'sing_up'
         app = ViewManager()
@@ -18,6 +18,7 @@ class TestView(unittest.TestCase):
         test_view = app.target_view
 
         self.assertEqual(test_view, answer)
+
 
 
 if __name__ == '__main__':
