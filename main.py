@@ -7,6 +7,9 @@ from kivy.uix.label import Label
 from kivy.uix.button import Button
 from kivy.core.window import Window
 
+from language import Language
+
+
 Window.size = 540, 960
 
 
@@ -20,11 +23,33 @@ class ViewButton(Button):
 
 
 class ViewSingUp(FloatLayout):
-    pass
+    root = []
+    name = ''
+    lang = Language()
+
+    def give_root(self, root):
+        self.root = root
+
+    def next(self):
+        temp_view = self.root.ids['temp_view']
+        if temp_view.header.text == self.lang.title('TITLE_HI_WHAT_ARE_YOUR_NAME'):
+            name = temp_view.input.text
+            next_allowed = True
+            if len(name) > 10:
+                temp_view.help_text.text = self.lang.title('TITLE_NAME_NOT_LONGER')
+                next_allowed = False
+            not_allowed_character = '\'1234567890!@#$%^&*()_+=-";:.,/\\*`~'
+            for character in name:
+                if character in not_allowed_character:
+                    next_allowed = False
+                    temp_view.help_text.text = self.lang.title('TITLE_NAME_ONLY_CHARACTERS')
+
+
 
 class ViewManager(FloatLayout):
     target_view = ''
     root = []
+    lang = Language()
 
     def __init__(self , **kwargs):
         super().__init__(**kwargs)
@@ -39,9 +64,12 @@ class ViewManager(FloatLayout):
     def add_w(self, view):
         if view == 'temp_view':
             temp_view = ViewSingUp()
+            temp_view.give_root(self)
             temp_view.size = 333, 333
             self.ids['temp_view'] = temp_view
             self.add_widget(temp_view)
+            self.ids['temp_view'].btn.text = self.lang.title('TITLE_BTN_NEXT')
+            self.ids['temp_view'].header.text = self.lang.title('TITLE_HI_WHAT_ARE_YOUR_NAME')
 
     def chose_main_view(self):
         if 'user' in self.store:
