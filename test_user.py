@@ -8,7 +8,7 @@ class TestView(unittest.TestCase):
 
     def setUp(self):
         pass
-
+    
     def test_get_target_view(self):
         app = ViewManager()
 
