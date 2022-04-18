@@ -9,10 +9,9 @@ class TestView(unittest.TestCase):
     def setUp(self):
         pass
 
-    def test_get_target_view(self):
+    def test_get_first_run(self):
         app = ViewManager()
 
-        print(111111111111, app.target_view)
 
 
 
