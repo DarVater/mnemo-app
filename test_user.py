@@ -7,7 +7,7 @@ from kivy.clock import Clock
 from main import MyApp
 
 
-class TestView(unittest.TestCase):
+class TestSingUpView(unittest.TestCase):
     def pause(*args):
         time.sleep(0.000001)
 
@@ -69,7 +69,38 @@ class TestView(unittest.TestCase):
         app.root.ids['temp_view'].input.text = test_word
         app.root.ids['temp_view'].next()
 
-        need_text = 'Ванька, какого ты года рождения?'
+        # Программа предложила ввести свой год рождения
+        need_text = 'Ванька, какого \nты года рождения?'
+        change_help_text = app.root.ids['temp_view'].header.text
+        self.assertEqual(change_help_text, need_text)
+
+        # Ванька ввел день рождения и месяц
+        test_word = '1307'
+        app.root.ids['temp_view'].input.text = test_word
+        app.root.ids['temp_view'].next()
+
+        # Программа предположила что он  из прошлого
+        need_text = 'Ты из прошлого?'
+        change_help_text = app.root.ids['temp_view'].help_text.text
+        self.assertEqual(change_help_text, need_text)
+
+        # Ванька ввел полную дату рождения
+        test_word = '13071999'
+        app.root.ids['temp_view'].input.text = test_word
+        app.root.ids['temp_view'].next()
+
+        # Программа предположила что он  из прошлого
+        need_text = 'Ты из будущего?'
+        change_help_text = app.root.ids['temp_view'].help_text.text
+        self.assertEqual(change_help_text, need_text)
+
+        # Ванька ввел только год рождения
+        test_word = '1999'
+        app.root.ids['temp_view'].input.text = test_word
+        app.root.ids['temp_view'].next()
+
+        # Программа спросила пол
+        need_text = 'Какого ты пола?'
         change_help_text = app.root.ids['temp_view'].header.text
         self.assertEqual(change_help_text, need_text)
 

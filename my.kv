@@ -14,6 +14,12 @@
     font_size: '32sp'
     color: (0, 0,0, 1)
 
+<MainInput@TextInput>:
+    font_size: '30sp'
+    multiline: False
+    background_normal: 'src/input.png'
+    height: '76sp'
+
 <ViewSingUp>:
     btn: btn
     help_text: help_text
@@ -31,12 +37,8 @@
         padding: 20
         SubLabel:
             id: header
-        TextInput:
-            font_size: '30sp'
-            multiline: False
+        MainInput:
             size_hint: self.size_hint[0], 0.85
-            height: '76sp'
-            background_normal: 'src/input.png'
             id: input
         MainLabel:
             size_hint: 1, 0.7
