@@ -1,4 +1,5 @@
 # coding: utf-8
+import os
 import time
 import unittest
 from functools import partial
@@ -28,6 +29,11 @@ class TestSingUpView(unittest.TestCase):
     # Он рещил попробовать и открыть его в первый раз. Приложение поприветствовало и спросило имя
 
     def test_example(self):
+        try:
+            path = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'hello.json')
+            os.remove(path)
+        except:
+            print("Don`t have 'hello.json' file to delete")
         app = MyApp()
         p = partial(self.run_test, app)
         Clock.schedule_once(p, 0.000001)
@@ -130,12 +136,18 @@ class TestSingUpView(unittest.TestCase):
         app.root.ids['temp_view'].next()
 
         # Ванька наконецто увидел надпись выбора пола
-        need_text = 'Последний вопрос. Какого ты пола?'
+        need_text = 'Последний вопрос. \nКакого ты пола?'
         change_help_text = app.root.ids['temp_view'].header.text
         self.assertEqual(change_help_text, need_text)
 
         # Он назал на кнопку 'Мужской'
         app.root.ids['temp_view'].view_interface.ids['gander_male'].on_press()
+
+        # Ванька увидел экран домашней страницы
+        answer_no_user = 'home'
+        test_view = app.root.target_view
+        self.assertEqual(test_view, answer_no_user)
+
 
 if __name__ == '__main__':
     unittest.MyApp()

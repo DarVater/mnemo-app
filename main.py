@@ -19,16 +19,18 @@ class ViewButton(Button):
         else:
             App.get_running_app().root.add_w('temp_view')
 
+
 class MainBtn(Button):
     background_normal = 'src/btn_main.png'
     background_down = 'src/btn_main_pressed.png'
+
 
 class ViewSingUp(FloatLayout):
     root = []
     name = ''
     gender = ''
     amail = ''
-    year = 0
+    age = 0
     lang = Language()
 
     def give_root(self, root):
@@ -65,7 +67,7 @@ class ViewSingUp(FloatLayout):
                 temp_view.input.text = ''
                 temp_view.header.text = self.lang.title('TITLE_YOUR_MAIL')
                 temp_view.input.input_filter = None
-                self.year = int(answer)
+                self.age = year - int(answer)
         elif temp_view.header.text == self.lang.title('TITLE_YOUR_MAIL'):
             answer = temp_view.input.text
             next_allowed = False
@@ -101,14 +103,21 @@ class ViewSingUp(FloatLayout):
         self.view_interface.ids['gander_female'].on_press = self.choose_female
         self.view_interface.add_widget(self.gander_female)
 
-    def choose_male(self ):
+    def choose_male(self):
         self.user_register('Male')
 
-    def choose_female(self  ):
+    def choose_female(self):
         self.user_register('Female')
 
     def user_register(self, gender):
-        print(gender)
+        self.root.store.put('user',
+                            name=self.name,
+                            sex=self.gender,
+                            age=self.age,
+                            amail=self.amail)
+        self.root.remove_w('temp_view')
+        self.root.chose_main_view()
+        self.root.draw_view()
 
     def remove_input(self):
         textinput = self.ids.input
