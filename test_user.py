@@ -99,11 +99,43 @@ class TestSingUpView(unittest.TestCase):
         app.root.ids['temp_view'].input.text = test_word
         app.root.ids['temp_view'].next()
 
-        # Программа спросила пол
-        need_text = 'Какого ты пола?'
+        # Программа спросила эмейл
+        need_text = 'Твоя электронная почта?'
         change_help_text = app.root.ids['temp_view'].header.text
         self.assertEqual(change_help_text, need_text)
 
+        # Ванька ввел случайный текст
+        test_word = 'фыва фывав'
+        app.root.ids['temp_view'].input.text = test_word
+        app.root.ids['temp_view'].next()
+
+        # Программа написала что на электронный адрес не похоже
+        need_text = 'На настоящую почту не похоже!'
+        change_help_text = app.root.ids['temp_view'].help_text.text
+        self.assertEqual(change_help_text, need_text)
+
+        # Он попрообовол симулировать почту
+        test_word = 'фыва@фывав'
+        app.root.ids['temp_view'].input.text = test_word
+        app.root.ids['temp_view'].next()
+
+        # Программа опять написала что на электронный адрес не похоже
+        need_text = 'На настоящую почту не похоже!'
+        change_help_text = app.root.ids['temp_view'].help_text.text
+        self.assertEqual(change_help_text, need_text)
+
+        # На этот раз ввел реалистичную почту
+        test_word = 'фыва@фывав.авы'
+        app.root.ids['temp_view'].input.text = test_word
+        app.root.ids['temp_view'].next()
+
+        # Ванька наконецто увидел надпись выбора пола
+        need_text = 'Последний вопрос. Какого ты пола?'
+        change_help_text = app.root.ids['temp_view'].header.text
+        self.assertEqual(change_help_text, need_text)
+
+        # Он назал на кнопку 'Мужской'
+        app.root.ids['temp_view'].view_interface.ids['gander_male'].on_press()
 
 if __name__ == '__main__':
     unittest.MyApp()

@@ -16,6 +16,7 @@
 
 <MainInput@TextInput>:
     font_size: '30sp'
+    opacity : 100
     multiline: False
     background_normal: 'src/input.png'
     height: '76sp'
@@ -25,12 +26,15 @@
     help_text: help_text
     header: header
     input: input
+    view_interface: view_interface
     canvas.before:
         Rectangle:
             pos: self.pos
             size: self.size
             source: 'src/background_main.png'
     BoxLayout:
+        spacing: 15
+        id: view_interface
         pos_hint: {'center_x': .5, 'center_y': .5}
         size_hint: 0.7, 0.5
         orientation: 'vertical'

@@ -19,10 +19,16 @@ class ViewButton(Button):
         else:
             App.get_running_app().root.add_w('temp_view')
 
+class MainBtn(Button):
+    background_normal = 'src/btn_main.png'
+    background_down = 'src/btn_main_pressed.png'
 
 class ViewSingUp(FloatLayout):
     root = []
     name = ''
+    gender = ''
+    amail = ''
+    year = 0
     lang = Language()
 
     def give_root(self, root):
@@ -32,30 +38,85 @@ class ViewSingUp(FloatLayout):
         temp_view = self.root.ids['temp_view']
         if temp_view.header.text == self.lang.title('TITLE_HI_WHAT_ARE_YOUR_NAME'):
             name = temp_view.input.text
-            next_allowed = True
-            if len(name) > 10:
-                temp_view.help_text.text = self.lang.title('TITLE_NAME_NOT_LONGER')
-                next_allowed = False
-            not_allowed_character = '\'1234567890!@#$%^&*()_+=-";:.,/\\*`~'
-            for character in name:
-                if character in not_allowed_character:
+            if len(name) > 1:
+                next_allowed = True
+                if len(name) > 10:
+                    temp_view.help_text.text = self.lang.title('TITLE_NAME_NOT_LONGER')
                     next_allowed = False
-                    temp_view.help_text.text = self.lang.title('TITLE_NAME_ONLY_CHARACTERS')
-            if next_allowed:
-                temp_view.input.text = ''
-                temp_view.input.input_filter = 'int'
-                self.name = name.lower()[0].upper() + name.lower()[1::]
-                temp_view.header.text = f"{self.name}, {self.lang.title('TITLE_HOW_LOD_ARE_YOU')}"
+                not_allowed_character = '\'1234567890!@#$%^&*()_+=-";:.,/\\*`~'
+                for character in name:
+                    if character in not_allowed_character:
+                        next_allowed = False
+                        temp_view.help_text.text = self.lang.title('TITLE_NAME_ONLY_CHARACTERS')
+                if next_allowed:
+                    temp_view.input.text = ''
+                    temp_view.input.input_filter = 'int'
+                    self.name = name.lower()[0].upper() + name.lower()[1::]
+                    temp_view.header.text = f"{self.name}, {self.lang.title('TITLE_HOW_LOD_ARE_YOU')}"
         elif temp_view.header.text == f"{self.name}, {self.lang.title('TITLE_HOW_LOD_ARE_YOU')}":
-            name = temp_view.input.text
+            answer = temp_view.input.text
             year = datetime.now().year
-            if int(name) < year - 100:
+            if int(answer) < year - 100:
                 temp_view.help_text.text = self.lang.title('TITLE_YOU_ARE_FROM_THE_PAST')
-            elif int(name) > year - 6:
+            elif int(answer) > year - 6:
                 temp_view.help_text.text = self.lang.title('TITLE_YOU_ARE_FROM_THE_FUTURE')
             else:
+                temp_view.help_text.text = ''
+                temp_view.input.text = ''
+                temp_view.header.text = self.lang.title('TITLE_YOUR_MAIL')
+                temp_view.input.input_filter = None
+                self.year = int(answer)
+        elif temp_view.header.text == self.lang.title('TITLE_YOUR_MAIL'):
+            answer = temp_view.input.text
+            next_allowed = False
+            if ' ' in answer:
+                temp_view.help_text.text = self.lang.title('TITLE_DONT_LOOK_LIKE_REAL_MAIL')
+            elif '@' in answer:
+                splited_answer = answer.split('@')
+                if len(splited_answer) == 2 and '.' in splited_answer[1]:
+                    next_allowed = True
+                else:
+                    temp_view.help_text.text = self.lang.title('TITLE_DONT_LOOK_LIKE_REAL_MAIL')
+            else:
+                temp_view.help_text.text = self.lang.title('TITLE_DONT_LOOK_LIKE_REAL_MAIL')
+            if next_allowed:
                 temp_view.header.text = self.lang.title('TITLE_WHAT_GENDER_ARE_YOU')
+                temp_view.help_text.text = ''
+                temp_view.input.text = ''
+                self.amail = answer
+                self.remove_input()
+                self.add_and_change_gender_btns()
 
+    def add_and_change_gender_btns(self):
+        self.gander_male = MainBtn()
+        self.gander_male.text = self.lang.title('TITLE_MALE')
+        self.view_interface.ids['gander_male'] = self.gander_male
+        self.view_interface.ids['gander_male'].on_press = self.choose_male
+        self.view_interface.add_widget(self.gander_male)
+
+        self.gander_female = MainBtn()
+        self.gander_female.text = self.lang.title('TITLE_FEMALE')
+        self.gander_female.spacing = 30
+        self.view_interface.ids['gander_female'] = self.gander_female
+        self.view_interface.ids['gander_female'].on_press = self.choose_female
+        self.view_interface.add_widget(self.gander_female)
+
+    def choose_male(self ):
+        self.user_register('Male')
+
+    def choose_female(self  ):
+        self.user_register('Female')
+
+    def user_register(self, gender):
+        print(gender)
+
+    def remove_input(self):
+        textinput = self.ids.input
+        textinput.parent.remove_widget(textinput)
+        self.ids.pop('input')
+        btn = self.ids.btn
+        btn.parent.remove_widget(btn)
+        self.ids.pop('btn')
 
 
 class ViewManager(FloatLayout):
