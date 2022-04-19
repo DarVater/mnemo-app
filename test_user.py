@@ -28,7 +28,7 @@ class TestSingUpView(unittest.TestCase):
 
     # Он рещил попробовать и открыть его в первый раз. Приложение поприветствовало и спросило имя
 
-    def test_example(self):
+    def test_sing_up(self):
         try:
             path = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'hello.json')
             os.remove(path)
@@ -148,6 +148,27 @@ class TestSingUpView(unittest.TestCase):
         test_view = app.root.target_view
         self.assertEqual(test_view, answer_no_user)
 
+        # Его отвлекли и он выключил приложение
+
+
+
+class TestHomeView(unittest.TestCase):
+    def pause(*args):
+        time.sleep(0.000001)
+
+    # main test function
+    def run_test(self, app, *args):
+        Clock.schedule_interval(self.pause, 0.000001)
+
+        # Do something
+
+        # Comment out if you are editing the test, it'll leave the
+        # Window opened.
+        app.stop()
+
+    # Пользаватель Ванька увлышал про новое приложение для простого изучения английских слов
+    def setUp(self):
+        pass
 
 if __name__ == '__main__':
     unittest.MyApp()
