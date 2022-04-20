@@ -7,7 +7,7 @@ from datetime import datetime
 
 from language import Language
 
-Window.size = 540, 960
+#Window.size = 540, 960
 
 
 class ViewButton(Button):
@@ -209,6 +209,10 @@ class ViewManager(FloatLayout):
             self.ids['temp_view'].choose_language.text = self.lang.title('TITLE_BTN_CHOOSE_LANGUAGE')
             self.ids['temp_view'].how_it_works.text = self.lang.title('TITLE_BTN_HOW_IT_WORKS')
             self.ids['temp_view'].topics.text = self.lang.title('TITLE_BTN_TOPICS')
+            self.ids['temp_view'].know.text = self.lang.title('TITLE_KNOW')
+            self.ids['temp_view'].repeat.text = self.lang.title('TITLE_REPEAT')
+            self.ids['temp_view'].hair.text = self.lang.title('TITLE_HAIR')
+
         elif self.target_view == 'how_it_works':
             temp_view = ViewHowItWorks()
             temp_view.give_root(self)
@@ -221,12 +225,35 @@ class ViewManager(FloatLayout):
             self.ids['temp_view'].bloc3.text = self.lang.title('TITLE_APP_NEED_FOR_BLOC3')
             self.ids['temp_view'].bloc4.text = self.lang.title('TITLE_APP_NEED_FOR_BLOC4')
             self.ids['temp_view'].bloc5.text = self.lang.title('TITLE_APP_NEED_FOR_BLOC5')
+            self.change_scroll_height()
+
+    def change_scroll_height(self):
+        skaler =  (((int(self.ids['temp_view'].bloc1.font_size) / 24 ) - 1)/10 + 1)
+        skaler =  (((int(self.ids['temp_view'].bloc1.font_size) / 24) - 1)/10 ) + 1
+        self.ids['temp_view'].header.height = self.ids['temp_view'].header.height * skaler
+        self.ids['temp_view'].bloc1.height = self.ids['temp_view'].bloc1.height * skaler
+        self.ids['temp_view'].bloc2.height = self.ids['temp_view'].bloc2.height * skaler
+        self.ids['temp_view'].bloc3.height = self.ids['temp_view'].bloc3.height * skaler
+        self.ids['temp_view'].bloc4.height = self.ids['temp_view'].bloc4.height * skaler
+        self.ids['temp_view'].bloc5.height = self.ids['temp_view'].bloc5.height * skaler
+
+        scroll_h = self.ids['temp_view'].header.height
+        scroll_h += self.ids['temp_view'].bloc1.height
+        scroll_h += self.ids['temp_view'].bloc2.height
+        scroll_h += self.ids['temp_view'].bloc3.height
+        scroll_h += self.ids['temp_view'].bloc4.height
+        scroll_h += self.ids['temp_view'].bloc5.height
+        scroll_h += 1000
+
+        self.ids['temp_view'].view_interface.height = scroll_h * ((skaler-1) * 1.5 + 1)
+
+
 
     def chose_main_view(self):
         if 'user' in self.store:
             self.target_view = 'home'
         else:
-            self.target_view = 'sing_up'
+            self.target_view = 'sing_up' #
 
     def give_root(self, root):
         self.root.append(root)

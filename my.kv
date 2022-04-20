@@ -29,11 +29,11 @@
 
 <MainLabel@Label>:
     font_size: '32sp'
-    color: (0.1, 0.1, 0.1, 1)
+    color: (0, 0,0, 1)
 
 <SubLabel@Label>:
     font_size: '24sp'
-    color: (0, 0,0, 1)
+    color: (0.1, 0.1, 0.1, 1)
 
 <MainInput@TextInput>:
     font_size: '30sp'
@@ -89,7 +89,7 @@
 
 <LongSubLabel@SubLabel>:
     size_hint_y: None
-    font_size: 24
+    font_size: '24sp'
     text_size: self.width- 50, None
 
 <ViewHowItWorks>:
@@ -107,18 +107,16 @@
             size: self.size
             source: 'src/background_main.png'
     ScrollView:
-        id: view_interface
         orientation: 'vertical'
         padding: 10
         BoxLayout:
+            id: view_interface
             orientation: 'vertical'
             size_hint: 1, None
-            height: '2600sp'
             MainLabel:
                 size_hint_y: None
-                height: '200sp'
                 id: header
-                font_size: 30
+                height: '200sp'
                 text_size: self.width- 50, None
 
             LongSubLabel:
@@ -173,6 +171,9 @@
     how_it_works: how_it_works
     choose_language: choose_language
     exit: exit
+    hair: hair
+    repeat: repeat
+    know: know
     canvas.before:
         Rectangle:
             pos: self.pos
@@ -205,7 +206,7 @@
                             size: self.size
                             source: 'src/hair_root.png'
                     SubLabel:
-                        text: 'Прошол'
+                        id:hair
             BoxLayout:
                 orientation: 'vertical'
                 BoxLayout:
@@ -217,7 +218,7 @@
                             size: self.size
                             source: 'src/repeat_root.png'
                     SubLabel:
-                        text: 'Повторил'
+                        id: repeat
             BoxLayout:
                 orientation: 'vertical'
                 BoxLayout:
@@ -229,7 +230,7 @@
                             size: self.size
                             source: 'src/know_root.png'
                     SubLabel:
-                        text: 'Запомнил'
+                        id: know
         BoxLayout:
             size_hint:  0.75, 1.1
             id: navigation
