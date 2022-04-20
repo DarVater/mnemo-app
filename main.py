@@ -128,6 +128,54 @@ class ViewSingUp(FloatLayout):
         self.ids.pop('btn')
 
 
+class ViewHowItWorks(FloatLayout):
+    root = []
+    lang = Language()
+
+    def press_on(self, text):
+        if text == 'back':
+            self.root.target_view = 'home'
+            self.root.remove_w('temp_view')
+            self.root.draw_view()
+
+    def give_root(self, root):
+        self.root = root
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+
+class ViewHome(FloatLayout):
+    root = []
+    lang = Language()
+
+    def press_on(self, text):
+        if text == 'Exit':
+            App.get_running_app().stop()
+        if text == 'how_it_works':
+            self.root.target_view = 'how_it_works'
+            self.root.remove_w('temp_view')
+            self.root.draw_view()
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+    def give_root(self, root):
+        self.root = root
+
+    def topics(self):
+        pass
+
+    def how_it_works(self):
+        pass
+
+    def choose_language(self):
+        pass
+
+    def exit(self):
+        App.get_running_app().stop()
+
+
 class ViewManager(FloatLayout):
     target_view = ''
     root = []
@@ -143,25 +191,42 @@ class ViewManager(FloatLayout):
         self.remove_widget(self.ids['temp_view'])
         self.ids.pop('temp_view')
 
-    def add_w(self, view):
-        if view == 'temp_view':
+    def draw_view(self):
+        if self.target_view == 'sing_up':
             temp_view = ViewSingUp()
             temp_view.give_root(self)
-            temp_view.size = 333, 333
             self.ids['temp_view'] = temp_view
             self.add_widget(temp_view)
             self.ids['temp_view'].btn.text = self.lang.title('TITLE_BTN_NEXT')
             self.ids['temp_view'].header.text = self.lang.title('TITLE_HI_WHAT_ARE_YOUR_NAME')
+        elif self.target_view == 'home':
+            temp_view = ViewHome()
+            temp_view.give_root(self)
+            temp_view.size = 333, 333
+            self.ids['temp_view'] = temp_view
+            self.add_widget(temp_view)
+            self.ids['temp_view'].exit.text = self.lang.title('TITLE_BTN_EXIT')
+            self.ids['temp_view'].choose_language.text = self.lang.title('TITLE_BTN_CHOOSE_LANGUAGE')
+            self.ids['temp_view'].how_it_works.text = self.lang.title('TITLE_BTN_HOW_IT_WORKS')
+            self.ids['temp_view'].topics.text = self.lang.title('TITLE_BTN_TOPICS')
+        elif self.target_view == 'how_it_works':
+            temp_view = ViewHowItWorks()
+            temp_view.give_root(self)
+            temp_view.size = 333, 333
+            self.ids['temp_view'] = temp_view
+            self.add_widget(temp_view)
+            self.ids['temp_view'].header.text = self.lang.title('TITLE_APP_NEED_FOR_HEADER')
+            self.ids['temp_view'].bloc1.text = self.lang.title('TITLE_APP_NEED_FOR_BLOC1')
+            self.ids['temp_view'].bloc2.text = self.lang.title('TITLE_APP_NEED_FOR_BLOC2')
+            self.ids['temp_view'].bloc3.text = self.lang.title('TITLE_APP_NEED_FOR_BLOC3')
+            self.ids['temp_view'].bloc4.text = self.lang.title('TITLE_APP_NEED_FOR_BLOC4')
+            self.ids['temp_view'].bloc5.text = self.lang.title('TITLE_APP_NEED_FOR_BLOC5')
 
     def chose_main_view(self):
         if 'user' in self.store:
             self.target_view = 'home'
         else:
             self.target_view = 'sing_up'
-
-    def draw_view(self):
-        if self.target_view == 'sing_up':
-            self.add_w('temp_view')
 
     def give_root(self, root):
         self.root.append(root)

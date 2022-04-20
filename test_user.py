@@ -48,7 +48,6 @@ class TestSingUpView(unittest.TestCase):
         start_header = app.root.ids['temp_view'].header.text
         app.root.ids['temp_view'].input.text = test_word
         app.root.ids['temp_view'].next()
-        test_answer = app.root.ids['temp_view'].name
 
         next_header = app.root.ids['temp_view'].header.text
 
@@ -149,6 +148,7 @@ class TestSingUpView(unittest.TestCase):
         self.assertEqual(test_view, answer_no_user)
 
         # Его отвлекли и он выключил приложение
+        app.root.ids['temp_view'].exit.on_press()
 
 
 
@@ -166,9 +166,26 @@ class TestHomeView(unittest.TestCase):
         # Window opened.
         app.stop()
 
-    # Пользаватель Ванька увлышал про новое приложение для простого изучения английских слов
     def setUp(self):
         pass
+
+    # Ванька включил приложение как только появилось свободное время
+    def test_menu_language(self):
+        app = MyApp()
+        p = partial(self.run_test, app)
+        Clock.schedule_once(p, 0.000001)
+        app.run()
+
+        # в главном меню его заинтересовал пункт как это работает и он нажал а него
+        app.root.ids['temp_view'].how_it_works.on_press()
+
+        # На этой странице Ванька увидел заголовок
+        test_word = 'Это программа для подбора образов кодирующих иностранное слово'
+        ansver = app.root.ids['temp_view'].header.text
+        self.assertEqual(ansver, test_word)
+
+
+
 
 if __name__ == '__main__':
     unittest.MyApp()

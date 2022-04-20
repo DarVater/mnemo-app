@@ -1,17 +1,38 @@
 
 
 <MainBtn@Button>:
-    font_size: '30sp'
+    font_size: '24sp'
     color: (0, 0, 0, 1)
     background_normal: 'src/btn_main.png'
     background_down: 'src/btn_main_pressed.png'
 
+<BackBtn@FloatLayout>:
+    size_hint_x: 0.12
+    size_hint_y: 0.06
+    Button
+        pos_hint: {'x':7, 'y':15.3}
+        font_size: '24sp'
+        color: (0, 0, 0, 1)
+        canvas.before:
+            Color:
+                rgba: (1, 1, 1, 0)
+            RoundedRectangle:
+                size: self.size
+                pos: self.pos
+                radius: [58]
+
+        background_normal: 'src/btn_back.png'
+        background_down: 'src/btn_back_pressed.png'
+        id: back
+        on_press:
+            app.root.ids['temp_view'].press_on('back')
+
 <MainLabel@Label>:
-    font_size: '28sp'
+    font_size: '32sp'
     color: (0.1, 0.1, 0.1, 1)
 
 <SubLabel@Label>:
-    font_size: '32sp'
+    font_size: '24sp'
     color: (0, 0,0, 1)
 
 <MainInput@TextInput>:
@@ -39,12 +60,12 @@
         size_hint: 0.7, 0.5
         orientation: 'vertical'
         padding: 20
-        SubLabel:
+        MainLabel:
             id: header
         MainInput:
             size_hint: self.size_hint[0], 0.85
             id: input
-        MainLabel:
+        SubLabel:
             size_hint: 1, 0.7
             id: help_text
         Label:
@@ -56,9 +77,102 @@
                 root.next()
 
 <ViewManager>:
+    id: view_manager
+
+
+<ImgLabel@Label>:
+    height: '300sp'
+    width: '400sp'
+    pos_hint: {'center_x': .5, 'center_y': .5}
+    size_hint_y: None
+    size_hint_x: None
+
+<LongSubLabel@SubLabel>:
+    size_hint_y: None
+    font_size: 24
+    text_size: self.width- 50, None
+
+<ViewHowItWorks>:
+    id: how_it_works
+    header: header
+    bloc1: bloc1
+    bloc2: bloc2
+    bloc3: bloc3
+    bloc4: bloc4
+    bloc5: bloc5
+    view_interface: view_interface
+    canvas.before:
+        Rectangle:
+            pos: self.pos
+            size: self.size
+            source: 'src/background_main.png'
+    ScrollView:
+        id: view_interface
+        orientation: 'vertical'
+        padding: 10
+        BoxLayout:
+            orientation: 'vertical'
+            size_hint: 1, None
+            height: '2600sp'
+            MainLabel:
+                size_hint_y: None
+                height: '200sp'
+                id: header
+                font_size: 30
+                text_size: self.width- 50, None
+
+            LongSubLabel:
+                height: '200sp'
+                id: bloc1
+
+            LongSubLabel:
+                id: bloc2
+                height: '300sp'
+
+            LongSubLabel:
+                height: '250sp'
+                id: bloc3
+
+            ImgLabel:
+                canvas.before:
+                    Rectangle:
+                        size: self.size
+                        pos: self.pos
+                        source: 'src/plot_forget.png'
+
+            LongSubLabel:
+                height: '650sp'
+                id: bloc4
+
+            ImgLabel:
+                canvas.before:
+                    Rectangle:
+                        size: self.size
+                        pos: self.pos
+                        source: 'src/plot_remember.png'
+
+            LongSubLabel:
+                height: '100sp'
+                id: bloc5
+
+            ImgLabel:
+                canvas.before:
+                    Rectangle:
+                        size: self.size
+                        pos: self.pos
+                        source: 'src/remember_lvl.png'
+
+
+    BackBtn:
+
+<ViewHome>:
+    id: view_home
     view_interface: view_interface
     navigation: navigation
-    id: view_manager
+    topics: topics
+    how_it_works: how_it_works
+    choose_language: choose_language
+    exit: exit
     canvas.before:
         Rectangle:
             pos: self.pos
@@ -90,7 +204,7 @@
                             pos: self.pos
                             size: self.size
                             source: 'src/hair_root.png'
-                    MainLabel:
+                    SubLabel:
                         text: 'Прошол'
             BoxLayout:
                 orientation: 'vertical'
@@ -102,7 +216,7 @@
                             pos: self.pos
                             size: self.size
                             source: 'src/repeat_root.png'
-                    MainLabel:
+                    SubLabel:
                         text: 'Повторил'
             BoxLayout:
                 orientation: 'vertical'
@@ -114,7 +228,7 @@
                             pos: self.pos
                             size: self.size
                             source: 'src/know_root.png'
-                    MainLabel:
+                    SubLabel:
                         text: 'Запомнил'
         BoxLayout:
             size_hint:  0.75, 1.1
@@ -124,23 +238,19 @@
             pos_hint: {'center_x': .5, 'center_y': .5}
             orientation: 'vertical'
             MainBtn:
-                text: 'Темы'
                 id: topics
                 on_press:
-                    root.topics()
+                    root.press_on('topics')
             MainBtn:
-                text: 'Как это работает'
                 id: how_it_works
                 on_press:
-                    root.how_it_works()
+                    root.press_on('how_it_works')
             MainBtn:
-                text: 'Выбор языка'
                 id: choose_language
                 on_press:
-                    root.choose_language()
+                    root.press_on('choose_language')
             MainBtn:
-                text: 'Выход'
-                id: out
+                id: exit
                 on_press:
-                    root.out()
+                    root.press_on('Exit')
 
