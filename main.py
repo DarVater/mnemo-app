@@ -1,4 +1,5 @@
 from kivy.app import App
+from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.floatlayout import FloatLayout
 from kivy.storage.jsonstore import JsonStore
 from kivy.uix.button import Button
@@ -7,7 +8,7 @@ from datetime import datetime
 
 from language import Language
 
-#Window.size = 540, 960
+Window.size = 540, 960
 
 
 class ViewButton(Button):
@@ -114,6 +115,7 @@ class ViewSingUp(FloatLayout):
                             name=self.name,
                             sex=self.gender,
                             age=self.age,
+                            lang='ru',
                             amail=self.amail)
         self.root.remove_w('temp_view')
         self.root.chose_main_view()
@@ -145,6 +147,31 @@ class ViewHowItWorks(FloatLayout):
         super().__init__(**kwargs)
 
 
+class ViewLanguage(FloatLayout):
+    root = []
+    lang = Language()
+
+    def press_on(self, text):
+        if text == 'back':
+            self.root.target_view = 'home'
+            self.root.remove_w('temp_view')
+            self.root.draw_view()
+        elif text == 'ru':
+            self.root.ids['temp_view'].ua.background_normal = 'src/btn_main_other.png'
+            self.root.ids['temp_view'].ru.background_normal = 'src/btn_main.png'
+            self.root.store.get('user')['lang'] = 'ru'
+        elif text == 'ua':
+            self.root.ids['temp_view'].ru.background_normal = 'src/btn_main_other.png'
+            self.root.ids['temp_view'].ua.background_normal = 'src/btn_main.png'
+            self.root.store.get('user')['lang'] = 'ua'
+
+    def give_root(self, root):
+        self.root = root
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+
 class ViewHome(FloatLayout):
     root = []
     lang = Language()
@@ -154,6 +181,10 @@ class ViewHome(FloatLayout):
             App.get_running_app().stop()
         if text == 'how_it_works':
             self.root.target_view = 'how_it_works'
+            self.root.remove_w('temp_view')
+            self.root.draw_view()
+        if text == 'choose_language':
+            self.root.target_view = 'languages'
             self.root.remove_w('temp_view')
             self.root.draw_view()
 
@@ -205,6 +236,8 @@ class ViewManager(FloatLayout):
             temp_view.size = 333, 333
             self.ids['temp_view'] = temp_view
             self.add_widget(temp_view)
+            self.lang.set_lang(self.store.get('user')['lang'])
+            self.ids['temp_view'].header.text = self.lang.title('TITLE_HOME_HEADER')
             self.ids['temp_view'].exit.text = self.lang.title('TITLE_BTN_EXIT')
             self.ids['temp_view'].choose_language.text = self.lang.title('TITLE_BTN_CHOOSE_LANGUAGE')
             self.ids['temp_view'].how_it_works.text = self.lang.title('TITLE_BTN_HOW_IT_WORKS')
@@ -227,9 +260,22 @@ class ViewManager(FloatLayout):
             self.ids['temp_view'].bloc5.text = self.lang.title('TITLE_APP_NEED_FOR_BLOC5')
             self.change_scroll_height()
 
+        elif self.target_view == 'languages':
+            temp_view = ViewLanguage()
+            temp_view.give_root(self)
+            temp_view.size = 333, 333
+            self.ids['temp_view'] = temp_view
+            self.add_widget(temp_view)
+            self.ids['temp_view'].header.text = self.lang.title('TITLE_LANGUAGE_ASSOCIATION')
+            self.ids['temp_view'].ua.text = self.lang.title('TITLE_LANGUAGE_UKRAINIAN')
+            self.ids['temp_view'].ru.text = self.lang.title('TITLE_LANGUAGE_RUSSIAN')
+            if self.store.get('user')['lang'] == 'ru':
+                self.ids['temp_view'].ru.background_normal = 'src/btn_main.png'
+            elif self.store.get('user')['lang'] == 'ua':
+                self.ids['temp_view'].ua.background_normal = 'src/btn_main.png'
+
     def change_scroll_height(self):
-        skaler =  (((int(self.ids['temp_view'].bloc1.font_size) / 24 ) - 1)/10 + 1)
-        skaler =  (((int(self.ids['temp_view'].bloc1.font_size) / 24) - 1)/10 ) + 1
+        skaler = (((int(self.ids['temp_view'].bloc1.font_size) / 24) - 1) / 10) + 1
         self.ids['temp_view'].header.height = self.ids['temp_view'].header.height * skaler
         self.ids['temp_view'].bloc1.height = self.ids['temp_view'].bloc1.height * skaler
         self.ids['temp_view'].bloc2.height = self.ids['temp_view'].bloc2.height * skaler
@@ -245,23 +291,16 @@ class ViewManager(FloatLayout):
         scroll_h += self.ids['temp_view'].bloc5.height
         scroll_h += 1000
 
-        self.ids['temp_view'].view_interface.height = scroll_h * ((skaler-1) * 1.5 + 1)
-
-
+        self.ids['temp_view'].view_interface.height = scroll_h * ((skaler - 1) * 1.5 + 1)
 
     def chose_main_view(self):
         if 'user' in self.store:
             self.target_view = 'home'
         else:
-            self.target_view = 'sing_up' #
+            self.target_view = 'sing_up'
 
     def give_root(self, root):
         self.root.append(root)
-
-    if 0:
-        self.store.put('user', name='Ванька', sex='male', age=17)
-        print(self.store.get('tito')['age'])
-        self.text = str(self.store.get('tito')['age'])
 
 
 class MyApp(App):

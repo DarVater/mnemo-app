@@ -151,7 +151,6 @@ class TestSingUpView(unittest.TestCase):
         app.root.ids['temp_view'].exit.on_press()
 
 
-
 class TestHomeView(unittest.TestCase):
     def pause(*args):
         time.sleep(0.000001)
@@ -177,14 +176,28 @@ class TestHomeView(unittest.TestCase):
         app.run()
 
         # в главном меню его заинтересовал пункт как это работает и он нажал а него
-        app.root.ids['temp_view'].how_it_works.on_press()
+        app.root.ids['temp_view'].press_on('how_it_works')
 
         # На этой странице Ванька увидел заголовок
         test_word = 'Это программа для подбора образов кодирующих иностранное слово'
-        ansver = app.root.ids['temp_view'].header.text
-        self.assertEqual(ansver, test_word)
+        answer = app.root.ids['temp_view'].header.text
+        self.assertEqual(answer, test_word)
 
+        # Он прочитал и захотел пройти все как следует. И проверить работает ли система. Нажал кнопку назад
+        app.root.ids['temp_view'].press_on('back')
 
+        # Оказался в главном меню
+        answer_no_user = 'home'
+        test_view = app.root.target_view
+        self.assertEqual(test_view, answer_no_user)
+
+        # Поинтересовался Ванька какие языки еще есть
+        app.root.ids['temp_view'].press_on('choose_language')
+
+        # Там Ванька увидел заголовок
+        test_word = 'С каким языком ассоциировать?'
+        answer = app.root.ids['temp_view'].header.text
+        self.assertEqual(answer, test_word)
 
 
 if __name__ == '__main__':
