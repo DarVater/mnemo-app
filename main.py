@@ -29,7 +29,6 @@ class MainBtn(Button):
 class ViewSingUp(FloatLayout):
     root = []
     name = ''
-    gender = ''
     amail = ''
     age = 0
     lang = Language()
@@ -105,15 +104,15 @@ class ViewSingUp(FloatLayout):
         self.view_interface.add_widget(self.gander_female)
 
     def choose_male(self):
-        self.user_register('Male')
+        self.user_register('M')
 
     def choose_female(self):
-        self.user_register('Female')
+        self.user_register('F')
 
     def user_register(self, gender):
         self.root.store.put('user',
                             name=self.name,
-                            sex=self.gender,
+                            sex=gender,
                             age=self.age,
                             lang='ru',
                             amail=self.amail)
@@ -159,11 +158,11 @@ class ViewLanguage(FloatLayout):
         elif text == 'ru':
             self.root.ids['temp_view'].ua.background_normal = 'src/btn_main_other.png'
             self.root.ids['temp_view'].ru.background_normal = 'src/btn_main.png'
-            self.root.store.get('user')['lang'] = 'ru'
+            self.root.store.put('user', lang='ru')
         elif text == 'ua':
             self.root.ids['temp_view'].ru.background_normal = 'src/btn_main_other.png'
             self.root.ids['temp_view'].ua.background_normal = 'src/btn_main.png'
-            self.root.store.get('user')['lang'] = 'ua'
+            self.root.store.put('user', lang='ua')
 
     def give_root(self, root):
         self.root = root
