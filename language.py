@@ -32,6 +32,9 @@ class Language():
                                          "TITLE_LANGUAGE_ASSOCIATION": 'С каким языком ассоциировать?',
                                          "TITLE_LANGUAGE_RUSSIAN": 'Русский',
                                          "TITLE_LANGUAGE_UKRAINIAN": 'Украинский',
+                                         "TITLE_TOPIC_HEADER": 'Темы и прогресс',
+                                         "TITLE_TOPIC_UNBLOCK_CHOOSE_TOPIC": 'Доступная новая тема!',
+
                                          },
                                   "ua": {"TITLE_BTN_NEXT": 'Наступний',
                                          "TITLE_NAME_ONLY_CHARACTERS": "Ім'я тільки з букв",
@@ -62,6 +65,8 @@ class Language():
                                          "TITLE_LANGUAGE_ASSOCIATION": 'З якою мовою асоціювати?',
                                          "TITLE_LANGUAGE_RUSSIAN": 'Російська',
                                          "TITLE_LANGUAGE_UKRAINIAN": 'Український',
+                                         "TITLE_TOPIC_HEADER": 'Теми та прогрес',
+                                         "TITLE_TOPIC_UNBLOCK_CHOOSE_TOPIC": 'Доступна нова тема!',
                                          },
                                   }
 

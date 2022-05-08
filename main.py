@@ -7,8 +7,42 @@ from kivy.core.window import Window
 from datetime import datetime
 
 from language import Language
+from word_by_topics import words_by_lvl
 
 Window.size = 540, 960
+
+print(len(words_by_lvl['ru'].keys()))
+
+['Город', 'Дом', 'Еда', 'Природа', 'Человек', 'Отношения', 'Транспорт', 'Животные', 'Спорт', 'Цвета', 'Работа',
+ 'Профессии', 'Изучение', 'Развлечения', 'Время', 'Календарь', 'Одежда', 'Хобби', 'Другое', 'Указатели', 'Восклицание',
+ 'союзы', 'числа', 'Предлог', 'Наречие', 'Глаголы наличия', 'Глаголы операции', 'Глаголы общения', 'Глаголы  стадии',
+ 'Глаголы движения', 'Глаголы восприятия и мышления', 'Другие глаголы', 'Эмоции', 'Абстрактные', 'На глаз', 'Состояние',
+ 'Качества', 'Местоимения']
+
+
+
+class ViewChooseTopics(FloatLayout):
+    root = []
+    lang = Language()
+    def press_on(self, text):
+        if text == 'back':
+            self.root.target_view = 'home'
+            self.root.remove_w('temp_view')
+            self.root.draw_view()
+        elif text == 'ru':
+            self.root.ids['temp_view'].ua.background_normal = 'src/btn_main_other.png'
+            self.root.ids['temp_view'].ru.background_normal = 'src/btn_main.png'
+            self.root.store.put('user', lang='ru')
+        elif text == 'ua':
+            self.root.ids['temp_view'].ru.background_normal = 'src/btn_main_other.png'
+            self.root.ids['temp_view'].ua.background_normal = 'src/btn_main.png'
+            self.root.store.put('user', lang='ua')
+
+    def give_root(self, root):
+        self.root = root
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
 
 
 class ViewButton(Button):
@@ -178,12 +212,16 @@ class ViewHome(FloatLayout):
     def press_on(self, text):
         if text == 'Exit':
             App.get_running_app().stop()
-        if text == 'how_it_works':
+        elif text == 'how_it_works':
             self.root.target_view = 'how_it_works'
             self.root.remove_w('temp_view')
             self.root.draw_view()
-        if text == 'choose_language':
+        elif text == 'choose_language':
             self.root.target_view = 'languages'
+            self.root.remove_w('temp_view')
+            self.root.draw_view()
+        elif text == 'all_topics':
+            self.root.target_view = 'all_topics'
             self.root.remove_w('temp_view')
             self.root.draw_view()
 
@@ -273,6 +311,16 @@ class ViewManager(FloatLayout):
             elif self.store.get('user')['lang'] == 'ua':
                 self.ids['temp_view'].ua.background_normal = 'src/btn_main.png'
 
+        elif self.target_view == 'all_topics':
+            temp_view = ViewChooseTopics()
+            temp_view.give_root(self)
+            temp_view.size = 333, 333
+            self.ids['temp_view'] = temp_view
+
+            self.add_widget(temp_view)
+            self.ids['temp_view'].header.text = self.lang.title('TITLE_TOPIC_HEADER')
+            self.ids['temp_view'].alert_text.text = self.lang.title('TITLE_TOPIC_UNBLOCK_CHOOSE_TOPIC')
+
     def change_scroll_height(self):
         skaler = (((int(self.ids['temp_view'].bloc1.font_size) / 24) - 1) / 10) + 1
         self.ids['temp_view'].header.height = self.ids['temp_view'].header.height * skaler
@@ -294,7 +342,7 @@ class ViewManager(FloatLayout):
 
     def chose_main_view(self):
         if 'user' in self.store:
-            self.target_view = 'home'
+            self.target_view = 'all_topics' #home
         else:
             self.target_view = 'sing_up'
 

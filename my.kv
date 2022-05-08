@@ -256,7 +256,7 @@
             MainBtn:
                 id: topics
                 on_press:
-                    root.press_on('topics')
+                    root.press_on('all_topics')
             MainBtn:
                 id: how_it_works
                 on_press:
@@ -307,6 +307,190 @@
                     root.press_on('ua')
         Label:
             size_hint_y: 1
+    BackBtn:
+        id: back
+
+
+<TopicLayout@BoxLayout>:
+    size_hint: 0.3, 0.15
+    orientation: 'vertical'
+    canvas.before:
+        Rectangle:
+            pos: self.pos
+            size: self.size
+            source: 'src/topic.png'
+    TopicInfoLayout
+    Label:
+        size_hint_y: 0.4
+        color: (0, 0, 0, 1)
+        text: 'Город'
+
+<TopicProgressBarLayout@BoxLayout>:
+    canvas.before:
+        Color:
+            rgba: (1, 1, 1, 1)
+        RoundedRectangle:
+            size: self.size
+            pos: self.pos
+            radius: [10]
+
+<TopicInfoLayout@BoxLayout>:
+    progress_know: progress_know
+    progress_repeat: progress_repeat
+    progress_hair: progress_hair
+
+    BoxLayout:
+        BoxLayout:
+            orientation: 'vertical'
+            canvas.before:
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+                    source: 'src/topic_town.png'
+
+        BoxLayout:
+            size_hint: 0.6, 1
+            spacing: '10sp'
+            padding: '10sp'
+            BoxLayout:
+                orientation: 'vertical'
+                BoxLayout:
+                    size_hint: 1, 0.5
+                BoxLayout:
+                    canvas.before:
+                        Color:
+                            rgba: (140/255, 76/255, 230/255, 1)
+                        RoundedRectangle:
+                            size: self.size
+                            pos: self.pos
+                            radius: [10]
+                    size_hint: 1, 0.1
+                    id: progress_know
+            BoxLayout:
+                orientation: 'vertical'
+                BoxLayout:
+                    size_hint: 1, 0.5
+                BoxLayout:
+                    canvas.before:
+                        Color:
+                            rgba: (94/255, 0/255, 224/255, 1)
+                        RoundedRectangle:
+                            size: self.size
+                            pos: self.pos
+                            radius: [10]
+                    size_hint: 1, 0.5
+                    id: progress_repeat
+            BoxLayout:
+                orientation: 'vertical'
+                BoxLayout:
+                    size_hint: 1, 0.5
+                BoxLayout:
+                    canvas.before:
+                        Color:
+                            rgba: (40/255, 0/255, 97/255, 1)
+                        RoundedRectangle:
+                            size: self.size
+                            pos: self.pos
+                            radius: [10]
+                    size_hint: 1, 2
+                    id: progress_hair
+
+
+
+<ViewChooseTopics>:
+    id: choose_topic
+    header: header
+    alert: alert
+    view_interface: view_interface
+    back: back
+    topics_grid: topics_grid
+    alert_text: alert_text
+    canvas.before:
+        Rectangle:
+            pos: self.pos
+            size: self.size
+            source: 'src/background_topic.png'
+    ScrollView:
+        orientation: 'vertical'
+        padding: 10
+        BoxLayout:
+            id: view_interface
+            padding: '40sp'
+            spacing: '20sp'
+            orientation: 'vertical'
+            size_hint: 1, None
+            height: '3500sp'
+            MainLabel:
+                size_hint_y: None
+                id: header
+                font_size: '42sp'
+                height: '100sp'
+                text_size: self.width- 50, None
+
+            BoxLayout:
+                id: alert
+                size_hint_y: None
+                height: '50sp'
+                pos_hint: {'center_x': .5, 'center_y': .5}
+                size_hint: 0.9, None
+                Label:
+                    canvas.before:
+                        Rectangle:
+                            pos: self.pos
+                            size: self.size
+                            source: 'src/info.png'
+                    size_hint_x: None
+                    width: '50sp'
+                SubLabel:
+                    id: alert_text
+                    text_size: self.width- 50, None
+
+            GridLayout:
+                spacing: '20sp'
+                cols: 2
+                id: topics_grid
+                TopicLayout:
+                TopicLayout:
+                TopicLayout:
+                TopicLayout:
+                TopicLayout:
+                TopicLayout:
+                TopicLayout:
+                TopicLayout:
+                TopicLayout:
+                TopicLayout:
+
+                TopicLayout:
+                TopicLayout:
+                TopicLayout:
+                TopicLayout:
+                TopicLayout:
+                TopicLayout:
+                TopicLayout:
+                TopicLayout:
+                TopicLayout:
+                TopicLayout:
+
+                TopicLayout:
+                TopicLayout:
+                TopicLayout:
+                TopicLayout:
+                TopicLayout:
+                TopicLayout:
+                TopicLayout:
+                TopicLayout:
+                TopicLayout:
+                TopicLayout:
+
+                TopicLayout:
+                TopicLayout:
+                TopicLayout:
+                TopicLayout:
+                TopicLayout:
+                TopicLayout:
+                TopicLayout:
+                TopicLayout:
+
 
 
     BackBtn:
