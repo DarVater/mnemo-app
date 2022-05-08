@@ -11,15 +11,6 @@ from word_by_topics import words_by_lvl
 
 Window.size = 540, 960
 
-print(len(words_by_lvl['ru'].keys()))
-
-['Город', 'Дом', 'Еда', 'Природа', 'Человек', 'Отношения', 'Транспорт', 'Животные', 'Спорт', 'Цвета', 'Работа',
- 'Профессии', 'Изучение', 'Развлечения', 'Время', 'Календарь', 'Одежда', 'Хобби', 'Другое', 'Указатели', 'Восклицание',
- 'союзы', 'числа', 'Предлог', 'Наречие', 'Глаголы наличия', 'Глаголы операции', 'Глаголы общения', 'Глаголы  стадии',
- 'Глаголы движения', 'Глаголы восприятия и мышления', 'Другие глаголы', 'Эмоции', 'Абстрактные', 'На глаз', 'Состояние',
- 'Качества', 'Местоимения']
-
-
 
 class ViewChooseTopics(FloatLayout):
     root = []
@@ -58,6 +49,14 @@ class ViewButton(Button):
 class MainBtn(Button):
     background_normal = 'src/btn_main.png'
     background_down = 'src/btn_main_pressed.png'
+
+
+class TopicInfoLayout(BoxLayout):
+    pass
+
+
+class TopicLayout(BoxLayout):
+    pass
 
 
 class ViewSingUp(FloatLayout):
@@ -143,12 +142,29 @@ class ViewSingUp(FloatLayout):
     def choose_female(self):
         self.user_register('F')
 
+    def create_start_user_topics(self):
+        lan = 'ru'
+        topics = words_by_lvl[lan].keys()
+        user_topics = {}
+        for top in topics:
+            etch_top_word = {}
+            for top_word in words_by_lvl[lan][top]:
+                etch_top_word[top_word] = {'cont_repeat': 0, 'ans_speed': 64}
+            user_topics[top] = {'know_pr': 0.01,
+                                'repeat_pr': 0.01,
+                                'hair_pr': 0.01,
+                                'etch_top_word': etch_top_word,
+                                }
+        return user_topics
+
     def user_register(self, gender):
+        user_topics = self.create_start_user_topics()
         self.root.store.put('user',
                             name=self.name,
                             sex=gender,
                             age=self.age,
                             lang='ru',
+                            user_topics=user_topics,
                             amail=self.amail)
         self.root.remove_w('temp_view')
         self.root.chose_main_view()
@@ -320,6 +336,18 @@ class ViewManager(FloatLayout):
             self.add_widget(temp_view)
             self.ids['temp_view'].header.text = self.lang.title('TITLE_TOPIC_HEADER')
             self.ids['temp_view'].alert_text.text = self.lang.title('TITLE_TOPIC_UNBLOCK_CHOOSE_TOPIC')
+            self.add_etch_top()
+
+    def add_etch_top(self):
+        user_topics = self.store.get('user')['user_topics']
+        for top_name in user_topics.keys():
+            print(top_name, user_topics[top_name] )
+            layout = TopicLayout()
+            layout.top_layout.progress_know.size_hint_y = user_topics[top_name]['know_pr']
+            layout.top_layout.progress_repeat.size_hint_y = user_topics[top_name]['repeat_pr']
+            layout.top_layout.progress_hair.size_hint_y = user_topics[top_name]['hair_pr']
+            layout.btn.text = top_name
+            self.ids['temp_view'].topics_grid.add_widget(layout)
 
     def change_scroll_height(self):
         skaler = (((int(self.ids['temp_view'].bloc1.font_size) / 24) - 1) / 10) + 1
@@ -342,7 +370,7 @@ class ViewManager(FloatLayout):
 
     def chose_main_view(self):
         if 'user' in self.store:
-            self.target_view = 'all_topics' #home
+            self.target_view = 'home' # home all_topics
         else:
             self.target_view = 'sing_up'
 

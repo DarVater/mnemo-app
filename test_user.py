@@ -199,6 +199,32 @@ class TestHomeView(unittest.TestCase):
         answer = app.root.ids['temp_view'].header.text
         self.assertEqual(answer, test_word)
 
+        # Случайно нажал на Украинский
+        app.root.ids['temp_view'].press_on('ua')
+
+        # И вышел
+        app.root.ids['temp_view'].press_on('back')
+
+        # Он заметил, что в главном окне изменилась надпись на Украинский язык
+        test_word = 'Слова рівня А1'
+        answer = app.root.ids['temp_view'].header.text
+        self.assertEqual(answer, test_word)
+
+        # Ваника поменял обратно
+        app.root.ids['temp_view'].press_on('choose_language')
+        app.root.ids['temp_view'].press_on('ru')
+        app.root.ids['temp_view'].press_on('back')
+        test_word = 'Слова уровня А1'
+        answer = app.root.ids['temp_view'].header.text
+        self.assertEqual(answer, test_word)
+
+        # Потом он нажал на темы
+        app.root.ids['temp_view'].press_on('all_topics')
+
+        # Заголовок изменился
+        test_word = 'Темы и прогресс'
+        answer = app.root.ids['temp_view'].header.text
+        self.assertEqual(answer, test_word)
 
 if __name__ == '__main__':
     unittest.MyApp()

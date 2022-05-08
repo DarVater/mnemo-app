@@ -33,9 +33,9 @@
                 radius: [58]
 
         background_normal: 'src/btn_back.png'
-        background_down: 'src/btn_back_pressed.png'
+        background_down: 'src/transparent.png'
         id: btn
-        on_press:
+        on_release:
             app.root.ids['temp_view'].press_on('back')
 
 <MainLabel@Label>:
@@ -255,19 +255,19 @@
             orientation: 'vertical'
             MainBtn:
                 id: topics
-                on_press:
+                on_release:
                     root.press_on('all_topics')
             MainBtn:
                 id: how_it_works
-                on_press:
+                on_release:
                     root.press_on('how_it_works')
             MainBtn:
                 id: choose_language
-                on_press:
+                on_release:
                     root.press_on('choose_language')
             MainBtn:
                 id: exit
-                on_press:
+                on_release:
                     root.press_on('Exit')
 
 
@@ -312,7 +312,9 @@
 
 
 
-<TopicLayout@BoxLayout>:
+<TopicLayout>:
+    btn: btn
+    top_layout: top_layout
     size_hint: 0.3, 0.15
     orientation: 'vertical'
     canvas.before:
@@ -321,7 +323,9 @@
             size: self.size
             source: 'src/topic.png'
     TopicInfoLayout:
+        id: top_layout
     Button:
+        id: btn
         background_normal: 'src/topic.png'
         background_down: 'src/topic_pressed.png'
         size_hint_y: 0.4
@@ -329,7 +333,7 @@
         text: 'Город'
 
 
-<TopicInfoLayout@BoxLayout>:
+<TopicInfoLayout>:
     progress_know: progress_know
     progress_repeat: progress_repeat
     progress_hair: progress_hair
@@ -391,7 +395,6 @@
                     id: progress_hair
 
 
-
 <ViewChooseTopics>:
     id: choose_topic
     header: header
@@ -444,47 +447,6 @@
                 spacing: '20sp'
                 cols: 2
                 id: topics_grid
-                TopicLayout:
-                TopicLayout:
-                TopicLayout:
-                TopicLayout:
-                TopicLayout:
-                TopicLayout:
-                TopicLayout:
-                TopicLayout:
-                TopicLayout:
-                TopicLayout:
-
-                TopicLayout:
-                TopicLayout:
-                TopicLayout:
-                TopicLayout:
-                TopicLayout:
-                TopicLayout:
-                TopicLayout:
-                TopicLayout:
-                TopicLayout:
-                TopicLayout:
-
-                TopicLayout:
-                TopicLayout:
-                TopicLayout:
-                TopicLayout:
-                TopicLayout:
-                TopicLayout:
-                TopicLayout:
-                TopicLayout:
-                TopicLayout:
-                TopicLayout:
-
-                TopicLayout:
-                TopicLayout:
-                TopicLayout:
-                TopicLayout:
-                TopicLayout:
-                TopicLayout:
-                TopicLayout:
-                TopicLayout:
 
 
 
