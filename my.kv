@@ -311,6 +311,7 @@
         id: back
 
 
+
 <TopicLayout@BoxLayout>:
     size_hint: 0.3, 0.15
     orientation: 'vertical'
@@ -319,20 +320,14 @@
             pos: self.pos
             size: self.size
             source: 'src/topic.png'
-    TopicInfoLayout
-    Label:
+    TopicInfoLayout:
+    Button:
+        background_normal: 'src/topic.png'
+        background_down: 'src/topic_pressed.png'
         size_hint_y: 0.4
         color: (0, 0, 0, 1)
         text: 'Город'
 
-<TopicProgressBarLayout@BoxLayout>:
-    canvas.before:
-        Color:
-            rgba: (1, 1, 1, 1)
-        RoundedRectangle:
-            size: self.size
-            pos: self.pos
-            radius: [10]
 
 <TopicInfoLayout@BoxLayout>:
     progress_know: progress_know
