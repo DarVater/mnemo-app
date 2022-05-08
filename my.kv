@@ -337,15 +337,16 @@
     progress_know: progress_know
     progress_repeat: progress_repeat
     progress_hair: progress_hair
-
+    top_background: top_background
     BoxLayout:
         BoxLayout:
-            orientation: 'vertical'
+            source: 'src/topic_town.png'
+            id: top_background
             canvas.before:
                 Rectangle:
                     pos: self.pos
                     size: self.size
-                    source: 'src/topic_town.png'
+                    source: app.root.ids['temp_view'].temp_image_source
 
         BoxLayout:
             size_hint: 0.6, 1

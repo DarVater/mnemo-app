@@ -7,7 +7,7 @@ from kivy.core.window import Window
 from datetime import datetime
 
 from language import Language
-from word_by_topics import words_by_lvl
+from word_by_topics import words_by_lvl, source_by_top
 
 Window.size = 540, 960
 
@@ -15,6 +15,7 @@ Window.size = 540, 960
 class ViewChooseTopics(FloatLayout):
     root = []
     lang = Language()
+    temp_image_source = ''
     def press_on(self, text):
         if text == 'back':
             self.root.target_view = 'home'
@@ -57,7 +58,6 @@ class TopicInfoLayout(BoxLayout):
 
 class TopicLayout(BoxLayout):
     pass
-
 
 class ViewSingUp(FloatLayout):
     root = []
@@ -342,6 +342,7 @@ class ViewManager(FloatLayout):
         user_topics = self.store.get('user')['user_topics']
         for top_name in user_topics.keys():
             print(top_name, user_topics[top_name] )
+            self.ids['temp_view'].temp_image_source = f"src/{source_by_top[top_name]}.png"
             layout = TopicLayout()
             layout.top_layout.progress_know.size_hint_y = user_topics[top_name]['know_pr']
             layout.top_layout.progress_repeat.size_hint_y = user_topics[top_name]['repeat_pr']
