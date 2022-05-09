@@ -1,3 +1,5 @@
+import time
+
 from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.floatlayout import FloatLayout
@@ -12,24 +14,28 @@ from word_by_topics import words_by_lvl, source_by_top
 Window.size = 540, 960
 
 
+class ViewTopic(BoxLayout):
+    root = []
+    lang = Language()
+    temp_image_source = ''
+
+    def give_root(self, root):
+        self.root = root
+
+
 class ViewChooseTopics(FloatLayout):
     root = []
     lang = Language()
     temp_image_source = ''
 
-    def press_on(self, text):
-        if text == 'back':
-            self.root.target_view = 'home'
-            self.root.remove_w('temp_view')
-            self.root.draw_view()
-        elif text == 'ru':
-            self.root.ids['temp_view'].ua.background_normal = 'src/btn_main_other.png'
-            self.root.ids['temp_view'].ru.background_normal = 'src/btn_main.png'
-            self.root.store.put('user', lang='ru')
-        elif text == 'ua':
-            self.root.ids['temp_view'].ru.background_normal = 'src/btn_main_other.png'
-            self.root.ids['temp_view'].ua.background_normal = 'src/btn_main.png'
-            self.root.store.put('user', lang='ua')
+    def choose_top(self, top):
+        self.root.target_view = ['topic', top]
+        self.root.ids['temp_view2'] = self.root.ids['temp_view']
+        print(self.root.ids)
+        self.root.draw_view()
+        print(self.root.ids)
+        self.root.remove_w('temp_view2')
+        print(self.root.ids)
 
     def give_root(self, root):
         self.root = root
@@ -58,7 +64,9 @@ class TopicInfoLayout(BoxLayout):
 
 
 class TopicLayout(BoxLayout):
-    pass
+
+    def press_on_topic(self, topic_name):
+        print(App.get_running_app().root.ids['temp_view'].choose_top(topic_name.text))
 
 
 class ViewSingUp(FloatLayout):
@@ -184,6 +192,7 @@ class ViewSingUp(FloatLayout):
 class ViewHowItWorks(FloatLayout):
     root = []
     lang = Language()
+    temp_image_source = ''
 
     def press_on(self, text):
         if text == 'back':
@@ -201,6 +210,7 @@ class ViewHowItWorks(FloatLayout):
 class ViewLanguage(FloatLayout):
     root = []
     lang = Language()
+    temp_image_source = ''
 
     def press_on(self, text):
         if text == 'back':
@@ -210,11 +220,17 @@ class ViewLanguage(FloatLayout):
         elif text == 'ru':
             self.root.ids['temp_view'].ua.background_normal = 'src/btn_main_other.png'
             self.root.ids['temp_view'].ru.background_normal = 'src/btn_main.png'
-            # self.root.store.put('user', lang='ru')
+            user_store = self.root.store.get('user')
+            user_store['lang'] = 'ru'
+            self.root.store.store_put('user', user_store)
+
         elif text == 'ua':
             self.root.ids['temp_view'].ru.background_normal = 'src/btn_main_other.png'
             self.root.ids['temp_view'].ua.background_normal = 'src/btn_main.png'
-            # self.root.store.put('user', lang='ua')
+            user_store = self.root.store.get('user')
+            user_store['lang'] = 'ua'
+            self.root.store.store_put('user', user_store)
+
 
     def give_root(self, root):
         self.root = root
@@ -274,9 +290,9 @@ class ViewManager(FloatLayout):
         self.chose_main_view()
         self.draw_view()
 
-    def remove_w(self, w_name):
-        self.remove_widget(self.ids['temp_view'])
-        self.ids.pop('temp_view')
+    def remove_w(self, w_name='temp_view'):
+        self.remove_widget(self.ids[w_name])
+        self.ids.pop(w_name)
 
     def draw_view(self):
         if self.target_view == 'sing_up':
@@ -341,6 +357,14 @@ class ViewManager(FloatLayout):
             self.ids['temp_view'].alert_text.text = self.lang.title('TITLE_TOPIC_UNBLOCK_CHOOSE_TOPIC')
             self.add_etch_top()
 
+        elif self.target_view[0] == 'topic':
+            temp_view = ViewTopic()
+            temp_view.give_root(self)
+            temp_view.size = 333, 333
+            self.ids['temp_view'] = temp_view
+            self.add_widget(temp_view)
+
+
     def add_etch_top(self):
         user_topics = self.store.get('user')['user_topics']
         can_choose_topic = True
@@ -359,7 +383,8 @@ class ViewManager(FloatLayout):
             if not can_choose_topic and 0.01 == user_topics[top_name]['hair_pr']:
                 layout.opacity = 0.5
                 layout.btn.background_down = 'src/topic.png'
-
+            else:
+                layout.btn.bind(on_press=layout.press_on_topic)
 
             self.ids['temp_view'].topics_grid.add_widget(layout)
 
