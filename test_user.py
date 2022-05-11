@@ -226,5 +226,15 @@ class TestHomeView(unittest.TestCase):
         answer = app.root.ids['temp_view'].header.text
         self.assertEqual(answer, test_word)
 
+        # За ней следовала надпись "Доступная новая тема!"
+        test_word = 'Доступная новая тема!'
+        answer = app.root.ids['temp_view'].alert_text.text
+        self.assertEqual(answer, test_word)
+
+        # Ему понравилась тема животные
+        print(app.root.ids['temp_view'])
+        app.root.ids['temp_view'].choose_top('Животные')
+
+
 if __name__ == '__main__':
     unittest.MyApp()

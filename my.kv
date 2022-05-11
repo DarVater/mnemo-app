@@ -314,7 +314,7 @@
 
 <TopicLayout>:
     btn: btn
-    top_layout: top_layout
+    top_info_layout: top_info_layout
     size_hint: 0.3, 0.15
     orientation: 'vertical'
     canvas.before:
@@ -323,7 +323,7 @@
             size: self.size
             source: 'src/topic.png'
     TopicInfoLayout:
-        id: top_layout
+        id: top_info_layout
     Button:
         id: btn
         background_normal: 'src/topic.png'
@@ -348,7 +348,7 @@
                 Rectangle:
                     pos: self.pos[0] + self.width*0.05, self.pos[1] + self.height*0.05
                     size: self.width*0.9, self.height*0.9
-                    source: app.root.ids['temp_view'].temp_image_source
+                    source: root.temp_image_source
 
         BoxLayout:
             size_hint: 0.6, 1
@@ -367,7 +367,7 @@
                             pos: self.pos
                             radius: [10]
                     size_hint: 1, 0.1
-                    id: progress_know
+                    id: progress_hair
             BoxLayout:
                 orientation: 'vertical'
                 BoxLayout:
@@ -395,7 +395,7 @@
                             pos: self.pos
                             radius: [10]
                     size_hint: 1, 2
-                    id: progress_hair
+                    id:  progress_know
 
 
 <ViewChooseTopics>:
@@ -456,3 +456,96 @@
 
     BackBtn:
         id: back
+
+<ViewLoadScreen>:
+    my_pb: my_pb
+    BoxLayout:
+        Button:
+            size_hint_y: None
+            height: 0
+            id: my_pb
+            background_normal: 'src/topic_load_screen.png'
+            background_down: 'src/topic_load_screen.png'
+
+
+<VersionBtn@Button>:
+    background_normal: 'src/btn_sup_big.png'
+    background_down: 'src/btn_sup_big_pressed.png'
+
+
+<ViewTopic>:
+    id: view_topic
+    back: back
+    header: header
+    variants: variants
+    learning: learning
+    versions: versions
+    pos_hint: {'center_x': .5, 'center_y': .5}
+    canvas.before:
+        Rectangle:
+            pos: self.pos
+            size: self.size
+            source: 'src/background_topic.png'
+    orientation: 'vertical'
+    padding: '15sp'
+    BoxLayout
+        pos_hint: {'center_x': .5, 'center_y': .5}
+        orientation: 'vertical'
+        MainLabel:
+            size_hint_y: 0.2
+            padding: 50, 40
+            size_hint_y: None
+            id: header
+            height: '200sp'
+            text_size: self.width- 50, None
+            pos_hint: {'center_x': .5, 'center_y': .5}
+        GridLayout:
+            spacing: '10sp'
+            padding: '0sp', '20sp'
+            cols: 2
+            id: versions
+
+            VersionBtn
+            VersionBtn
+            VersionBtn
+            VersionBtn
+            VersionBtn
+
+            VersionBtn
+            VersionBtn
+            VersionBtn
+            VersionBtn
+            VersionBtn
+
+            VersionBtn
+            VersionBtn
+            VersionBtn
+            VersionBtn
+            VersionBtn
+
+            VersionBtn
+            VersionBtn
+            VersionBtn
+            VersionBtn
+            VersionBtn
+
+        BoxLayout:
+            pos_hint: {'center_x': .5, 'center_y': .5}
+            size_hint_y: 0.2
+            spacing: '10sp'
+            padding: '0sp', '20sp'
+            MainPassiveBtn:
+                id: variants
+                size_hint: 1, 1
+                background_normal: 'src/btn_main_other.png'
+                on_release:
+                    root.press_on('ru')
+            MainPassiveBtn:
+                id: learning
+                size_hint: 1, 1
+                background_normal: 'src/btn_main_other.png'
+                on_release:
+                    root.press_on('ua')
+    BackBtn:
+        id: back
+

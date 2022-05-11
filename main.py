@@ -1,6 +1,7 @@
 import time
 
 from kivy.app import App
+from kivy.clock import Clock
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.floatlayout import FloatLayout
 from kivy.storage.jsonstore import JsonStore
@@ -8,16 +9,26 @@ from kivy.uix.button import Button
 from kivy.core.window import Window
 from datetime import datetime
 
+from kivy.uix.progressbar import ProgressBar
+
 from language import Language
 from word_by_topics import words_by_lvl, source_by_top
 
-Window.size = 540, 960
+#Window.size = 540, 960
 
+
+class ViewLoadScreen(FloatLayout):
+    pass
 
 class ViewTopic(BoxLayout):
     root = []
     lang = Language()
-    temp_image_source = ''
+
+    def press_on(self, text):
+        if text == 'back':
+            self.root.target_view = 'all_topics'
+            self.root.remove_w('temp_view')
+            self.root.draw_view()
 
     def give_root(self, root):
         self.root = root
@@ -26,16 +37,17 @@ class ViewTopic(BoxLayout):
 class ViewChooseTopics(FloatLayout):
     root = []
     lang = Language()
-    temp_image_source = ''
+
+    def press_on(self, text):
+        if text == 'back':
+            self.root.target_view = 'home'
+            self.root.remove_w('temp_view')
+            self.root.draw_view()
 
     def choose_top(self, top):
         self.root.target_view = ['topic', top]
-        self.root.ids['temp_view2'] = self.root.ids['temp_view']
-        print(self.root.ids)
+        self.root.remove_w('temp_view')
         self.root.draw_view()
-        print(self.root.ids)
-        self.root.remove_w('temp_view2')
-        print(self.root.ids)
 
     def give_root(self, root):
         self.root = root
@@ -46,7 +58,6 @@ class ViewChooseTopics(FloatLayout):
 
 class ViewButton(Button):
     text = 'asdasd'
-
     def on_touch_down(self, touch):
         if 'temp_view' in App.get_running_app().root.ids:
             App.get_running_app().root.remove_w('temp_view')
@@ -59,14 +70,18 @@ class MainBtn(Button):
     background_down = 'src/btn_main_pressed.png'
 
 
+temp_data = ''
 class TopicInfoLayout(BoxLayout):
-    pass
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        global temp_data
+        self.temp_image_source = temp_data
 
 
 class TopicLayout(BoxLayout):
 
     def press_on_topic(self, topic_name):
-        print(App.get_running_app().root.ids['temp_view'].choose_top(topic_name.text))
+        App.get_running_app().root.ids['temp_view'].choose_top(topic_name.text)
 
 
 class ViewSingUp(FloatLayout):
@@ -192,7 +207,6 @@ class ViewSingUp(FloatLayout):
 class ViewHowItWorks(FloatLayout):
     root = []
     lang = Language()
-    temp_image_source = ''
 
     def press_on(self, text):
         if text == 'back':
@@ -210,7 +224,6 @@ class ViewHowItWorks(FloatLayout):
 class ViewLanguage(FloatLayout):
     root = []
     lang = Language()
-    temp_image_source = ''
 
     def press_on(self, text):
         if text == 'back':
@@ -242,7 +255,6 @@ class ViewLanguage(FloatLayout):
 class ViewHome(FloatLayout):
     root = []
     lang = Language()
-    temp_image_source = ''
 
     def press_on(self, text):
         if text == 'Exit':
@@ -278,14 +290,16 @@ class ViewHome(FloatLayout):
     def exit(self):
         App.get_running_app().stop()
 
-
 class ViewManager(FloatLayout):
     target_view = ''
     root = []
+    started = 0
+    topic_keys = []
     lang = Language()
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        self.pb = None
         self.store = JsonStore('hello.json')
         self.chose_main_view()
         self.draw_view()
@@ -347,15 +361,24 @@ class ViewManager(FloatLayout):
                 self.ids['temp_view'].ua.background_normal = 'src/btn_main.png'
 
         elif self.target_view == 'all_topics':
+
+            load_view = ViewLoadScreen()
+
+            self.add_widget(load_view)
+            self.ids['load_view'] = load_view
+            print(self.ids)
+
+
             temp_view = ViewChooseTopics()
             temp_view.give_root(self)
             temp_view.size = 333, 333
             self.ids['temp_view'] = temp_view
 
-            self.add_widget(temp_view)
+            self.ids['temp_view'].opacity = 0
             self.ids['temp_view'].header.text = self.lang.title('TITLE_TOPIC_HEADER')
             self.ids['temp_view'].alert_text.text = self.lang.title('TITLE_TOPIC_UNBLOCK_CHOOSE_TOPIC')
             self.add_etch_top()
+            self.ids['temp_view'].opacity = 1
 
         elif self.target_view[0] == 'topic':
             temp_view = ViewTopic()
@@ -365,28 +388,45 @@ class ViewManager(FloatLayout):
             self.add_widget(temp_view)
 
 
-    def add_etch_top(self):
-        user_topics = self.store.get('user')['user_topics']
-        can_choose_topic = True
-        for top_name in user_topics.keys():
-            if 0.01 < user_topics[top_name]['hair_pr'] < 0.9:
-                can_choose_topic = False
-        if can_choose_topic:
-            self.ids['temp_view'].alert.opacity = 1
-        for top_name in user_topics.keys():
-            self.ids['temp_view'].temp_image_source = f"src/{source_by_top[top_name]}.png"
-            layout = TopicLayout()
-            layout.top_layout.progress_know.size_hint_y = user_topics[top_name]['know_pr']
-            layout.top_layout.progress_repeat.size_hint_y = user_topics[top_name]['repeat_pr']
-            layout.top_layout.progress_hair.size_hint_y = user_topics[top_name]['hair_pr']
-            layout.btn.text = top_name
-            if not can_choose_topic and 0.01 == user_topics[top_name]['hair_pr']:
-                layout.opacity = 0.5
-                layout.btn.background_down = 'src/topic.png'
-            else:
-                layout.btn.bind(on_press=layout.press_on_topic)
+    def add_etch_top(self, time_pass = 1):
+        if self.started == 0:
+            self.user_topics = self.store.get('user')['user_topics']
+            self.can_choose_topic = True
+            for top_name in self.user_topics.keys():
+                self.topic_keys.append(top_name)
+                if 0.01 < self.user_topics[top_name]['hair_pr'] < 0.9:
+                    self.can_choose_topic = False
+            if self.can_choose_topic:
+                self.ids['temp_view'].alert.opacity = 1
 
-            self.ids['temp_view'].topics_grid.add_widget(layout)
+        top_name = self.topic_keys[self.started]
+        global temp_data
+        self.started += 1
+        self.ids['load_view'].my_pb.height = self.ids['load_view'].height/38 * self.started
+
+        temp_data = f"src/{source_by_top[top_name]}.png"
+        layout = TopicLayout()
+        layout.top_info_layout.progress_know.size_hint_y = self.user_topics[top_name]['know_pr']
+        layout.top_info_layout.progress_repeat.size_hint_y = self.user_topics[top_name]['repeat_pr']
+        layout.top_info_layout.progress_hair.size_hint_y = self.user_topics[top_name]['hair_pr']
+        layout.btn.text = top_name
+        if not self.can_choose_topic and 0.01 == self.user_topics[top_name]['hair_pr']:
+            layout.opacity = 0.5
+            layout.btn.background_down = 'src/topic.png'
+        else:
+            layout.btn.bind(on_press=layout.press_on_topic)
+
+        self.ids['temp_view'].topics_grid.add_widget(layout)
+        if self.started < 38:
+            Clock.schedule_once(self.add_etch_top, 0.001)
+        else:
+            self.started = 0
+            self.topic_keys = []
+            self.remove_widget(self.ids['load_view'])
+            self.ids.pop('load_view')
+
+            self.add_widget(self.ids['temp_view'])
+
 
     def change_scroll_height(self):
         skaler = (((int(self.ids['temp_view'].bloc1.font_size) / 24) - 1) / 10) + 1
