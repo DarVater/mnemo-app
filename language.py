@@ -36,6 +36,7 @@ class Language():
                                          "TITLE_TOPIC_UNBLOCK_CHOOSE_TOPIC": 'Доступная новая тема!',
                                          "TITLE_TOPIC_BTN_ANSWERS": 'Ответы',
                                          "TITLE_TOPIC_BTN_LEARN": 'Учить',
+                                         "TITLE_TOPIC_BTN_NEXT": 'Дальше',
                                          },
 
                                   "ua": {"TITLE_BTN_NEXT": 'Наступний',
@@ -71,6 +72,7 @@ class Language():
                                          "TITLE_TOPIC_UNBLOCK_CHOOSE_TOPIC": 'Доступна нова тема!',
                                          "TITLE_TOPIC_BTN_ANSWERS": 'Відповіді',
                                          "TITLE_TOPIC_BTN_LEARN": 'Вчити',
+                                         "TITLE_TOPIC_BTN_NEXT": 'Далі',
                                          },
                                   }
 

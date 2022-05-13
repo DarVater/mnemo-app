@@ -553,11 +553,11 @@
     size_hint_y: None
     height: '54sp'
 
-
-<SplitWord>:
+<ViewSplitWord>:
     id: split_word
     back: back
     header: header
+    btn_place: btn_place
     canvas.before:
         Rectangle:
             pos: self.pos
@@ -578,13 +578,121 @@
             orientation: 'vertical'
             padding: 10
             GridLayout:
+                id: btn_place
                 size_hint: 1, None
                 height: 2000
                 cols: 1
                 spacing: '25sp'
                 padding: '50sp'
-
         Label:
             size_hint_y: 0.1
     BackBtn:
         id: back
+
+<VersionWordBtn@Button>:
+    background_normal: 'src/transparent.png' #lighted
+    background_down: 'src/transparent.png'
+    font_size: '24sp'
+    color: (0, 0, 0, 1)
+
+<SelectionPart>:
+    canvas.before:
+        Rectangle:
+            pos: self.pos
+            size: self.size
+            source: 'src/tab.png'
+    orientation: 'vertical'
+    spacing: '10sp'
+    padding: '10sp'
+    BoxLayout:
+        MainInput:
+            font_size: '24sp'
+        Button:
+            text: 'Ok'
+            size_hint_x: 0.2
+            on_release:
+                root.write_word(self)
+    VersionWordBtn
+    VersionWordBtn
+    VersionWordBtn
+    VersionWordBtn
+    VersionWordBtn
+    VersionWordBtn
+    VersionWordBtn
+    VersionWordBtn
+    VersionWordBtn
+    VersionWordBtn
+
+<WordPart>:
+    background_normal: 'src/transparent.png' #lighted
+    background_down: 'src/transparent.png'
+    font_size: '24sp'
+    color: (0, 0, 0, 1)
+
+<ViewSelection>:
+    id: split_word
+    back: back
+    header: header
+    word_place: word_place
+    part_place: part_place
+    next_btn: next_btn
+    canvas.before:
+        Rectangle:
+            pos: self.pos
+            size: self.size
+            source: 'src/background_topic.png'
+    cols: 1
+    BoxLayout
+        orientation: 'vertical'
+        BoxLayout:
+            size_hint_y: 0.2
+            orientation: 'horizontal'
+            MainLabel:
+                padding: 50, 40
+                size_hint_y: None
+                id: header
+                height: '200sp'
+                text_size: self.width- 50, None
+                pos_hint: {'center_x': .5, 'center_y': .5}
+            BoxLayout:
+                padding: '10sp'
+                spacing: '10sp'
+                size_hint_y: 1
+                size_hint_x: 0.4
+                orientation: 'vertical'
+                BoxLayout:
+                    Button:
+                        background_normal: 'src/transparent.png'
+                        background_down: 'src/transparent.png'
+
+                    Button:
+                        background_normal: 'src/btn_back.png'
+                        background_down: 'src/transparent.png'
+                        on_release:
+                            root.press_on_back()
+                        id: back
+                Button:
+                    background_normal: 'src/btn_main_other.png'
+                    background_down: 'src/btn_main_other.png'
+                    font_size: '24sp'
+                    color: (0, 0, 0, 1)
+                    on_release:
+                        root.press_on_next()
+                    id: next_btn
+
+        BoxLayout:
+            spacing: '15sp'
+            padding: '10sp'
+            id: part_place
+            size_hint_y: 0.1
+        ScrollView:
+            orientation: 'horizontal'
+            padding: 10
+            GridLayout:
+                id: word_place
+                size_hint: None, 1
+                rows: 1
+                width: 900
+                spacing: '25sp'
+                padding: '50sp'
+

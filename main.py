@@ -10,10 +10,112 @@ from kivy.uix.button import Button
 from kivy.core.window import Window
 from datetime import datetime
 
+from kivy.uix.gridlayout import GridLayout
+
 from language import Language
 from word_by_topics import words_by_lvl, source_by_top
+from assosiator import Associator
 
-Window.size = 540, 960
+#Window.size = 540, 960
+
+
+class SelectionPart(BoxLayout):
+    def write_word(self, btn):
+        text = btn.parent.children[1].text
+        if len(text) > 1:
+            btn.parent.children[1].background_normal =  'src/lighted.png'
+            root = btn.parent.parent.parent.parent.parent.parent
+            index_part = btn.parent.parent.children[10].index
+            root.kit[index_part] = text
+            print(root.kit)
+            print(index_part)
+            for n in range(10):
+                btn.parent.parent.children[n].background_normal = 'src/transparent.png'
+                btn.parent.parent.children[n].background_down = 'src/transparent.png'
+            root.check_kit()
+            index_part = len(root.part_place.children) - 1 - index_part
+            root.part_place.children[index_part].background_normal = 'src/lighted.png'
+
+class WordPart(Button):
+    pass
+
+
+class ViewSelection(GridLayout):
+    all_compares = None
+    words_by_group = {}
+    root = None
+    kit = None
+    lang = Language()
+    next_allowed = False
+
+    def press_on_next(self):
+        if self.next_allowed:
+            print('next')
+        else:
+            print('Need Choose for all')
+
+    def press_on_back(self):
+        print('back')
+        self.root.target_view.pop(-1)
+        self.root.target_view[0] = 'splitting'
+        self.root.remove_w('temp_view')
+        self.root.draw_view()
+
+    def choose_word(self, btn):
+        print(btn.text)
+        for n in range(10):
+            btn.parent.children[n].background_normal = 'src/transparent.png'
+            btn.parent.children[n].background_down = 'src/transparent.png'
+        print(btn.parent.children[10].children[1])
+        btn.parent.children[10].children[1].background_normal = 'src/input.png'
+        btn.background_normal = 'src/lighted.png'
+        btn.background_down = 'src/lighted.png'
+        index_part = len(self.part_place.children) - 1 - self.words_by_group[btn.text]
+        self.part_place.children[index_part].background_normal = 'src/lighted.png'
+        self.kit[self.words_by_group[btn.text]] = btn.text
+        print(self.kit)
+        self.check_kit()
+        a = 0
+        if a:
+            self.root.target_view.append(self.broken_word[btn.index])
+            self.root.target_view[0] = 'selection'
+            self.root.remove_w('temp_view')
+            self.root.draw_view()
+
+    def check_kit(self):
+        self.next_allowed = True
+        if '' in self.kit:
+            self.next_allowed = False
+        if self.next_allowed:
+            self.next_btn.background_normal = 'src/btn_main.png'
+            self.next_btn.background_down = 'src/btn_main_pressed.png'
+
+    def selection(self):
+        self.header.text = self.root.target_view[2]
+        self.next_btn.text = self.lang.title('TITLE_TOPIC_BTN_NEXT')
+        ass = Associator()
+        self.all_compares = ass.get_words_of_broken_version(self.root.target_view[4])
+        self.kit = [''] * len(self.root.target_view[4])
+        self.word_place.width = f"{len(self.root.target_view[4]) * 300}sp"
+        for part in self.root.target_view[4]:
+            word_part = WordPart()
+            word_part.text = part
+            self.part_place.add_widget(word_part)
+            selection_part = SelectionPart()
+            word_index = self.root.target_view[4].index(part)
+            for n in range(10):
+                part_word = self.all_compares[word_index][n]
+                self.words_by_group[part_word[2]] = word_index
+                selection_part.children[n].text = part_word[2]
+                selection_part.children[n].bind(on_release=self.choose_word)
+            selection_part.children[10].index = word_index
+            self.word_place.add_widget(selection_part)
+
+    def give_root(self, root):
+        self.root = root
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
 
 
 class VersionBtn(Button):
@@ -24,12 +126,21 @@ class SplitBtn(VersionBtn):
     pass
 
 
-class SplitWord(FloatLayout):
+class ViewSplitWord(FloatLayout):
     root = []
     lang = Language()
+    broken_word = {}
 
     def split_word(self):
-        print(self.root.target_view[2])
+        self.header.text = self.root.target_view[2]
+        ass = Associator()
+        self.broken_word = ass.get_broken_word(self.root.target_view[2].lower())
+        for n in self.broken_word:
+            btn = SplitBtn()
+            btn.text = ', '.join(self.broken_word[n])
+            btn.index = n
+            btn.bind(on_release=self.choose_split)
+            self.btn_place.add_widget(btn)
 
     def press_on(self, text):
         if text == 'back':
@@ -37,8 +148,10 @@ class SplitWord(FloatLayout):
             self.root.remove_w('temp_view')
             self.root.draw_view()
 
-    def choose_top(self, top):
-        self.root.target_view = ['topic', top]
+    def choose_split(self, btn):
+        print(self.broken_word[btn.index])
+        self.root.target_view.append(self.broken_word[btn.index])
+        self.root.target_view[0] = 'selection'
         self.root.remove_w('temp_view')
         self.root.draw_view()
 
@@ -116,11 +229,12 @@ class ViewTopic(BoxLayout):
         if f_sum <= half:
             return round(0.5 / half * f_sum, 2)
         else:
-            return 1 + round( 1 / half * (f_sum - half), 2)
+            return 1 + round(1 / half * (f_sum - half), 2)
 
     def learn_word(self):
         print('learn word', self.target_word)
-        self.root.target_view = ['learn', self.root.target_view[1], self.right_answers[self.target_word], self.target_word]
+        self.root.target_view = ['splitting', self.root.target_view[1], self.right_answers[self.target_word],
+                                 self.target_word]
         self.root.remove_w('temp_view')
         self.root.draw_view()
 
@@ -539,13 +653,21 @@ class ViewManager(FloatLayout):
             self.ids['temp_view'].header.text = self.lang.title('TITLE_TOPIC_HEADER')
             self.ids['temp_view'].check_top_action(self.user_topics[self.target_view[1]], self.target_view[1])
 
-        elif self.target_view[0] == 'learn':
-            temp_view = SplitWord()
+        elif self.target_view[0] == 'splitting':
+            temp_view = ViewSplitWord()
             temp_view.give_root(self)
             temp_view.size = 333, 333
             self.ids['temp_view'] = temp_view
             self.add_widget(temp_view)
             self.ids['temp_view'].split_word()
+
+        elif self.target_view[0] == 'selection':
+            temp_view = ViewSelection()
+            temp_view.give_root(self)
+            temp_view.size = 333, 333
+            self.ids['temp_view'] = temp_view
+            self.add_widget(temp_view)
+            self.ids['temp_view'].selection()
 
     def add_etch_top(self, time_pass=1):
         if self.started == 0:
@@ -604,7 +726,7 @@ class ViewManager(FloatLayout):
 
     def chose_main_view(self):
         if 'user' in self.store:
-            self.target_view = ['learn', 'Дом', 'computer', 'компьютер']  # home
+            self.target_view = ['selection', 'Дом', 'computer', 'компьютер', ['кэм', 'пйу', 'утэ']]  # home
         else:
             self.target_view = 'sing_up'
 
