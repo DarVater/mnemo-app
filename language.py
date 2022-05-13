@@ -34,8 +34,10 @@ class Language():
                                          "TITLE_LANGUAGE_UKRAINIAN": 'Украинский',
                                          "TITLE_TOPIC_HEADER": 'Темы и прогресс',
                                          "TITLE_TOPIC_UNBLOCK_CHOOSE_TOPIC": 'Доступная новая тема!',
-
+                                         "TITLE_TOPIC_BTN_ANSWERS": 'Ответы',
+                                         "TITLE_TOPIC_BTN_LEARN": 'Учить',
                                          },
+
                                   "ua": {"TITLE_BTN_NEXT": 'Наступний',
                                          "TITLE_NAME_ONLY_CHARACTERS": "Ім'я тільки з букв",
                                          "TITLE_NAME_NOT_LONGER": "Ім'я до 10 символів",
@@ -67,6 +69,8 @@ class Language():
                                          "TITLE_LANGUAGE_UKRAINIAN": 'Український',
                                          "TITLE_TOPIC_HEADER": 'Теми та прогрес',
                                          "TITLE_TOPIC_UNBLOCK_CHOOSE_TOPIC": 'Доступна нова тема!',
+                                         "TITLE_TOPIC_BTN_ANSWERS": 'Відповіді',
+                                         "TITLE_TOPIC_BTN_LEARN": 'Вчити',
                                          },
                                   }
 

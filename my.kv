@@ -361,7 +361,7 @@
                 BoxLayout:
                     canvas.before:
                         Color:
-                            rgba: (140/255, 76/255, 230/255, 1)
+                            rgba: (40/255, 0/255, 97/255, 1)
                         RoundedRectangle:
                             size: self.size
                             pos: self.pos
@@ -389,7 +389,7 @@
                 BoxLayout:
                     canvas.before:
                         Color:
-                            rgba: (40/255, 0/255, 97/255, 1)
+                            rgba: (140/255, 76/255, 230/255, 1)
                         RoundedRectangle:
                             size: self.size
                             pos: self.pos
@@ -451,9 +451,6 @@
                 spacing: '20sp'
                 cols: 2
                 id: topics_grid
-
-
-
     BackBtn:
         id: back
 
@@ -467,17 +464,18 @@
             background_normal: 'src/topic_load_screen.png'
             background_down: 'src/topic_load_screen.png'
 
-
 <VersionBtn@Button>:
     background_normal: 'src/btn_sup_big.png'
     background_down: 'src/btn_sup_big_pressed.png'
+    font_size: '24sp'
+    color: (0, 0, 0, 1)
 
 
 <ViewTopic>:
     id: view_topic
     back: back
     header: header
-    variants: variants
+    answers: answers
     learning: learning
     versions: versions
     pos_hint: {'center_x': .5, 'center_y': .5}
@@ -492,14 +490,16 @@
         pos_hint: {'center_x': .5, 'center_y': .5}
         orientation: 'vertical'
         MainLabel:
-            size_hint_y: 0.2
+            size_hint_y: 0.1
             padding: 50, 40
             size_hint_y: None
             id: header
             height: '200sp'
             text_size: self.width- 50, None
             pos_hint: {'center_x': .5, 'center_y': .5}
+
         GridLayout:
+            size_hint_y: 1
             spacing: '10sp'
             padding: '0sp', '20sp'
             cols: 2
@@ -535,17 +535,56 @@
             spacing: '10sp'
             padding: '0sp', '20sp'
             MainPassiveBtn:
-                id: variants
+                id: answers
                 size_hint: 1, 1
                 background_normal: 'src/btn_main_other.png'
                 on_release:
-                    root.press_on('ru')
+                    root.show_answers()
             MainPassiveBtn:
                 id: learning
                 size_hint: 1, 1
                 background_normal: 'src/btn_main_other.png'
                 on_release:
-                    root.press_on('ua')
+                    root.learn_word()
     BackBtn:
         id: back
 
+<SplitBtn>:
+    size_hint_y: None
+    height: '54sp'
+
+
+<SplitWord>:
+    id: split_word
+    back: back
+    header: header
+    canvas.before:
+        Rectangle:
+            pos: self.pos
+            size: self.size
+            source: 'src/background_topic.png'
+    BoxLayout
+        orientation: 'vertical'
+        MainLabel:
+            size_hint_y: 0.2
+            padding: 50, 40
+            size_hint_y: None
+            id: header
+            height: '200sp'
+            text_size: self.width- 50, None
+            pos_hint: {'center_x': .5, 'center_y': .5}
+
+        ScrollView:
+            orientation: 'vertical'
+            padding: 10
+            GridLayout:
+                size_hint: 1, None
+                height: 2000
+                cols: 1
+                spacing: '25sp'
+                padding: '50sp'
+
+        Label:
+            size_hint_y: 0.1
+    BackBtn:
+        id: back
