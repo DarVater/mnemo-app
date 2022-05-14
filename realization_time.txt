@@ -1,0 +1,37 @@
+
+ get_broken_word
+     load_dictword_trans_dict
+     load_dictword_trans_dict 0.005
+     china_trans
+         load_dictchina_trans
+         load_dictchina_trans 0.0
+     china_trans 0.0
+     find_broken_word_versions
+         break_a_word_into_syllables
+             get_letters_type
+             get_letters_type 0.0
+             check_other_letters
+             check_other_letters 0.0
+             find_all_version
+             find_all_version 0.0
+         break_a_word_into_syllables 0.0
+         collect_avery_syllables
+         collect_avery_syllables 0.0
+     find_broken_word_versions 0.0
+ get_broken_word 0.006
+ get_words_of_broken_version
+     load_dictru_nouns
+     load_dictru_nouns 0.002
+     get_words_of_broken_version # one word_part
+     get_words_of_broken_version # one word_part 0.014
+     get_words_of_broken_version # append
+         get_best_version
+         get_best_version 0.001
+     get_words_of_broken_version # append 0.001
+     get_words_of_broken_version # one word_part
+     get_words_of_broken_version # one word_part 0.011
+     get_words_of_broken_version # append
+         get_best_version
+         get_best_version 0.001
+     get_words_of_broken_version # append 0.001
+ get_words_of_broken_version 0.029

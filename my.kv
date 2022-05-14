@@ -696,3 +696,14 @@
                 spacing: '25sp'
                 padding: '50sp'
 
+<ViewExcept>:
+    canvas.before:
+        Rectangle:
+            pos: self.pos
+            size: self.size
+            source: 'src/background_topic.png'
+    orientation: 'vertical'
+    except_text: except_text
+    MainLabel:
+        id: except_text
+        text: 'Error catch'

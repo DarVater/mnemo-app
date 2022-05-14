@@ -11,19 +11,20 @@ from kivy.core.window import Window
 from datetime import datetime
 
 from kivy.uix.gridlayout import GridLayout
+from kivy.uix.layout import Layout
 
 from language import Language
 from word_by_topics import words_by_lvl, source_by_top
 from assosiator import Associator
 
-#Window.size = 540, 960
+Window.size = 540, 960
 
 
 class SelectionPart(BoxLayout):
     def write_word(self, btn):
         text = btn.parent.children[1].text
         if len(text) > 1:
-            btn.parent.children[1].background_normal =  'src/lighted.png'
+            btn.parent.children[1].background_normal = 'src/lighted.png'
             root = btn.parent.parent.parent.parent.parent.parent
             index_part = btn.parent.parent.children[10].index
             root.kit[index_part] = text
@@ -35,6 +36,7 @@ class SelectionPart(BoxLayout):
             root.check_kit()
             index_part = len(root.part_place.children) - 1 - index_part
             root.part_place.children[index_part].background_normal = 'src/lighted.png'
+
 
 class WordPart(Button):
     pass
@@ -631,6 +633,7 @@ class ViewManager(FloatLayout):
                 self.ids['temp_view'].ua.background_normal = 'src/btn_main.png'
 
         elif self.target_view == 'all_topics':
+            asdf
             load_view = ViewLoadScreen()
             self.add_widget(load_view)
             self.ids['load_view'] = load_view
@@ -726,7 +729,7 @@ class ViewManager(FloatLayout):
 
     def chose_main_view(self):
         if 'user' in self.store:
-            self.target_view = ['selection', 'Дом', 'computer', 'компьютер', ['кэм', 'пйу', 'утэ']]  # home
+            self.target_view = 'home'  # home
         else:
             self.target_view = 'sing_up'
 
@@ -734,11 +737,33 @@ class ViewManager(FloatLayout):
         self.root.append(root)
 
 
+class ViewExcept(BoxLayout):
+    pass
+
+
 class MyApp(App):
     def build(self):
-        view_manager = ViewManager()
+        global exeption
+        if exeption == '':
+            view_manager = ViewManager()
+        else:
+            view_manager = ViewExcept()
+            btn = MainBtn()
+            btn.text = 'Send to server'
+            btn.bind(on_release=self.send_error())
+            view_manager.add_widget(btn)
+            view_manager.except_text.text = str(exeption)
         return view_manager
 
+    def send_error(self):
+        pass
+
+exeption = ''
 
 if __name__ == '__main__':
-    MyApp().run()
+    try:
+        MyApp().run()
+    except Exception as e:
+        exeption = e
+        print(e)
+        MyApp().run()
