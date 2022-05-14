@@ -633,7 +633,6 @@ class ViewManager(FloatLayout):
                 self.ids['temp_view'].ua.background_normal = 'src/btn_main.png'
 
         elif self.target_view == 'all_topics':
-            asdf
             load_view = ViewLoadScreen()
             self.add_widget(load_view)
             self.ids['load_view'] = load_view

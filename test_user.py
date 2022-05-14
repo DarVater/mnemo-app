@@ -4,6 +4,7 @@ import time
 import unittest
 from functools import partial
 from kivy.clock import Clock
+from kivy.storage.jsonstore import JsonStore
 
 from main import MyApp
 
@@ -232,9 +233,131 @@ class TestHomeView(unittest.TestCase):
         self.assertEqual(answer, test_word)
 
         # Ему понравилась тема животные
-        print(app.root.ids['temp_view'])
         app.root.ids['temp_view'].choose_top('Животные')
 
+        # Приложение написало слово по-русски
+        ask_word = app.root.ids['temp_view'].header.text
+
+        # Ответа не было видно, а были две кнопки учить и ответы
+        test_word = 'Ответы'
+        answer = app.root.ids['temp_view'].answers.text
+        self.assertEqual(answer, test_word)
+        test_word = 'Учить'
+        answer = app.root.ids['temp_view'].learning.text
+        self.assertEqual(answer, test_word)
+
+        # Еще были пустые кнопки
+        for version in app.root.ids['temp_view'].versions.children:
+            answer = version.text
+            self.assertEqual(answer, '')
+
+        # Ванька знал это слово и нажимать на кнопку учить не хотел
+        animals = {'животное': 'animal', 'слон': 'elephant', 'лошадь': 'horse', 'лев': 'lion', 'мышь': 'mouse',
+                   'свинья': 'pig', 'птица': 'bird', 'вид': 'kind', 'овца': 'sheep', 'рыба': 'fish', 'змея': 'snake',
+                   'Кот': 'cat', 'курица': 'chicken', 'корова': 'cow', 'собака': 'dog', 'ферма': 'farm'}
+        answer_word = animals[ask_word]
+
+        # Он нажал на ответы
+        app.root.ids['temp_view'].show_answers()
+
+        # Пустые кнопки изменились на английские слова и Ванька нашел там правильный ответ
+        was = False
+        find_btn = None
+        for version in app.root.ids['temp_view'].versions.children:
+            answer = version.text
+            if answer_word == answer:
+                was = True
+                find_btn = version
+        if not was:
+            self.assertEqual(answer, 'Not find!')
+
+        # Затем он нажал на него
+        app.root.ids['temp_view'].choose_version(find_btn)
+
+        # Все кнопки опять стали пустые
+        for version in app.root.ids['temp_view'].versions.children:
+            answer = version.text
+            self.assertEqual(answer, '')
+
+        # Сверху слово изменилось
+        ask_word2 = app.root.ids['temp_view'].header.text
+        self.assertNotEquals(ask_word, ask_word2)
+
+        # Ванька сомневался что произошло и нажал назад
+        app.root.ids['temp_view'].press_on('back')
+
+        # Заголовок изменился
+        test_word = 'Темы и прогресс'
+        answer = app.root.ids['temp_view'].header.text
+        self.assertEqual(answer, test_word)
+
+        # Прогресс темы увеличился
+        store = JsonStore('hello.json')
+        topic_know_pr =store.get('user')['user_topics']['Животные']['know_pr']
+        self.assertNotEquals(0.01, topic_know_pr)
+
+        # Он опять вернулся в туже тему
+        app.root.ids['temp_view'].choose_top('Животные')
+
+        # Приложение опять написало слово по-русски
+        ask_word = app.root.ids['temp_view'].header.text
+
+        # Ванька решительно нажал на ответы
+        app.root.ids['temp_view'].show_answers()
+
+        # Ошибся с выбором
+        for version in app.root.ids['temp_view'].versions.children:
+            answer = version.text
+            if answer_word != answer:
+                find_btn = version
+
+        # И нажал на него
+        app.root.ids['temp_view'].choose_version(find_btn)
+
+        # Сверху появился ответ
+        answer_word = app.root.ids['temp_view'].header.text
+        answer = animals[ask_word]
+        self.assertEqual(answer_word, answer)
+
+        # Он нажал на первую попавшуюся кнопку
+        split_btn = app.root.ids['temp_view'].btn_place.children[-1]
+        app.root.ids['temp_view'].choose_split(split_btn)
+
+        # Заголовок не изменился
+        answer_word = app.root.ids['temp_view'].header.text
+        answer = animals[ask_word]
+        self.assertEqual(answer_word, answer)
+
+        # текст кнопки разбился на части
+        for part in app.root.ids['temp_view'].part_place.children:
+            print(part.text, ':', split_btn.text)
+            self.assertIn(part.text, split_btn.text)
+
+        # Он попробовал нажать на кнопку далее
+        app.root.ids['temp_view'].press_on_next()
+
+        # Ничего не изменилось, а кнопка была фиалетовой
+        test_color = 'src/btn_main_other.png'
+        answer = app.root.ids['temp_view'].next_btn.background_normal
+        self.assertEqual(test_color, answer)
+
+        # Снизу появились списки и Ванька выбрал по слову
+        for word_list in app.root.ids['temp_view'].word_place.children:
+            print(word_list.children[0].text)
+            app.root.ids['temp_view'].choose_word(word_list.children[0])
+
+        # Части слова выделились
+        for part in app.root.ids['temp_view'].part_place.children:
+            answer = 'src/lighted.png'
+            self.assertIn(part.background_normal, answer)
+
+        # Кнопка далее изменила цвет
+        test_color = 'src/btn_main.png'
+        answer = app.root.ids['temp_view'].next_btn.background_normal
+        self.assertEqual(test_color, answer)
+
+        # Он попробовал нажать на кнопку далее еще раз
+        app.root.ids['temp_view'].press_on_next()
 
 if __name__ == '__main__':
     unittest.MyApp()
