@@ -37,6 +37,12 @@ class Language():
                                          "TITLE_TOPIC_BTN_ANSWERS": 'Ответы',
                                          "TITLE_TOPIC_BTN_LEARN": 'Учить',
                                          "TITLE_TOPIC_BTN_NEXT": 'Дальше',
+                                         "TITLE_REMEMBERING_IMAGINATION": 'Представь выбранные объекты!',
+                                         "TITLE_REMEMBERING_RESIZE": 'Уменьшить/увеличить объекты до размера баскетбольного мяча.',
+                                         "TITLE_REMEMBERING_ACTION": 'Добавить действие (нелепые, смешные, пошлые)',
+                                         "TITLE_REMEMBERING_DETAILS": '6 секунд на детали, добавить (звук, запах, потертости)',
+                                         "TITLE_REMEMBERING_SPEAK": 'Глядя вверх 3 раза повторить слово по-английски',
+                                         "TITLE_REMEMBERING_READY": 'Есть',
                                          },
 
                                   "ua": {"TITLE_BTN_NEXT": 'Наступний',

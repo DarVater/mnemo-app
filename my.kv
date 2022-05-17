@@ -42,7 +42,7 @@
     font_size: '32sp'
     color: (0, 0,0, 1)
 
-<SubLabel@Label>:
+<SubLabel>:
     font_size: '24sp'
     color: (0.1, 0.1, 0.1, 1)
 
@@ -99,7 +99,7 @@
     size_hint_y: None
     size_hint_x: None
 
-<LongSubLabel@SubLabel>:
+<LongSubLabel>:
     size_hint_y: None
     font_size: '24sp'
     text_size: self.width- 50, None
@@ -636,6 +636,8 @@
     word_place: word_place
     part_place: part_place
     next_btn: next_btn
+    space_block: space_block
+    scroll_space: scroll_space
     canvas.before:
         Rectangle:
             pos: self.pos
@@ -645,7 +647,9 @@
     BoxLayout
         orientation: 'vertical'
         BoxLayout:
-            size_hint_y: 0.2
+            padding: 20, 10
+            size_hint: None, None
+            size: root.width, root.height/10
             orientation: 'horizontal'
             MainLabel:
                 padding: 50, 40
@@ -671,30 +675,36 @@
                         on_release:
                             root.press_on_back()
                         id: back
-                Button:
-                    background_normal: 'src/btn_main_other.png'
-                    background_down: 'src/btn_main_other.png'
-                    font_size: '24sp'
-                    color: (0, 0, 0, 1)
-                    on_release:
-                        root.press_on_next()
-                    id: next_btn
-
         BoxLayout:
             spacing: '15sp'
             padding: '10sp'
             id: part_place
             size_hint_y: 0.1
-        ScrollView:
-            orientation: 'horizontal'
-            padding: 10
-            GridLayout:
-                id: word_place
-                size_hint: None, 1
-                rows: 1
-                width: 900
-                spacing: '25sp'
-                padding: '50sp'
+        BoxLayout:
+            id: scroll_space
+            orientation: 'vertical'
+            ScrollView:
+                orientation: 'horizontal'
+                padding: 10
+                GridLayout:
+                    id: word_place
+                    size_hint: None, 1
+                    rows: 1
+                    width: 900
+                    spacing: '25sp'
+                    padding: '50sp'
+        BoxLayout:
+            pos_hint: {'center_x': .5, 'center_y': .5}
+            size_hint: 0.7, 0.1
+            padding: 40, 0
+            MainBtn:
+                on_release:
+                    root.press_on_next(self.text)
+                id: next_btn
+        BoxLayout:
+            id: space_block
+            size_hint: 0.7, 0.05
+            padding: 40, 40
 
 <ViewExcept>:
     canvas.before:
@@ -704,6 +714,11 @@
             source: 'src/background_topic.png'
     orientation: 'vertical'
     except_text: except_text
-    MainLabel:
+    LongSubLabel:
+        canvas.before:
+            Rectangle:
+                pos: self.pos
+                size: self.size
+                source: 'src/tab.png'
+        size_hint_y: 1
         id: except_text
-        text: 'Error catch'

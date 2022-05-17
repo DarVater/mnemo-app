@@ -11,6 +11,7 @@ from kivy.core.window import Window
 from datetime import datetime
 
 from kivy.uix.gridlayout import GridLayout
+from kivy.uix.label import Label
 from kivy.uix.layout import Layout
 
 from language import Language
@@ -41,6 +42,12 @@ class SelectionPart(BoxLayout):
 class WordPart(Button):
     pass
 
+class SubLabel(Label):
+    pass
+
+class LongSubLabel(SubLabel):
+    pass
+
 
 class ViewSelection(GridLayout):
     all_compares = None
@@ -50,16 +57,73 @@ class ViewSelection(GridLayout):
     lang = Language()
     next_allowed = False
 
-    def press_on_next(self):
+    def press_on_next(self, btn):
+        print(btn)
         if self.next_allowed:
-            print('next')
+            if btn == self.lang.title('TITLE_REMEMBERING_READY'):
+                if self.helper.text == self.lang.title('TITLE_REMEMBERING_IMAGINATION'):
+                    self.back.parent.remove_widget(self.back)
+                    self.helper.text = self.lang.title('TITLE_REMEMBERING_RESIZE')
+                elif self.helper.text == self.lang.title('TITLE_REMEMBERING_RESIZE'):
+                    self.helper.text = self.lang.title('TITLE_REMEMBERING_ACTION')
+                    self.next_allowed = False
+                    Clock.schedule_once(self.next_allowed_true, 1)
+                elif self.helper.text == self.lang.title('TITLE_REMEMBERING_ACTION'):
+                    self.helper.text = self.lang.title('TITLE_REMEMBERING_DETAILS')
+                    self.next_allowed = False
+                    Clock.schedule_once(self.next_allowed_true, 6)
+                elif self.helper.text == self.lang.title('TITLE_REMEMBERING_DETAILS'):
+                    self.helper.text = self.lang.title('TITLE_REMEMBERING_SPEAK')
+                    self.next_allowed = False
+                    Clock.schedule_once(self.next_allowed_true, 1)
+                elif self.helper.text == self.lang.title('TITLE_REMEMBERING_SPEAK'):
+                    pass
+
+            else:
+                self.compulsion()
+                #self.root.target_view[0] = 'compulsion'
+                self.root.target_view.append(self.kit)
         else:
             print('Need Choose for all')
+
+    def next_allowed_true(self, t):
+        self.next_allowed = True
+
+    def compulsion(self):
+        self.scroll_space.remove_widget(self.scroll_space.children[0])
+        print('END!')
+        for word in self.kit:
+            word_part = WordPart()
+            word_part.text = word
+            word_part.size_hint_y = None
+            word_part.height = '100sp'
+            self.scroll_space.add_widget(word_part)
+        self.next_btn.text = self.lang.title('TITLE_REMEMBERING_READY')
+        self.helper = LongSubLabel()
+        self.helper.size_hint_y = 1
+        self.helper.pos_hint = {'center_x': .5, 'center_y': .5}
+        self.helper.text = self.lang.title('TITLE_REMEMBERING_IMAGINATION')
+        self.scroll_space.add_widget(self.helper)
+
+        a = 0
+        if a:
+            print(self.lang.title('')) #TITLE_REMEMBERING_RESIZE
+            self.word_place.parent.parent.add_widget(self.accept_btn)
+            self.word_place.padding = '50sp'
+
+    def save_word(self):
+        self.show_next_word()
+
+    def show_next_word(self):
+        self.root.target_view = ['topic', self.root.target_view[1]]
+        self.root.remove_w('temp_view')
+        self.root.draw_view()
 
     def press_on_back(self):
         print('back')
         self.root.target_view.pop(-1)
         self.root.target_view[0] = 'splitting'
+        print(self.root.target_view)
         self.root.remove_w('temp_view')
         self.root.draw_view()
 
@@ -93,6 +157,7 @@ class ViewSelection(GridLayout):
             self.next_btn.background_down = 'src/btn_main_pressed.png'
 
     def selection(self):
+        print(self.root.target_view)
         self.header.text = self.root.target_view[2]
         self.next_btn.text = self.lang.title('TITLE_TOPIC_BTN_NEXT')
         ass = Associator()
@@ -118,6 +183,8 @@ class ViewSelection(GridLayout):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        self.accept_btn = None
+        self.helper = None
 
 
 class VersionBtn(Button):
@@ -154,8 +221,10 @@ class ViewSplitWord(FloatLayout):
         print(self.broken_word[btn.index])
         self.root.target_view.append(self.broken_word[btn.index])
         self.root.target_view[0] = 'selection'
+        print(self.root.target_view)
         self.root.remove_w('temp_view')
         self.root.draw_view()
+
 
     def give_root(self, root):
         self.root = root
@@ -575,6 +644,7 @@ class ViewManager(FloatLayout):
         self.store = JsonStore('hello.json')
         self.chose_main_view()
         self.draw_view()
+        self.user_topics = None
 
     def remove_w(self, w_name='temp_view'):
         self.remove_widget(self.ids[w_name])
@@ -653,6 +723,8 @@ class ViewManager(FloatLayout):
             self.ids['temp_view'] = temp_view
             self.add_widget(temp_view)
             self.ids['temp_view'].header.text = self.lang.title('TITLE_TOPIC_HEADER')
+            if self.user_topics == None:
+                self.user_topics = self.store.get('user')['user_topics']
             self.ids['temp_view'].check_top_action(self.user_topics[self.target_view[1]], self.target_view[1])
 
         elif self.target_view[0] == 'splitting':
@@ -728,7 +800,9 @@ class ViewManager(FloatLayout):
 
     def chose_main_view(self):
         if 'user' in self.store:
-            self.target_view = 'home'  # home
+            self.target_view = ['selection', 'Животные', 'animal', 'животное', ['эни', 'мыэл' ]]  # home
+            # ['splitting', 'Животные', 'cow', 'корова']
+            # ['selection', 'Животные', 'animal', 'животное', ['эни', 'мэл']]
         else:
             self.target_view = 'sing_up'
 
@@ -741,28 +815,34 @@ class ViewExcept(BoxLayout):
 
 
 class MyApp(App):
+    view_manager = None
+
     def build(self):
         global exeption
         if exeption == '':
-            view_manager = ViewManager()
+            self.view_manager = ViewManager()
         else:
-            view_manager = ViewExcept()
+            self.view_manager = ViewExcept()
             btn = MainBtn()
             btn.text = 'Send to server'
-            btn.bind(on_release=self.send_error())
-            view_manager.add_widget(btn)
-            view_manager.except_text.text = str(exeption)
-        return view_manager
+            btn.bind(on_release=self.send_error)
+            self.view_manager.add_widget(btn)
+            self.view_manager.except_text.text = f"Error catch\n\n{str(exeption)}!"
+        return self.view_manager
 
-    def send_error(self):
-        pass
+    def send_error(self, btn):
+        self.view_manager
+
 
 exeption = ''
-
+error_catch = True  # False True
 if __name__ == '__main__':
-    try:
-        MyApp().run()
-    except Exception as e:
-        exeption = e
-        print(e)
+    if error_catch:
+        try:
+            MyApp().run()
+        except Exception as e:
+            exeption = e
+            print(e)
+            MyApp().run()
+    else:
         MyApp().run()
