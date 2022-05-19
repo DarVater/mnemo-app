@@ -476,6 +476,8 @@
     back: back
     header: header
     answers: answers
+    objects: objects
+    splited: splited
     learning: learning
     versions: versions
     pos_hint: {'center_x': .5, 'center_y': .5}
@@ -494,7 +496,25 @@
             padding: 50, 40
             size_hint_y: None
             id: header
-            height: '200sp'
+            height: '100sp'
+            text_size: self.width- 50, None
+            pos_hint: {'center_x': .5, 'center_y': .5}
+
+        SubLabel:
+            size_hint_y: 0.1
+            padding: 50, 40
+            size_hint_y: None
+            id: objects
+            height: '50sp'
+            text_size: self.width- 50, None
+            pos_hint: {'center_x': .5, 'center_y': .5}
+
+        SubLabel:
+            size_hint_y: 0.1
+            padding: 50, 40
+            size_hint_y: None
+            id: splited
+            height: '50sp'
             text_size: self.width- 50, None
             pos_hint: {'center_x': .5, 'center_y': .5}
 
@@ -544,8 +564,6 @@
                 id: learning
                 size_hint: 1, 1
                 background_normal: 'src/btn_main_other.png'
-                on_release:
-                    root.learn_word()
     BackBtn:
         id: back
 
@@ -697,7 +715,9 @@
             pos_hint: {'center_x': .5, 'center_y': .5}
             size_hint: 0.7, 0.1
             padding: 40, 0
-            MainBtn:
+            MainPassiveBtn:
+                background_normal: 'src/btn_main_other.png'
+                background_down: 'src/btn_main_other.png'
                 on_release:
                     root.press_on_next(self.text)
                 id: next_btn

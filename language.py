@@ -1,7 +1,6 @@
-
-
 class Language():
     language = 'ru'
+
     def __init__(self):
         self.title_by_language = {"ru": {"TITLE_BTN_NEXT": 'Следующий',
                                          "TITLE_NAME_ONLY_CHARACTERS": 'Имя только из букв',
@@ -43,6 +42,9 @@ class Language():
                                          "TITLE_REMEMBERING_DETAILS": '6 секунд на детали, добавить (звук, запах, потертости)',
                                          "TITLE_REMEMBERING_SPEAK": 'Глядя вверх 3 раза повторить слово по-английски',
                                          "TITLE_REMEMBERING_READY": 'Есть',
+                                         "TITLE_TOPIC_BTN_OBJECTS": 'Объекты',
+                                         "TITLE_TOPIC_BTN_FORGET": 'Забыл',
+                                         "TITLE_TOPIC_BTN_BAD": 'Плохо',
                                          },
 
                                   "ua": {"TITLE_BTN_NEXT": 'Наступний',
@@ -79,12 +81,63 @@ class Language():
                                          "TITLE_TOPIC_BTN_ANSWERS": 'Відповіді',
                                          "TITLE_TOPIC_BTN_LEARN": 'Вчити',
                                          "TITLE_TOPIC_BTN_NEXT": 'Далі',
+                                         "TITLE_REMEMBERING_IMAGINATION": 'Уяви вибрані об\'єкти!',
+                                         "TITLE_REMEMBERING_RESIZE": 'Зменшити/збільшити об\'єкти до розміру баскетбольного м\'яча.',
+                                         "TITLE_REMEMBERING_ACTION": 'Додати дію (безглузду, смішну, вульгарну)',
+                                         "TITLE_REMEMBERING_DETAILS": '6 секунд на деталі, додати (звук, запах, потертості)',
+                                         "TITLE_REMEMBERING_SPEAK": 'Дивлячись вгору 3 рази повторити слово англійською',
+                                         "TITLE_REMEMBERING_READY": 'Готово',
+                                         "TITLE_TOPIC_BTN_OBJECTS": 'Об\'єкти',
+                                         "TITLE_TOPIC_BTN_FORGET": 'Забув',
+                                         "TITLE_TOPIC_BTN_BAD": 'Погано',
                                          },
                                   }
 
     def set_lang(self, lang):
         self.language = lang
 
-
     def title(self, title):
         return self.title_by_language[self.language][title]
+
+
+{'know_pr': 0.12, 'repeat_pr': 0.12, 'hair_pr': 1.5, 'time_to_repeat': 1652945705.8, 'etch_top_word': {
+    'animal': {'cont_repeat': 0, 'last_word_connect': 1652944508, 'ans_speed': 64, 'objects': ['гЕНИй', 'МЕд'],
+               'word_split': ['эни', 'мэл']}, 'elephant': {'cont_repeat': 0, 'last_word_connect': 0, 'ans_speed': 64},
+    'horse': {'cont_repeat': 0, 'last_word_connect': 1652944509, 'ans_speed': 64, 'objects': ['уХО', 'ОЗеро'],
+              'word_split': ['хо', 'ос']},
+    'lion': {'cont_repeat': 0, 'last_word_connect': 1652944508, 'ans_speed': 64, 'objects': ['ЛАпа', 'чИН'],
+             'word_split': ['ла', 'иэн']},
+    'mouse': {'cont_repeat': 0, 'last_word_connect': 1652944507, 'ans_speed': 64, 'objects': ['УС'],
+              'word_split': ['маус']},
+    'pig': {'cont_repeat': 0, 'last_word_connect': 1652944508, 'ans_speed': 64, 'objects': ['ИГла'],
+            'word_split': ['пиг']},
+    'bird': {'cont_repeat': 0, 'last_word_connect': 1652944508, 'ans_speed': 64, 'objects': ['БЕДа'],
+             'word_split': ['бэд']}, 'kind': {'cont_repeat': 0, 'last_word_connect': 0, 'ans_speed': 64},
+    'sheep': {'cont_repeat': 5, 'last_word_connect': 1652944507, 'ans_speed': 0},
+    'fish': {'cont_repeat': 0, 'last_word_connect': 1652944509, 'ans_speed': 64, 'objects': ['ВИд'],
+             'word_split': ['фиш']}, 'snake': {'cont_repeat': 5, 'last_word_connect': 1652944508, 'ans_speed': 0},
+    'cat': {'cont_repeat': 0, 'last_word_connect': 0, 'ans_speed': 64},
+    'chicken': {'cont_repeat': 0, 'last_word_connect': 1652944509, 'ans_speed': 64, 'objects': ['ЧИн', 'КИНо'],
+                'word_split': ['чи', 'кин']},
+    'cow': {'cont_repeat': 0, 'last_word_connect': 1652944509, 'ans_speed': 64, 'objects': ['КАдр'],
+            'word_split': ['кау']},
+    'dog': {'cont_repeat': 0, 'last_word_connect': 1652944508, 'ans_speed': 64, 'objects': ['ДОлГ'],
+            'word_split': ['дог']}, 'farm': {'cont_repeat': 0, 'last_word_connect': 0, 'ans_speed': 64}}}
+
+{'know_pr': 0.06, 'repeat_pr': 0.06, 'hair_pr': 0.06, 'time_to_repeat': 1684480507,
+ 'etch_top_word': {'animal': {'cont_repeat': 0, 'last_word_connect': 0, 'ans_speed': 64},
+                   'elephant': {'cont_repeat': 0, 'last_word_connect': 0, 'ans_speed': 64},
+                   'horse': {'cont_repeat': 0, 'last_word_connect': 0, 'ans_speed': 64},
+                   'lion': {'cont_repeat': 0, 'last_word_connect': 0, 'ans_speed': 64},
+                   'mouse': {'cont_repeat': 0, 'last_word_connect': 0, 'ans_speed': 64},
+                   'pig': {'cont_repeat': 0, 'last_word_connect': 0, 'ans_speed': 64},
+                   'bird': {'cont_repeat': 0, 'last_word_connect': 0, 'ans_speed': 64},
+                   'kind': {'cont_repeat': 0, 'last_word_connect': 0, 'ans_speed': 64},
+                   'sheep': {'cont_repeat': 5, 'last_word_connect': 1652944507, 'ans_speed': 0},
+                   'fish': {'cont_repeat': 0, 'last_word_connect': 0, 'ans_speed': 64},
+                   'snake': {'cont_repeat': 0, 'last_word_connect': 0, 'ans_speed': 64},
+                   'cat': {'cont_repeat': 0, 'last_word_connect': 0, 'ans_speed': 64},
+                   'chicken': {'cont_repeat': 0, 'last_word_connect': 0, 'ans_speed': 64},
+                   'cow': {'cont_repeat': 0, 'last_word_connect': 0, 'ans_speed': 64},
+                   'dog': {'cont_repeat': 0, 'last_word_connect': 0, 'ans_speed': 64},
+                   'farm': {'cont_repeat': 0, 'last_word_connect': 0, 'ans_speed': 64}}}

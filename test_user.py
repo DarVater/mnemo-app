@@ -1,4 +1,5 @@
 # coding: utf-8
+import json
 import os
 import time
 import unittest
@@ -170,7 +171,7 @@ class TestHomeView(unittest.TestCase):
         pass
 
     # Ванька включил приложение как только появилось свободное время
-    def test_menu_language(self):
+    def test_menu_functions(self):
         app = MyApp()
         p = partial(self.run_test, app)
         Clock.schedule_once(p, 0.000001)
@@ -293,7 +294,7 @@ class TestHomeView(unittest.TestCase):
 
         # Прогресс темы увеличился
         store = JsonStore('hello.json')
-        topic_know_pr =store.get('user')['user_topics']['Животные']['know_pr']
+        topic_know_pr = store.get('user')['user_topics']['Животные']['know_pr']
         self.assertNotEquals(0.01, topic_know_pr)
 
         # Он опять вернулся в туже тему
@@ -334,9 +335,9 @@ class TestHomeView(unittest.TestCase):
             self.assertIn(part.text, split_btn.text)
 
         # Он попробовал нажать на кнопку далее
-        app.root.ids['temp_view'].press_on_next()
+        app.root.ids['temp_view'].press_on_next(app.root.ids['temp_view'].next_btn.text)
 
-        # Ничего не изменилось, а кнопка была фиалетовой
+        # Ничего не изменилось, а кнопка была фиолетовой
         test_color = 'src/btn_main_other.png'
         answer = app.root.ids['temp_view'].next_btn.background_normal
         self.assertEqual(test_color, answer)
@@ -356,8 +357,84 @@ class TestHomeView(unittest.TestCase):
         answer = app.root.ids['temp_view'].next_btn.background_normal
         self.assertEqual(test_color, answer)
 
+        scroll_list = app.root.ids['temp_view'].scroll_space.children[0]
         # Он попробовал нажать на кнопку далее еще раз
-        app.root.ids['temp_view'].press_on_next()
+        app.root.ids['temp_view'].press_on_next(app.root.ids['temp_view'].next_btn.text)
+
+        # Список слов пропал
+        self.assertNotIn(scroll_list, app.root.ids['temp_view'].scroll_space.children)
+
+        # Появились выбранные объекты
+        for word_part in app.root.ids['temp_view'].scroll_space.children[1:]:
+            self.assertIn(word_part.text, app.root.ids['temp_view'].kit)
+
+        # Ванька следовал всем указаниям по запоминанию
+        app.root.ids['temp_view'].save_learn_word()
+        app.root.ids['temp_view'].return_on_topic()
+
+        # И вышел посмотреть сохранило ли прогресс
+        app.root.ids['temp_view'].press_on('back')
+        topic_know_pr = store.get('user')['user_topics']['Животные']['know_pr']
+        store = JsonStore('hello.json')
+        self.assertGreater(store.get('user')['user_topics']['Животные']['hair_pr'],
+                           store.get('user')['user_topics']['Животные']['know_pr'])
+
+        # Он опять вернулся в туже тему
+        app.root.ids['temp_view'].choose_top('Животные')
+
+        # Ванька проработал еще десяток слов
+        for n in range(10):
+            # Он нажал на ответы
+            app.root.ids['temp_view'].show_answers()
+
+            # И сделал выбор
+            app.root.ids['temp_view'].choose_version(app.root.ids['temp_view'].versions.children[0])
+            if app.root.target_view[0] != 'topic':
+
+                # выбрал разбиение
+                split_btn = app.root.ids['temp_view'].btn_place.children[-1]
+                app.root.ids['temp_view'].choose_split(split_btn)
+
+                # Ванька подобрал опять по слову
+                for word_list in app.root.ids['temp_view'].word_place.children:
+                    app.root.ids['temp_view'].choose_word(word_list.children[0])
+
+                app.root.ids['temp_view'].press_on_next(app.root.ids['temp_view'].next_btn.text)
+
+                # Ванька следовал всем указаниям по запоминанию
+                app.root.ids['temp_view'].save_learn_word()
+                app.root.ids['temp_view'].return_on_topic()
+
+        # Почувствовал усталость вышел
+        app.root.ids['temp_view'].press_on('back')
+        app.root.ids['temp_view'].press_on('back')
+
+        run_time(60*30)
+
+        print(111111, app.root.target_view)
+        # Выбрал тему
+        app.root.ids['temp_view'].press_on('all_topics')
+        print(2222222, app.root.target_view)
+        app.root.ids['temp_view'].choose_top('Животные')
+        print(3333333, app.root.target_view)
+
+def run_time(seconds):
+    with open('hello.json', 'r') as file:
+        text = file.read()
+    print()
+    new_text_list = []
+    for part in text.split(' '):
+        try:
+            if ',' in part and '}' not in part and int(part[0:-1]) > 160000000:
+                part = f"{int(part[0:-1]) - seconds},"
+                print(part[0:-1])
+        except:
+            pass
+        new_text_list.append(part)
+    new_text = ' '.join(new_text_list)
+    with open('hello.json', 'w') as file:
+        file.write(new_text)
+
 
 if __name__ == '__main__':
     unittest.MyApp()

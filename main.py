@@ -19,6 +19,7 @@ from word_by_topics import words_by_lvl, source_by_top
 from assosiator import Associator
 
 Window.size = 540, 960
+error_catch = False  # False True
 
 
 class SelectionPart(BoxLayout):
@@ -29,8 +30,6 @@ class SelectionPart(BoxLayout):
             root = btn.parent.parent.parent.parent.parent.parent
             index_part = btn.parent.parent.children[10].index
             root.kit[index_part] = text
-            print(root.kit)
-            print(index_part)
             for n in range(10):
                 btn.parent.parent.children[n].background_normal = 'src/transparent.png'
                 btn.parent.parent.children[n].background_down = 'src/transparent.png'
@@ -42,23 +41,24 @@ class SelectionPart(BoxLayout):
 class WordPart(Button):
     pass
 
+
 class SubLabel(Label):
     pass
+
 
 class LongSubLabel(SubLabel):
     pass
 
 
 class ViewSelection(GridLayout):
-    all_compares = None
     words_by_group = {}
+    lang = Language()
+    all_compares = None
     root = None
     kit = None
-    lang = Language()
     next_allowed = False
 
     def press_on_next(self, btn):
-        print(btn)
         if self.next_allowed:
             if btn == self.lang.title('TITLE_REMEMBERING_READY'):
                 if self.helper.text == self.lang.title('TITLE_REMEMBERING_IMAGINATION'):
@@ -77,21 +77,79 @@ class ViewSelection(GridLayout):
                     self.next_allowed = False
                     Clock.schedule_once(self.next_allowed_true, 1)
                 elif self.helper.text == self.lang.title('TITLE_REMEMBERING_SPEAK'):
-                    pass
-
+                    self.save_learn_word()
+                    self.return_on_topic()
             else:
                 self.compulsion()
-                #self.root.target_view[0] = 'compulsion'
                 self.root.target_view.append(self.kit)
+
+    def return_on_topic(self):
+        self.root.target_view = ['topic', self.root.target_view[1]]
+        self.root.remove_w('temp_view')
+        self.root.draw_view()
+
+    def save_learn_word(self):
+        user_store = self.root.store.get('user')
+        user_store['user_topics'][self.root.target_view[1]]['etch_top_word'][self.root.target_view[2]][
+            'last_word_connect'] = round(time.time())
+        user_store['user_topics'][self.root.target_view[1]]['etch_top_word'][self.root.target_view[2]][
+            'objects'] = self.kit
+        user_store['user_topics'][self.root.target_view[1]]['etch_top_word'][self.root.target_view[2]]['word_split'] = \
+            self.root.target_view[-2]
+        user_store = self.calculate_topic_progress2(user_store)
+        self.root.store.put('user',
+                            name=user_store['name'],
+                            sex=user_store['sex'],
+                            age=user_store['age'],
+                            lang=user_store['lang'],
+                            user_topics=user_store['user_topics'],
+                            amail=user_store['amail'],
+                            )
+
+    def calculate_bar2(self, half, f_sum):
+        if f_sum <= half:
+            return round(0.5 / half * f_sum, 2)
         else:
-            print('Need Choose for all')
+            return 1 + round(1 / half * (f_sum - half), 2)
+
+    def calculate_topic_progress2(self, user_store):
+        know = 0
+        repeat = 0
+        time_repeat_by_number_repeat = {0: 3600 * 0.333,
+                                        1: 3600 * 2,
+                                        2: 3600 * 18,
+                                        3: 3600 * 24 * 7,
+                                        4: 3600 * 24 * 60,
+                                        5: 3600 * 24 * 365,
+                                        }
+        hair = 0
+        word_count = len(user_store['user_topics'][self.root.target_view[1]]['etch_top_word'])
+        user_store['user_topics'][self.root.target_view[1]]['time_to_repeat'] = 0
+        for word in user_store['user_topics'][self.root.target_view[1]]['etch_top_word']:
+            last_word_connect = user_store['user_topics'][self.root.target_view[1]]['etch_top_word'][word][
+                'last_word_connect']
+            cont_repeat = user_store['user_topics'][self.root.target_view[1]]['etch_top_word'][word]['cont_repeat']
+            time_to_repeat_top = user_store['user_topics'][self.root.target_view[1]]['time_to_repeat']
+            step_to_repeat_word = time_repeat_by_number_repeat[cont_repeat]
+            if last_word_connect != 0 and (time_to_repeat_top > last_word_connect + step_to_repeat_word or time_to_repeat_top == 0):
+                user_store['user_topics'][self.root.target_view[1]][
+                    'time_to_repeat'] = round(last_word_connect + step_to_repeat_word)
+            if last_word_connect != 0:
+                hair += 1
+                if cont_repeat > 0:
+                    repeat += 1
+                if cont_repeat == 5:
+                    know += 1
+        user_store['user_topics'][self.root.target_view[1]]['know_pr'] = self.calculate_bar2(word_count / 2, know)
+        user_store['user_topics'][self.root.target_view[1]]['repeat_pr'] = self.calculate_bar2(word_count / 2, repeat)
+        user_store['user_topics'][self.root.target_view[1]]['hair_pr'] = self.calculate_bar2(word_count / 2, hair)
+        return user_store
 
     def next_allowed_true(self, t):
         self.next_allowed = True
 
     def compulsion(self):
         self.scroll_space.remove_widget(self.scroll_space.children[0])
-        print('END!')
         for word in self.kit:
             word_part = WordPart()
             word_part.text = word
@@ -105,12 +163,6 @@ class ViewSelection(GridLayout):
         self.helper.text = self.lang.title('TITLE_REMEMBERING_IMAGINATION')
         self.scroll_space.add_widget(self.helper)
 
-        a = 0
-        if a:
-            print(self.lang.title('')) #TITLE_REMEMBERING_RESIZE
-            self.word_place.parent.parent.add_widget(self.accept_btn)
-            self.word_place.padding = '50sp'
-
     def save_word(self):
         self.show_next_word()
 
@@ -120,33 +172,22 @@ class ViewSelection(GridLayout):
         self.root.draw_view()
 
     def press_on_back(self):
-        print('back')
         self.root.target_view.pop(-1)
         self.root.target_view[0] = 'splitting'
-        print(self.root.target_view)
         self.root.remove_w('temp_view')
         self.root.draw_view()
 
     def choose_word(self, btn):
-        print(btn.text)
         for n in range(10):
             btn.parent.children[n].background_normal = 'src/transparent.png'
             btn.parent.children[n].background_down = 'src/transparent.png'
-        print(btn.parent.children[10].children[1])
         btn.parent.children[10].children[1].background_normal = 'src/input.png'
         btn.background_normal = 'src/lighted.png'
         btn.background_down = 'src/lighted.png'
         index_part = len(self.part_place.children) - 1 - self.words_by_group[btn.text]
         self.part_place.children[index_part].background_normal = 'src/lighted.png'
         self.kit[self.words_by_group[btn.text]] = btn.text
-        print(self.kit)
         self.check_kit()
-        a = 0
-        if a:
-            self.root.target_view.append(self.broken_word[btn.index])
-            self.root.target_view[0] = 'selection'
-            self.root.remove_w('temp_view')
-            self.root.draw_view()
 
     def check_kit(self):
         self.next_allowed = True
@@ -157,7 +198,6 @@ class ViewSelection(GridLayout):
             self.next_btn.background_down = 'src/btn_main_pressed.png'
 
     def selection(self):
-        print(self.root.target_view)
         self.header.text = self.root.target_view[2]
         self.next_btn.text = self.lang.title('TITLE_TOPIC_BTN_NEXT')
         ass = Associator()
@@ -218,13 +258,10 @@ class ViewSplitWord(FloatLayout):
             self.root.draw_view()
 
     def choose_split(self, btn):
-        print(self.broken_word[btn.index])
         self.root.target_view.append(self.broken_word[btn.index])
         self.root.target_view[0] = 'selection'
-        print(self.root.target_view)
         self.root.remove_w('temp_view')
         self.root.draw_view()
-
 
     def give_root(self, root):
         self.root = root
@@ -241,21 +278,37 @@ class ViewTopic(BoxLayout):
     root = []
     lang = Language()
     learning_list = []
+    repeating_list = []
     answer_versions = []
     right_answers = {}
+    helpers_by_word = {}
     timer_start = 0
     target_word = ''
+    repeat = False
     check_answers = False
 
     def choose_version(self, btn):
         if self.check_answers:
-            print(self.right_answers[self.target_word], self.right_answers[self.target_word] == btn.text, btn.text)
             if self.right_answers[self.target_word] == btn.text:
                 self.learning_list.pop(self.learning_list.index(self.target_word))
-                print('next word')
                 user_store = self.root.store.get('user')
-                user_store['user_topics'][self.root.target_view[1]]['etch_top_word'][
-                    self.right_answers[self.target_word]]['cont_repeat'] = 5
+                if self.repeat:
+                    if self.learning.text == self.lang.title('TITLE_TOPIC_BTN_OBJECTS'):
+                        if user_store['user_topics'][self.root.target_view[1]]['etch_top_word'][
+                            self.right_answers[self.target_word]]['cont_repeat'] < 5:
+                            user_store['user_topics'][self.root.target_view[1]]['etch_top_word'][
+                                self.right_answers[self.target_word]]['cont_repeat'] += 1
+                    if self.learning.text == self.lang.title('TITLE_TOPIC_BTN_FORGET'):
+                        user_store['user_topics'][self.root.target_view[1]]['etch_top_word'][
+                            self.right_answers[self.target_word]]['cont_repeat'] = 1
+                    if self.learning.text == self.lang.title('TITLE_TOPIC_BTN_BAD'):
+                        user_store['user_topics'][self.root.target_view[1]]['etch_top_word'][
+                            self.right_answers[self.target_word]]['cont_repeat'] = 0
+                        user_store['user_topics'][self.root.target_view[1]]['etch_top_word'][
+                            self.right_answers[self.target_word]]['last_word_connect'] = 0
+                else:
+                    user_store['user_topics'][self.root.target_view[1]]['etch_top_word'][
+                        self.right_answers[self.target_word]]['cont_repeat'] = 5
                 user_store['user_topics'][self.root.target_view[1]]['etch_top_word'][
                     self.right_answers[self.target_word]]['last_word_connect'] = round(time.time())
                 user_store['user_topics'][self.root.target_view[1]]['etch_top_word'][
@@ -269,7 +322,6 @@ class ViewTopic(BoxLayout):
                                     user_topics=user_store['user_topics'],
                                     amail=user_store['amail']
                                     )
-                print(user_store['user_topics'][self.root.target_view[1]])
 
                 self.learning_mod()
                 self.clear_answers()
@@ -279,12 +331,25 @@ class ViewTopic(BoxLayout):
     def calculate_topic_progress(self, user_store):
         know = 0
         repeat = 0
+        time_repeat_by_number_repeat = {0: 3600 * 0.333,
+                                        1: 3600 * 2,
+                                        2: 3600 * 18,
+                                        3: 3600 * 24 * 7,
+                                        4: 3600 * 24 * 60,
+                                        5: 3600 * 24 * 365,
+                                        }
         hair = 0
         word_count = len(user_store['user_topics'][self.root.target_view[1]]['etch_top_word'])
+        user_store['user_topics'][self.root.target_view[1]]['time_to_repeat'] = 0
         for word in user_store['user_topics'][self.root.target_view[1]]['etch_top_word']:
             last_word_connect = user_store['user_topics'][self.root.target_view[1]]['etch_top_word'][word][
                 'last_word_connect']
             cont_repeat = user_store['user_topics'][self.root.target_view[1]]['etch_top_word'][word]['cont_repeat']
+            time_to_repeat_top = user_store['user_topics'][self.root.target_view[1]]['time_to_repeat']
+            step_to_repeat_word = time_repeat_by_number_repeat[cont_repeat]
+            if last_word_connect != 0 and (time_to_repeat_top > last_word_connect + step_to_repeat_word or time_to_repeat_top == 0):
+                user_store['user_topics'][self.root.target_view[1]][
+                    'time_to_repeat'] = round(last_word_connect + step_to_repeat_word)
             if last_word_connect != 0:
                 hair += 1
                 if cont_repeat > 0:
@@ -302,8 +367,7 @@ class ViewTopic(BoxLayout):
         else:
             return 1 + round(1 / half * (f_sum - half), 2)
 
-    def learn_word(self):
-        print('learn word', self.target_word)
+    def learn_word(self, btn=''):
         self.root.target_view = ['splitting', self.root.target_view[1], self.right_answers[self.target_word],
                                  self.target_word]
         self.root.remove_w('temp_view')
@@ -320,9 +384,28 @@ class ViewTopic(BoxLayout):
 
     def learning_mod(self):
         self.learning.text = self.lang.title('TITLE_TOPIC_BTN_LEARN')
+        self.learning.bind(on_release=self.learn_word)
         self.answers.text = self.lang.title('TITLE_TOPIC_BTN_ANSWERS')
         self.target_word = self.learning_list[random.randint(0, len(self.learning_list)) - 1]
         self.header.text = self.target_word
+
+    def repeating_mod(self):
+        self.learning.text = self.lang.title('TITLE_TOPIC_BTN_OBJECTS')
+        self.learning.bind(on_release=self.show_helper)
+        self.answers.text = self.lang.title('TITLE_TOPIC_BTN_ANSWERS')
+        if len(self.repeating_list):
+            self.target_word = self.repeating_list[random.randint(0, len(self.learning_list)) - 1]
+            self.header.text = self.target_word
+
+    def show_helper(self, btn):
+        if btn.text == self.lang.title('TITLE_TOPIC_BTN_BAD'):
+            pass
+        elif btn.text == self.lang.title('TITLE_TOPIC_BTN_FORGET'):
+            self.splited.text = ', '.join(self.helpers_by_word[self.right_answers[self.target_word]]['word_split'])
+            btn.text = self.lang.title('TITLE_TOPIC_BTN_BAD')
+        else:
+            btn.text = self.lang.title('TITLE_TOPIC_BTN_FORGET')
+            self.objects.text = ', '.join(self.helpers_by_word[self.right_answers[self.target_word]]['objects'])
 
     def clear_answers(self):
         self.check_answers = False
@@ -344,31 +427,42 @@ class ViewTopic(BoxLayout):
         self.learning_list = []
         self.answer_versions = []
         self.right_answers = {}
-        time_repeat_by_number_repeat = {0: 3600 / 0.3,
+        time_repeat_by_number_repeat = {0: 3600 * 0.333,
                                         1: 3600 * 2,
                                         2: 3600 * 18,
                                         3: 3600 * 24 * 7,
                                         4: 3600 * 24 * 60,
                                         5: 3600 * 24 * 365,
                                         }
-        repeat = False
-        if top['hair_pr'] < 1:
-            if round(time.time()) - top['last_top_connect'] > 3600 and top['last_top_connect'] != 0:
-                repeat = True
+        if top['hair_pr'] < 2:
+            if 1 and (round(time.time()) > top['time_to_repeat'] and top['time_to_repeat'] != 0):
+                self.repeat = True
             else:
                 for word in top['etch_top_word']:
                     ask_word = words_by_lvl['ru'][top_name][word]
                     self.answer_versions.append(word)
-                    last_word_connect = round(time.time()) - top['etch_top_word'][word]['last_word_connect']
-                    time_past_from_repeat = time_repeat_by_number_repeat[top['etch_top_word'][word]['cont_repeat']]
-                    if last_word_connect > time_past_from_repeat:
+                    if top['etch_top_word'][word]['last_word_connect'] == 0:
                         self.right_answers[ask_word] = word
                         self.learning_list.append(ask_word)
                 self.learning_mod()
         else:
-            repeat = True
-        if repeat:
-            print('need repeat')
+            self.repeat = True
+        if self.repeat:
+            for word in top['etch_top_word']:
+                ask_word = words_by_lvl['ru'][top_name][word]
+                self.answer_versions.append(word)
+
+                last_word_connect = round(time.time()) - top['etch_top_word'][word]['last_word_connect']
+                time_past_from_repeat = time_repeat_by_number_repeat[top['etch_top_word'][word]['cont_repeat']]
+                if top['etch_top_word'][word]['last_word_connect'] != 0 and last_word_connect > time_past_from_repeat:
+                    self.helpers_by_word[word] = {'objects': top['etch_top_word'][word]['objects'],
+                                                  'word_split': top['etch_top_word'][word]['word_split']}
+                    self.right_answers[ask_word] = word
+                    self.repeating_list.append(ask_word)
+
+                if top['etch_top_word'][word]['last_word_connect'] == 0:
+                    self.learning_list.append(ask_word)
+            self.repeating_mod()
 
 
 class ViewChooseTopics(FloatLayout):
@@ -518,7 +612,7 @@ class ViewSingUp(FloatLayout):
             user_topics[top] = {'know_pr': 0.01,
                                 'repeat_pr': 0.01,
                                 'hair_pr': 0.01,
-                                'last_top_connect': 0,
+                                'time_to_repeat': 0,
                                 'etch_top_word': etch_top_word,
                                 }
         return user_topics
@@ -637,6 +731,7 @@ class ViewManager(FloatLayout):
     started = 0
     topic_keys = []
     lang = Language()
+    user_topics = None
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -723,8 +818,8 @@ class ViewManager(FloatLayout):
             self.ids['temp_view'] = temp_view
             self.add_widget(temp_view)
             self.ids['temp_view'].header.text = self.lang.title('TITLE_TOPIC_HEADER')
-            if self.user_topics == None:
-                self.user_topics = self.store.get('user')['user_topics']
+            self.store = JsonStore('hello.json')
+            self.user_topics = self.store.get('user')['user_topics']
             self.ids['temp_view'].check_top_action(self.user_topics[self.target_view[1]], self.target_view[1])
 
         elif self.target_view[0] == 'splitting':
@@ -800,7 +895,7 @@ class ViewManager(FloatLayout):
 
     def chose_main_view(self):
         if 'user' in self.store:
-            self.target_view = ['selection', 'Животные', 'animal', 'животное', ['эни', 'мыэл' ]]  # home
+            self.target_view = 'home' # home
             # ['splitting', 'Животные', 'cow', 'корова']
             # ['selection', 'Животные', 'animal', 'животное', ['эни', 'мэл']]
         else:
@@ -835,7 +930,6 @@ class MyApp(App):
 
 
 exeption = ''
-error_catch = True  # False True
 if __name__ == '__main__':
     if error_catch:
         try:
