@@ -15,7 +15,7 @@ from kivy.uix.label import Label
 from kivy.uix.layout import Layout
 
 from language import Language
-from word_by_topics import words_by_lvl, source_by_top
+from word_by_topics import words_by_lvl, source_by_top, translanguage_top_connect
 from assosiator import Associator
 
 Window.size = 540, 960
@@ -90,11 +90,16 @@ class ViewSelection(GridLayout):
 
     def save_learn_word(self):
         user_store = self.root.store.get('user')
-        user_store['user_topics'][self.root.target_view[1]]['etch_top_word'][self.root.target_view[2]][
+        mem_top_name = self.root.target_view[1]
+        try:
+            user_store['user_topics'][mem_top_name]['etch_top_word']
+        except:
+            mem_top_name = translanguage_top_connect[mem_top_name]
+        user_store['user_topics'][mem_top_name]['etch_top_word'][self.root.target_view[2]][
             'last_word_connect'] = round(time.time())
-        user_store['user_topics'][self.root.target_view[1]]['etch_top_word'][self.root.target_view[2]][
+        user_store['user_topics'][mem_top_name]['etch_top_word'][self.root.target_view[2]][
             'objects'] = self.kit
-        user_store['user_topics'][self.root.target_view[1]]['etch_top_word'][self.root.target_view[2]]['word_split'] = \
+        user_store['user_topics'][mem_top_name]['etch_top_word'][self.root.target_view[2]]['word_split'] = \
             self.root.target_view[-2]
         user_store = self.calculate_topic_progress2(user_store)
         self.root.store.put('user',
@@ -115,6 +120,11 @@ class ViewSelection(GridLayout):
     def calculate_topic_progress2(self, user_store):
         know = 0
         repeat = 0
+        mem_top_name = self.root.target_view[1]
+        try:
+            user_store['user_topics'][mem_top_name]['etch_top_word']
+        except:
+            mem_top_name = translanguage_top_connect[mem_top_name]
         time_repeat_by_number_repeat = {0: 3600 * 0.333,
                                         1: 3600 * 2,
                                         2: 3600 * 18,
@@ -123,16 +133,17 @@ class ViewSelection(GridLayout):
                                         5: 3600 * 24 * 365,
                                         }
         hair = 0
-        word_count = len(user_store['user_topics'][self.root.target_view[1]]['etch_top_word'])
-        user_store['user_topics'][self.root.target_view[1]]['time_to_repeat'] = 0
-        for word in user_store['user_topics'][self.root.target_view[1]]['etch_top_word']:
-            last_word_connect = user_store['user_topics'][self.root.target_view[1]]['etch_top_word'][word][
+        word_count = len(user_store['user_topics'][mem_top_name]['etch_top_word'])
+        user_store['user_topics'][mem_top_name]['time_to_repeat'] = 0
+        for word in user_store['user_topics'][mem_top_name]['etch_top_word']:
+            last_word_connect = user_store['user_topics'][mem_top_name]['etch_top_word'][word][
                 'last_word_connect']
-            cont_repeat = user_store['user_topics'][self.root.target_view[1]]['etch_top_word'][word]['cont_repeat']
-            time_to_repeat_top = user_store['user_topics'][self.root.target_view[1]]['time_to_repeat']
+            cont_repeat = user_store['user_topics'][mem_top_name]['etch_top_word'][word]['cont_repeat']
+            time_to_repeat_top = user_store['user_topics'][mem_top_name]['time_to_repeat']
             step_to_repeat_word = time_repeat_by_number_repeat[cont_repeat]
-            if last_word_connect != 0 and (time_to_repeat_top > last_word_connect + step_to_repeat_word or time_to_repeat_top == 0):
-                user_store['user_topics'][self.root.target_view[1]][
+            if last_word_connect != 0 and (
+                    time_to_repeat_top > last_word_connect + step_to_repeat_word or time_to_repeat_top == 0):
+                user_store['user_topics'][mem_top_name][
                     'time_to_repeat'] = round(last_word_connect + step_to_repeat_word)
             if last_word_connect != 0:
                 hair += 1
@@ -140,9 +151,9 @@ class ViewSelection(GridLayout):
                     repeat += 1
                 if cont_repeat == 5:
                     know += 1
-        user_store['user_topics'][self.root.target_view[1]]['know_pr'] = self.calculate_bar2(word_count / 2, know)
-        user_store['user_topics'][self.root.target_view[1]]['repeat_pr'] = self.calculate_bar2(word_count / 2, repeat)
-        user_store['user_topics'][self.root.target_view[1]]['hair_pr'] = self.calculate_bar2(word_count / 2, hair)
+        user_store['user_topics'][mem_top_name]['know_pr'] = self.calculate_bar2(word_count / 2, know)
+        user_store['user_topics'][mem_top_name]['repeat_pr'] = self.calculate_bar2(word_count / 2, repeat)
+        user_store['user_topics'][mem_top_name]['hair_pr'] = self.calculate_bar2(word_count / 2, hair)
         return user_store
 
     def next_allowed_true(self, t):
@@ -220,6 +231,7 @@ class ViewSelection(GridLayout):
 
     def give_root(self, root):
         self.root = root
+        self.lang.set_lang(self.root.store.get('user')['lang'])
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -287,32 +299,52 @@ class ViewTopic(BoxLayout):
     repeat = False
     check_answers = False
 
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.store = JsonStore('hello.json')
+        self.lang.set_lang(self.store.get('user')['lang'])
+
     def choose_version(self, btn):
-        if self.check_answers:
+        if self.check_answers:  # Check was showing answers
             if self.right_answers[self.target_word] == btn.text:
-                self.learning_list.pop(self.learning_list.index(self.target_word))
+                self.store = JsonStore('hello.json')
                 user_store = self.root.store.get('user')
+                top_name = self.root.target_view[1]
+                mem_top_name = top_name
+                try:
+                    user_store['user_topics'][top_name]['etch_top_word']
+                except:
+                    mem_top_name = translanguage_top_connect[top_name]
+                en_word = self.right_answers[self.target_word]
+
+                ''' 
+                        0: 3600 * 0.333,
+                        1: 3600 * 2,
+                        2: 3600 * 18,
+                        3: 3600 * 24 * 7,
+                        4: 3600 * 24 * 60,
+                        5: 3600 * 24 * 365,
+                                        
+                                        
+                
+                '''
                 if self.repeat:
+                    self.repeating_list.pop(self.repeating_list.index(self.target_word))
                     if self.learning.text == self.lang.title('TITLE_TOPIC_BTN_OBJECTS'):
-                        if user_store['user_topics'][self.root.target_view[1]]['etch_top_word'][
-                            self.right_answers[self.target_word]]['cont_repeat'] < 5:
-                            user_store['user_topics'][self.root.target_view[1]]['etch_top_word'][
-                                self.right_answers[self.target_word]]['cont_repeat'] += 1
+                        if user_store['user_topics'][mem_top_name]['etch_top_word'][en_word]['cont_repeat'] < 5:
+                            user_store['user_topics'][mem_top_name]['etch_top_word'][en_word]['cont_repeat'] += 1
                     if self.learning.text == self.lang.title('TITLE_TOPIC_BTN_FORGET'):
-                        user_store['user_topics'][self.root.target_view[1]]['etch_top_word'][
-                            self.right_answers[self.target_word]]['cont_repeat'] = 1
+                        user_store['user_topics'][mem_top_name]['etch_top_word'][en_word]['cont_repeat'] = 1
                     if self.learning.text == self.lang.title('TITLE_TOPIC_BTN_BAD'):
-                        user_store['user_topics'][self.root.target_view[1]]['etch_top_word'][
-                            self.right_answers[self.target_word]]['cont_repeat'] = 0
-                        user_store['user_topics'][self.root.target_view[1]]['etch_top_word'][
-                            self.right_answers[self.target_word]]['last_word_connect'] = 0
+                        user_store['user_topics'][mem_top_name]['etch_top_word'][en_word]['cont_repeat'] = 0
+                        user_store['user_topics'][mem_top_name]['etch_top_word'][en_word]['last_word_connect'] = 0
                 else:
-                    user_store['user_topics'][self.root.target_view[1]]['etch_top_word'][
-                        self.right_answers[self.target_word]]['cont_repeat'] = 5
-                user_store['user_topics'][self.root.target_view[1]]['etch_top_word'][
-                    self.right_answers[self.target_word]]['last_word_connect'] = round(time.time())
-                user_store['user_topics'][self.root.target_view[1]]['etch_top_word'][
-                    self.right_answers[self.target_word]]['ans_speed'] = round(time.time()) - self.timer_start
+                    self.learning_list.pop(self.learning_list.index(self.target_word))
+                    user_store['user_topics'][mem_top_name]['etch_top_word'][en_word]['cont_repeat'] = 5
+                user_store['user_topics'][mem_top_name]['etch_top_word'][en_word]['last_word_connect'] = round(
+                    time.time())
+                ans_speed = round(time.time()) - self.timer_start
+                user_store['user_topics'][mem_top_name]['etch_top_word'][en_word]['ans_speed'] = ans_speed
                 user_store = self.calculate_topic_progress(user_store)
                 self.root.store.put('user',
                                     name=user_store['name'],
@@ -323,14 +355,30 @@ class ViewTopic(BoxLayout):
                                     amail=user_store['amail']
                                     )
 
-                self.learning_mod()
+                if self.repeat:
+                    if len(self.repeating_list) > 0:
+                        self.repeating_mod()
+                    else:
+                        self.repeat = False
+                        self.learning_mod()
+                else:
+                    self.learning_mod()
                 self.clear_answers()
             else:
-                self.learn_word()
+                if self.repeat:
+                    btn.background_normal = 'src/btn_main_other.png'
+                    btn.background_down = 'src/btn_main_other.png'
+                else:
+                    self.learn_word()
 
     def calculate_topic_progress(self, user_store):
         know = 0
         repeat = 0
+        top_name = self.root.target_view[1]
+        try:
+            user_store['user_topics'][top_name]['etch_top_word']
+        except:
+            top_name = translanguage_top_connect[top_name]
         time_repeat_by_number_repeat = {0: 3600 * 0.333,
                                         1: 3600 * 2,
                                         2: 3600 * 18,
@@ -339,16 +387,22 @@ class ViewTopic(BoxLayout):
                                         5: 3600 * 24 * 365,
                                         }
         hair = 0
-        word_count = len(user_store['user_topics'][self.root.target_view[1]]['etch_top_word'])
-        user_store['user_topics'][self.root.target_view[1]]['time_to_repeat'] = 0
-        for word in user_store['user_topics'][self.root.target_view[1]]['etch_top_word']:
-            last_word_connect = user_store['user_topics'][self.root.target_view[1]]['etch_top_word'][word][
+        mem_top_name = top_name
+        try:
+            user_store['user_topics'][top_name]['etch_top_word']
+        except:
+            mem_top_name = translanguage_top_connect[top_name]
+        word_count = len(user_store['user_topics'][mem_top_name]['etch_top_word'])
+        user_store['user_topics'][mem_top_name]['time_to_repeat'] = 0
+        for word in user_store['user_topics'][mem_top_name]['etch_top_word']:
+            last_word_connect = user_store['user_topics'][mem_top_name]['etch_top_word'][word][
                 'last_word_connect']
-            cont_repeat = user_store['user_topics'][self.root.target_view[1]]['etch_top_word'][word]['cont_repeat']
-            time_to_repeat_top = user_store['user_topics'][self.root.target_view[1]]['time_to_repeat']
+            cont_repeat = user_store['user_topics'][mem_top_name]['etch_top_word'][word]['cont_repeat']
+            time_to_repeat_top = user_store['user_topics'][mem_top_name]['time_to_repeat']
             step_to_repeat_word = time_repeat_by_number_repeat[cont_repeat]
-            if last_word_connect != 0 and (time_to_repeat_top > last_word_connect + step_to_repeat_word or time_to_repeat_top == 0):
-                user_store['user_topics'][self.root.target_view[1]][
+            if last_word_connect != 0 and (
+                    time_to_repeat_top > last_word_connect + step_to_repeat_word or time_to_repeat_top == 0):
+                user_store['user_topics'][mem_top_name][
                     'time_to_repeat'] = round(last_word_connect + step_to_repeat_word)
             if last_word_connect != 0:
                 hair += 1
@@ -356,9 +410,9 @@ class ViewTopic(BoxLayout):
                     repeat += 1
                 if cont_repeat == 5:
                     know += 1
-        user_store['user_topics'][self.root.target_view[1]]['know_pr'] = self.calculate_bar(word_count / 2, know)
-        user_store['user_topics'][self.root.target_view[1]]['repeat_pr'] = self.calculate_bar(word_count / 2, repeat)
-        user_store['user_topics'][self.root.target_view[1]]['hair_pr'] = self.calculate_bar(word_count / 2, hair)
+        user_store['user_topics'][mem_top_name]['know_pr'] = self.calculate_bar(word_count / 2, know)
+        user_store['user_topics'][mem_top_name]['repeat_pr'] = self.calculate_bar(word_count / 2, repeat)
+        user_store['user_topics'][mem_top_name]['hair_pr'] = self.calculate_bar(word_count / 2, hair)
         return user_store
 
     def calculate_bar(self, half, f_sum):
@@ -393,19 +447,19 @@ class ViewTopic(BoxLayout):
         self.learning.text = self.lang.title('TITLE_TOPIC_BTN_OBJECTS')
         self.learning.bind(on_release=self.show_helper)
         self.answers.text = self.lang.title('TITLE_TOPIC_BTN_ANSWERS')
-        if len(self.repeating_list):
-            self.target_word = self.repeating_list[random.randint(0, len(self.learning_list)) - 1]
-            self.header.text = self.target_word
+        self.target_word = self.repeating_list[random.randint(0, len(self.repeating_list)) - 1]
+        self.header.text = self.target_word
 
     def show_helper(self, btn):
         if btn.text == self.lang.title('TITLE_TOPIC_BTN_BAD'):
             pass
         elif btn.text == self.lang.title('TITLE_TOPIC_BTN_FORGET'):
             self.splited.text = ', '.join(self.helpers_by_word[self.right_answers[self.target_word]]['word_split'])
+            self.objects.text = ', '.join(self.helpers_by_word[self.right_answers[self.target_word]]['objects'])
             btn.text = self.lang.title('TITLE_TOPIC_BTN_BAD')
         else:
             btn.text = self.lang.title('TITLE_TOPIC_BTN_FORGET')
-            self.objects.text = ', '.join(self.helpers_by_word[self.right_answers[self.target_word]]['objects'])
+            self.objects.text = ', '.join(self.helpers_by_word[self.right_answers[self.target_word]]['objects']).lower()
 
     def clear_answers(self):
         self.check_answers = False
@@ -425,6 +479,7 @@ class ViewTopic(BoxLayout):
 
     def check_top_action(self, top, top_name):
         self.learning_list = []
+        self.repeating_list = []
         self.answer_versions = []
         self.right_answers = {}
         time_repeat_by_number_repeat = {0: 3600 * 0.333,
@@ -439,7 +494,11 @@ class ViewTopic(BoxLayout):
                 self.repeat = True
             else:
                 for word in top['etch_top_word']:
-                    ask_word = words_by_lvl['ru'][top_name][word]
+                    try:
+                        ask_word = words_by_lvl[self.root.store.get('user')['lang']][top_name][word]
+                    except:
+                        ask_word = \
+                            words_by_lvl[self.root.store.get('user')['lang']][translanguage_top_connect[top_name]][word]
                     self.answer_versions.append(word)
                     if top['etch_top_word'][word]['last_word_connect'] == 0:
                         self.right_answers[ask_word] = word
@@ -449,7 +508,7 @@ class ViewTopic(BoxLayout):
             self.repeat = True
         if self.repeat:
             for word in top['etch_top_word']:
-                ask_word = words_by_lvl['ru'][top_name][word]
+                ask_word = words_by_lvl[self.root.store.get('user')['lang']][top_name][word]
                 self.answer_versions.append(word)
 
                 last_word_connect = round(time.time()) - top['etch_top_word'][word]['last_word_connect']
@@ -602,7 +661,7 @@ class ViewSingUp(FloatLayout):
         self.user_register('F')
 
     def create_start_user_topics(self):
-        lan = 'ru'
+        lan = self.root.store.get('user')['lang']
         topics = words_by_lvl[lan].keys()
         user_topics = {}
         for top in topics:
@@ -670,14 +729,28 @@ class ViewLanguage(FloatLayout):
             self.root.ids['temp_view'].ru.background_normal = 'src/btn_main.png'
             user_store = self.root.store.get('user')
             user_store['lang'] = 'ru'
-            self.root.store.store_put('user', user_store)
+            self.root.store.put('user',
+                                name=user_store['name'],
+                                sex=user_store['sex'],
+                                age=user_store['age'],
+                                lang=user_store['lang'],
+                                user_topics=user_store['user_topics'],
+                                amail=user_store['amail']
+                                )
 
         elif text == 'ua':
             self.root.ids['temp_view'].ru.background_normal = 'src/btn_main_other.png'
             self.root.ids['temp_view'].ua.background_normal = 'src/btn_main.png'
             user_store = self.root.store.get('user')
             user_store['lang'] = 'ua'
-            self.root.store.store_put('user', user_store)
+            self.root.store.put('user',
+                                name=user_store['name'],
+                                sex=user_store['sex'],
+                                age=user_store['age'],
+                                lang=user_store['lang'],
+                                user_topics=user_store['user_topics'],
+                                amail=user_store['amail']
+                                )
 
     def give_root(self, root):
         self.root = root
@@ -708,9 +781,49 @@ class ViewHome(FloatLayout):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        self.store = JsonStore('hello.json')
 
     def give_root(self, root):
         self.root = root
+        n = 0
+        know_pr = 0
+        repeat_pr = 0
+        hair_pr = 0
+        for top_name in self.store.get('user')['user_topics'].keys():
+            print(top_name)
+            n += 1
+            know_pr += float(self.store.get('user')['user_topics'][top_name]["know_pr"])
+            repeat_pr += float(self.store.get('user')['user_topics'][top_name]["repeat_pr"])
+            hair_pr += float(self.store.get('user')['user_topics'][top_name]["hair_pr"])
+        know_pr = know_pr / n
+        repeat_pr = repeat_pr / n
+        hair_pr = hair_pr / n
+
+        if know_pr > 1:
+            self.progress_know.size_hint_y = 1 + ((know_pr - 1) * 10)
+        else:
+            self.progress_know.size_hint_y = know_pr
+        if repeat_pr > 1:
+            self.progress_repeat.size_hint_y = 1 + ((repeat_pr - 1) * 10)
+        else:
+            self.progress_repeat.size_hint_y = repeat_pr
+        if hair_pr > 1:
+            self.progress_hair.size_hint_y = 1 + ((hair_pr - 1) * 10)
+        else:
+            self.progress_hair.size_hint_y = hair_pr
+
+        if know_pr > 1:
+            self.progress_know_text.text = str(50 + round(50 * (know_pr - 1)))
+        else:
+            self.progress_know_text.text = str(round(50 * know_pr))
+        if repeat_pr > 1:
+            self.progress_repeat_text.text = str(50 + round(50 * (repeat_pr - 1)))
+        else:
+            self.progress_repeat_text.text = str(round(50 * repeat_pr))
+        if hair_pr > 1:
+            self.progress_hair_text.text = str(50 + round(50 * (hair_pr - 1)))
+        else:
+            self.progress_hair_text.text = str(round(50 * hair_pr))
 
     def topics(self):
         pass
@@ -820,7 +933,11 @@ class ViewManager(FloatLayout):
             self.ids['temp_view'].header.text = self.lang.title('TITLE_TOPIC_HEADER')
             self.store = JsonStore('hello.json')
             self.user_topics = self.store.get('user')['user_topics']
-            self.ids['temp_view'].check_top_action(self.user_topics[self.target_view[1]], self.target_view[1])
+            try:
+                self.ids['temp_view'].check_top_action(self.user_topics[self.target_view[1]], self.target_view[1])
+            except:
+                self.ids['temp_view'].check_top_action(self.user_topics[translanguage_top_connect[self.target_view[1]]],
+                                                       translanguage_top_connect[self.target_view[1]])
 
         elif self.target_view[0] == 'splitting':
             temp_view = ViewSplitWord()
@@ -842,24 +959,35 @@ class ViewManager(FloatLayout):
         if self.started == 0:
             self.user_topics = self.store.get('user')['user_topics']
             self.can_choose_topic = True
-            for top_name in self.user_topics.keys():
+            for top_name in words_by_lvl[self.store.get('user')['lang']].keys():
+                mem_top_name = top_name
+                try:
+                    if 0.01 < self.user_topics[top_name]['hair_pr'] < 0.9:
+                        self.can_choose_topic = False
+                except:
+                    mem_top_name = translanguage_top_connect[top_name]
+                    if 0.01 < self.user_topics[mem_top_name]['hair_pr'] < 0.9:
+                        self.can_choose_topic = False
                 self.topic_keys.append(top_name)
-                if 0.01 < self.user_topics[top_name]['hair_pr'] < 0.9:
-                    self.can_choose_topic = False
             if self.can_choose_topic:
                 self.ids['temp_view'].alert.opacity = 1
 
         top_name = self.topic_keys[self.started]
+        mem_top_name = top_name
+        try:
+            self.user_topics[mem_top_name]['know_pr']
+        except:
+            mem_top_name = translanguage_top_connect[top_name]
         global temp_data
         self.started += 1
         self.ids['load_view'].my_pb.height = self.ids['load_view'].height / 38 * self.started
         temp_data = f"src/{source_by_top[top_name]}.png"
         layout = TopicLayout()
-        layout.top_info_layout.progress_know.size_hint_y = self.user_topics[top_name]['know_pr']
-        layout.top_info_layout.progress_repeat.size_hint_y = self.user_topics[top_name]['repeat_pr']
-        layout.top_info_layout.progress_hair.size_hint_y = self.user_topics[top_name]['hair_pr']
+        layout.top_info_layout.progress_know.size_hint_y = self.user_topics[mem_top_name]['know_pr']
+        layout.top_info_layout.progress_repeat.size_hint_y = self.user_topics[mem_top_name]['repeat_pr']
+        layout.top_info_layout.progress_hair.size_hint_y = self.user_topics[mem_top_name]['hair_pr']
         layout.btn.text = top_name
-        if not self.can_choose_topic and 0.01 == self.user_topics[top_name]['hair_pr']:
+        if not self.can_choose_topic and 0.01 == self.user_topics[mem_top_name]['hair_pr']:
             layout.opacity = 0.5
             layout.btn.background_down = 'src/topic.png'
         else:
@@ -895,7 +1023,7 @@ class ViewManager(FloatLayout):
 
     def chose_main_view(self):
         if 'user' in self.store:
-            self.target_view = 'home' # home
+            self.target_view = 'home'  # home
             # ['splitting', 'Животные', 'cow', 'корова']
             # ['selection', 'Животные', 'animal', 'животное', ['эни', 'мэл']]
         else:

@@ -2,6 +2,9 @@ import json
 from random import randint
 import time
 
+from kivy.storage.jsonstore import JsonStore
+
+from language import Language
 
 class Associator():
     def __init__(self):
@@ -32,7 +35,9 @@ class Associator():
         :return:
         '''
         self.start_t("load_dict"+name)
+        print(name)
         with open(f'{name}.data', 'r') as file:
+            if name == 'ru_nouns':  print(file.read())
             ret = json.loads(file.read())
             self.stop_t("load_dict"+name)
             return ret
@@ -44,7 +49,10 @@ class Associator():
         :return:
         '''
         self.start_t("china_trans")
-        china_dict = self.load_dict('china_trans')
+        store = JsonStore('hello.json')
+        lang = Language()
+        lang.set_lang(store.get('user')['lang'])
+        china_dict = self.load_dict(lang.title('FILE_CHINA_TRANS'))
         for compl in china_dict['complex']:
             word_trans = word_trans.replace(compl, china_dict['complex'][compl])
         for compl in china_dict['simple']:
@@ -73,7 +81,7 @@ class Associator():
         :return:
         """
         self.start_t("get_letters_type")
-        ru_vowels = ['а', 'е', 'ё', 'и', 'о', 'у', 'ы', 'э', 'ю', 'я']
+        ru_vowels = ['а', 'е', 'ё', 'и', 'о', 'у', 'ы', 'э', 'ю', 'я', 'і', 'е']
         ru_consonant = ['б', 'в', 'г', 'д', 'ж', 'з', 'й', 'к', 'л', 'м', 'н', 'п', 'р', 'с', 'т', 'ф', 'х', 'ц', 'ч',
                         'ш',
                         'щ', 'ъ', 'ь']
@@ -321,7 +329,10 @@ class Associator():
         self.start_t("get_words_of_broken_version")
         all_compares = []
         if not self.ru_nouns:
-            self.ru_nouns = self.load_dict('ru_nouns')
+            store = JsonStore('hello.json')
+            lang = Language()
+            lang.set_lang(store.get('user')['lang'])
+            self.ru_nouns = self.load_dict(lang.title('FILE_NOUNS'))
         for word_part in broken_word:
             all_word_parts = {}
             self.start_t("get_words_of_broken_version # one word_part")

@@ -189,6 +189,12 @@
     repeat: repeat
     know: know
     header: header
+    progress_hair: progress_hair
+    progress_know: progress_know
+    progress_repeat: progress_repeat
+    progress_know_text: progress_know_text
+    progress_hair_text: progress_hair_text
+    progress_repeat_text: progress_repeat_text
     canvas.before:
         Rectangle:
             pos: self.pos
@@ -213,6 +219,30 @@
             BoxLayout:
                 orientation: 'vertical'
                 BoxLayout:
+                    orientation: 'vertical'
+                    BoxLayout:
+                        size_hint: 1, 1
+                    BoxLayout:
+                        height: '56sp'
+                        canvas.before:
+                            Rectangle:
+                                pos: self.pos
+                                size: self.size
+                                source: 'src/hair_top.png'
+                        size_hint: 1, None
+                        SubLabel:
+                            id:  progress_hair_text
+                            text: '100'
+                    BoxLayout:
+                        size_hint_x: 0.5
+                        pos_hint: {'center_x': .5, 'center_y': .5}
+                        canvas.before:
+                            Rectangle:
+                                pos: self.pos
+                                size: self.size
+                                source: 'src/hair_mid.png'
+                        size_hint_y:  10 ####################
+                        id:  progress_hair
                 BoxLayout:
                     size_hint_y: 0.17
                     canvas.before:
@@ -225,6 +255,30 @@
             BoxLayout:
                 orientation: 'vertical'
                 BoxLayout:
+                    orientation: 'vertical'
+                    BoxLayout:
+                        size_hint: 1, 1
+                    BoxLayout:
+                        height: '56sp'
+                        canvas.before:
+                            Rectangle:
+                                pos: self.pos
+                                size: self.size
+                                source: 'src/repeat_top.png'
+                        size_hint: 1, None
+                        SubLabel:
+                            id:  progress_repeat_text
+                            text: '50'
+                    BoxLayout:
+                        size_hint_x: 0.5
+                        pos_hint: {'center_x': .5, 'center_y': .5}
+                        canvas.before:
+                            Rectangle:
+                                pos: self.pos
+                                size: self.size
+                                source: 'src/repeat_mid.png'
+                        size_hint_y:  1 ######################
+                        id:  progress_repeat
                 BoxLayout:
                     size_hint_y: 0.17
                     canvas.before:
@@ -237,6 +291,30 @@
             BoxLayout:
                 orientation: 'vertical'
                 BoxLayout:
+                    orientation: 'vertical'
+                    BoxLayout:
+                        size_hint: 1, 1
+                    BoxLayout:
+                        height: '56sp'
+                        canvas.before:
+                            Rectangle:
+                                pos: self.pos
+                                size: self.size
+                                source: 'src/know_top.png'
+                        size_hint: 1, None
+                        SubLabel:
+                            id:  progress_know_text
+                            text: '0'
+                    BoxLayout:
+                        size_hint_x: 0.5
+                        pos_hint: {'center_x': .5, 'center_y': .5}
+                        canvas.before:
+                            Rectangle:
+                                pos: self.pos
+                                size: self.size
+                                source: 'src/know_mid.png'
+                        size_hint_y:  0.001 #################
+                        id:  progress_know
                 BoxLayout:
                     size_hint_y: 0.17
                     canvas.before:

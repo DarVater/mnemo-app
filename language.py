@@ -2,7 +2,9 @@ class Language():
     language = 'ru'
 
     def __init__(self):
-        self.title_by_language = {"ru": {"TITLE_BTN_NEXT": 'Следующий',
+        self.title_by_language = {"ru": {"FILE_NOUNS": 'ru_nouns',
+                                         "FILE_CHINA_TRANS": 'ru_china_trans',
+                                         "TITLE_BTN_NEXT": 'Следующий',
                                          "TITLE_NAME_ONLY_CHARACTERS": 'Имя только из букв',
                                          "TITLE_NAME_NOT_LONGER": 'Имя до 10 символов',
                                          "TITLE_HI_WHAT_ARE_YOUR_NAME": 'Привет! Как тебя зовут?',
@@ -47,7 +49,9 @@ class Language():
                                          "TITLE_TOPIC_BTN_BAD": 'Плохо',
                                          },
 
-                                  "ua": {"TITLE_BTN_NEXT": 'Наступний',
+                                  "ua": {"FILE_NOUNS": 'ua_nouns',
+                                         "FILE_CHINA_TRANS": 'ua_china_trans',
+                                         "TITLE_BTN_NEXT": 'Наступний',
                                          "TITLE_NAME_ONLY_CHARACTERS": "Ім'я тільки з букв",
                                          "TITLE_NAME_NOT_LONGER": "Ім'я до 10 символів",
                                          "TITLE_HI_WHAT_ARE_YOUR_NAME": 'Вітаю! Як тебе звати?',

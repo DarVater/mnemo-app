@@ -392,8 +392,13 @@ class TestHomeView(unittest.TestCase):
             if app.root.target_view[0] != 'topic':
 
                 # выбрал разбиение
-                split_btn = app.root.ids['temp_view'].btn_place.children[-1]
-                app.root.ids['temp_view'].choose_split(split_btn)
+                try:
+                    split_btn = app.root.ids['temp_view'].btn_place.children[-1]
+                    app.root.ids['temp_view'].choose_split(split_btn)
+                except:
+                    if n < 8:
+                        split_btn = app.root.ids['temp_view'].btn_place.children[0]
+                        app.root.ids['temp_view'].choose_split(split_btn)
 
                 # Ванька подобрал опять по слову
                 for word_list in app.root.ids['temp_view'].word_place.children:
@@ -409,25 +414,309 @@ class TestHomeView(unittest.TestCase):
         app.root.ids['temp_view'].press_on('back')
         app.root.ids['temp_view'].press_on('back')
 
-        run_time(60*30)
+        run_time(60 * 30)
 
-        print(111111, app.root.target_view)
         # Выбрал тему
         app.root.ids['temp_view'].press_on('all_topics')
-        print(2222222, app.root.target_view)
         app.root.ids['temp_view'].choose_top('Животные')
-        print(3333333, app.root.target_view)
+
+        # Кнопки учить уже не было
+        must_be = 'Объекты'
+        answer_word = app.root.ids['temp_view'].learning.text
+        self.assertEqual(answer_word, must_be)
+
+        # Ответ с одной подсказкой
+        if 1:
+            # Программа спрашивала слово
+            ask_word = app.root.ids['temp_view'].header.text
+
+            # Он нажал на ответы
+            app.root.ids['temp_view'].show_answers()
+
+            # Этого слова он не помнил и нажал на кнопку помощи
+            app.root.ids['temp_view'].show_helper(app.root.ids['temp_view'].learning)
+
+            # Она поменялась на
+            must_be = 'Забыл'
+            answer_word = app.root.ids['temp_view'].learning.text
+            self.assertEqual(answer_word, must_be)
+
+            # Ванька вспомнил слово
+            answer_word = animals[ask_word]
+            for version in app.root.ids['temp_view'].versions.children:
+                answer = version.text
+                if answer_word == answer:
+                    find_btn = version
+            help1 = find_btn.text
+            print('help1: ', help1)
+            app.root.ids['temp_view'].choose_version(find_btn)
+
+        # Ответ с двумя подсказками
+        if 2:
+            # Программа спрашивала слово
+            ask_word = app.root.ids['temp_view'].header.text
+
+            # Он нажал на ответы
+            app.root.ids['temp_view'].show_answers()
+
+            # Этого слова он не помнил и нажал на кнопку помощи
+            app.root.ids['temp_view'].show_helper(app.root.ids['temp_view'].learning)
+
+            # Объекты не помогли он нажал на не помню
+            app.root.ids['temp_view'].show_helper(app.root.ids['temp_view'].learning)
+
+            # Она поменялась на
+            must_be = 'Плохо'
+            answer_word = app.root.ids['temp_view'].learning.text
+            self.assertEqual(answer_word, must_be)
+
+            # Ванька вспомнил слово
+            answer_word = animals[ask_word]
+            for version in app.root.ids['temp_view'].versions.children:
+                answer = version.text
+                if answer_word == answer:
+                    find_btn = version
+            help2 = find_btn.text
+            print('help2: ', help2)
+            app.root.ids['temp_view'].choose_version(find_btn)
+
+        # Ванька ответил на остальные вопросы повторения
+        for n in range(len(app.root.ids['temp_view'].repeating_list)):
+            # Программа спрашивала слово
+            ask_word = app.root.ids['temp_view'].header.text
+
+            # Он нажал на ответы
+            app.root.ids['temp_view'].show_answers()
+
+            # Ванька знал слово
+            answer_word = animals[ask_word]
+            for version in app.root.ids['temp_view'].versions.children:
+                answer = version.text
+                if answer_word == answer:
+                    find_btn = version
+            app.root.ids['temp_view'].choose_version(find_btn)
+
+        # Кнопки учить появилась
+        must_be = 'Учить'
+        answer_word = app.root.ids['temp_view'].learning.text
+        self.assertEqual(answer_word, must_be)
+
+        # Его позвали и он вышел
+        app.root.ids['temp_view'].press_on('back')
+        app.root.ids['temp_view'].press_on('back')
+
+        # Прошло еще 5 минут
+        run_time(60 * 5)
+
+        # Выбрал тему
+        app.root.ids['temp_view'].press_on('all_topics')
+        app.root.ids['temp_view'].choose_top('Животные')
+
+        # Кнопка учить еще была
+        must_be = 'Учить'
+        answer_word = app.root.ids['temp_view'].learning.text
+        self.assertEqual(answer_word, must_be)
+
+        # Его позвали и он вышел
+        app.root.ids['temp_view'].press_on('back')
+        app.root.ids['temp_view'].press_on('back')
+
+        # Прошло еще 25 минут
+        run_time(60 * 25)
+
+        # Выбрал тему
+        app.root.ids['temp_view'].press_on('all_topics')
+        app.root.ids['temp_view'].choose_top('Животные')
+
+        # Кнопки учить уже не было
+        must_be = 'Объекты'
+        answer_word = app.root.ids['temp_view'].learning.text
+        self.assertEqual(answer_word, must_be)
+
+        # Его позвали и он вышел
+        app.root.ids['temp_view'].press_on('back')
+        app.root.ids['temp_view'].press_on('back')
+
+        # Прошло еще 31 минут
+        run_time(60 * 60 * 2)
+
+        # Выбрал тему
+        app.root.ids['temp_view'].press_on('all_topics')
+        app.root.ids['temp_view'].choose_top('Животные')
+
+        # Кнопки учить уже не было
+        must_be = 'Объекты'
+        answer_word = app.root.ids['temp_view'].learning.text
+        self.assertEqual(answer_word, must_be)
+
+        # Ситуация повторилась
+        if 1:
+            # Ответ с одной подсказкой
+            if 1:
+                # Программа спрашивала слово
+                ask_word = app.root.ids['temp_view'].header.text
+
+                # Он нажал на ответы
+                app.root.ids['temp_view'].show_answers()
+
+                # Этого слова он не помнил и нажал на кнопку помощи
+                app.root.ids['temp_view'].show_helper(app.root.ids['temp_view'].learning)
+
+                # Она поменялась на
+                must_be = 'Забыл'
+                answer_word = app.root.ids['temp_view'].learning.text
+                self.assertEqual(answer_word, must_be)
+
+                # Ванька вспомнил слово
+                answer_word = animals[ask_word]
+                for version in app.root.ids['temp_view'].versions.children:
+                    answer = version.text
+                    if answer_word == answer:
+                        find_btn = version
+                help1 = find_btn.text
+                print('help1: ', help1)
+                app.root.ids['temp_view'].choose_version(find_btn)
+
+            # Ответ с двумя подсказками
+            if 2:
+                # Программа спрашивала слово
+                ask_word = app.root.ids['temp_view'].header.text
+
+                # Он нажал на ответы
+                app.root.ids['temp_view'].show_answers()
+
+                # Этого слова он не помнил и нажал на кнопку помощи
+                app.root.ids['temp_view'].show_helper(app.root.ids['temp_view'].learning)
+
+                # Объекты не помогли он нажал на не помню
+                app.root.ids['temp_view'].show_helper(app.root.ids['temp_view'].learning)
+
+                # Она поменялась на
+                must_be = 'Плохо'
+                answer_word = app.root.ids['temp_view'].learning.text
+                self.assertEqual(answer_word, must_be)
+
+                # Ванька вспомнил слово
+                answer_word = animals[ask_word]
+                for version in app.root.ids['temp_view'].versions.children:
+                    answer = version.text
+                    if answer_word == answer:
+                        find_btn = version
+                help2 = find_btn.text
+                print('help2: ', help2)
+                app.root.ids['temp_view'].choose_version(find_btn)
+
+            # Ванька ответил на остальные вопросы повторения
+            for n in range(len(app.root.ids['temp_view'].repeating_list)):
+                # Программа спрашивала слово
+                ask_word = app.root.ids['temp_view'].header.text
+
+                # Он нажал на ответы
+                app.root.ids['temp_view'].show_answers()
+
+                # Ванька знал слово
+                answer_word = animals[ask_word]
+                for version in app.root.ids['temp_view'].versions.children:
+                    answer = version.text
+                    if answer_word == answer:
+                        find_btn = version
+                app.root.ids['temp_view'].choose_version(find_btn)
+
+            # Кнопки учить появилась
+            must_be = 'Учить'
+            answer_word = app.root.ids['temp_view'].learning.text
+            self.assertEqual(answer_word, must_be)
+
+        # Его позвали и он вышел
+        app.root.ids['temp_view'].press_on('back')
+        app.root.ids['temp_view'].press_on('back')
+
+        # Прошло еще 5 минут
+        run_time(60 * 5)
+
+        # Выбрал тему
+        app.root.ids['temp_view'].press_on('all_topics')
+        app.root.ids['temp_view'].choose_top('Животные')
+
+        # Кнопка учить еще была
+        must_be = 'Учить'
+        answer_word = app.root.ids['temp_view'].learning.text
+        self.assertEqual(answer_word, must_be)
+
+        # Слов для повторения не было
+        self.assertEqual(0, len(app.root.ids['temp_view'].repeating_list))
+
+        # Его позвали и он вышел
+        app.root.ids['temp_view'].press_on('back')
+        app.root.ids['temp_view'].press_on('back')
+
+        # Прошло еще 25 минут
+        run_time(60 * 25)
+
+        # Выбрал тему
+        app.root.ids['temp_view'].press_on('all_topics')
+        app.root.ids['temp_view'].choose_top('Животные')
+
+        # Кнопки учить уже не было
+        must_be = 'Объекты'
+        answer_word = app.root.ids['temp_view'].learning.text
+        self.assertEqual(answer_word, must_be)
+
+        # Добавилось слово для повторения
+        self.assertEqual(1, len(app.root.ids['temp_view'].repeating_list))
+
+        # Его позвали и он вышел
+        app.root.ids['temp_view'].press_on('back')
+        app.root.ids['temp_view'].press_on('back')
+
+        # Прошло еще 91 минут
+        run_time(60 * 91)
+
+        # Выбрал тему
+        app.root.ids['temp_view'].press_on('all_topics')
+        app.root.ids['temp_view'].choose_top('Животные')
+
+        # Кнопки учить уже не было
+        must_be = 'Объекты'
+        answer_word = app.root.ids['temp_view'].learning.text
+        self.assertEqual(answer_word, must_be)
+
+        # Добавилось слово для повторения
+        self.assertEqual(2, len(app.root.ids['temp_view'].repeating_list))
+
+        # Ванька ответил на эти вопросы
+        for n in range(len(app.root.ids['temp_view'].repeating_list)):
+            # Программа спрашивала слово
+            ask_word = app.root.ids['temp_view'].header.text
+
+            # Он нажал на ответы
+            app.root.ids['temp_view'].show_answers()
+
+            # Ванька знал слово
+            answer_word = animals[ask_word]
+            for version in app.root.ids['temp_view'].versions.children:
+                answer = version.text
+                if answer_word == answer:
+                    find_btn = version
+            app.root.ids['temp_view'].choose_version(find_btn)
+
+        # Кнопки учить появилась
+        must_be = 'Учить'
+        answer_word = app.root.ids['temp_view'].learning.text
+        self.assertEqual(answer_word, must_be)
+
+        print(app.root.target_view)
+        print('repeating_list', app.root.ids['temp_view'].repeating_list)
+
 
 def run_time(seconds):
     with open('hello.json', 'r') as file:
         text = file.read()
-    print()
     new_text_list = []
     for part in text.split(' '):
         try:
             if ',' in part and '}' not in part and int(part[0:-1]) > 160000000:
                 part = f"{int(part[0:-1]) - seconds},"
-                print(part[0:-1])
         except:
             pass
         new_text_list.append(part)
