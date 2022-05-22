@@ -682,7 +682,7 @@ class TestHomeView(unittest.TestCase):
         self.assertEqual(answer_word, must_be)
 
         # Добавилось слово для повторения
-        self.assertEqual(2, len(app.root.ids['temp_view'].repeating_list))
+        self.assertEqual(3, len(app.root.ids['temp_view'].repeating_list))
 
         # Ванька ответил на эти вопросы
         for n in range(len(app.root.ids['temp_view'].repeating_list)):

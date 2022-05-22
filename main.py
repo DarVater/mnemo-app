@@ -1,5 +1,6 @@
 import random
 import time
+from datetime import datetime
 
 from kivy.app import App
 from kivy.clock import Clock
@@ -8,18 +9,16 @@ from kivy.uix.floatlayout import FloatLayout
 from kivy.storage.jsonstore import JsonStore
 from kivy.uix.button import Button
 from kivy.core.window import Window
-from datetime import datetime
-
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.label import Label
-from kivy.uix.layout import Layout
 
 from language import Language
 from word_by_topics import words_by_lvl, source_by_top, translanguage_top_connect
 from assosiator import Associator
 
-Window.size = 540, 960
 error_catch = False  # False True
+if not error_catch:
+    Window.size = 540, 960
 
 
 class SelectionPart(BoxLayout):
@@ -661,7 +660,7 @@ class ViewSingUp(FloatLayout):
         self.user_register('F')
 
     def create_start_user_topics(self):
-        lan = self.root.store.get('user')['lang']
+        lan = 'ru'
         topics = words_by_lvl[lan].keys()
         user_topics = {}
         for top in topics:
@@ -790,7 +789,6 @@ class ViewHome(FloatLayout):
         repeat_pr = 0
         hair_pr = 0
         for top_name in self.store.get('user')['user_topics'].keys():
-            print(top_name)
             n += 1
             know_pr += float(self.store.get('user')['user_topics'][top_name]["know_pr"])
             repeat_pr += float(self.store.get('user')['user_topics'][top_name]["repeat_pr"])
@@ -981,7 +979,7 @@ class ViewManager(FloatLayout):
         global temp_data
         self.started += 1
         self.ids['load_view'].my_pb.height = self.ids['load_view'].height / 38 * self.started
-        temp_data = f"src/{source_by_top[top_name]}.png"
+        temp_data = f"src/{source_by_top[mem_top_name]}.png"
         layout = TopicLayout()
         layout.top_info_layout.progress_know.size_hint_y = self.user_topics[mem_top_name]['know_pr']
         layout.top_info_layout.progress_repeat.size_hint_y = self.user_topics[mem_top_name]['repeat_pr']
@@ -1042,6 +1040,7 @@ class MyApp(App):
 
     def build(self):
         global exeption
+        self.icon = 'src/Logo.png'
         if exeption == '':
             self.view_manager = ViewManager()
         else:

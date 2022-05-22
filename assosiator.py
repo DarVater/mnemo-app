@@ -35,9 +35,7 @@ class Associator():
         :return:
         '''
         self.start_t("load_dict"+name)
-        print(name)
         with open(f'{name}.data', 'r') as file:
-            if name == 'ru_nouns':  print(file.read())
             ret = json.loads(file.read())
             self.stop_t("load_dict"+name)
             return ret
@@ -371,7 +369,6 @@ class Associator():
         self.start_t("get_words_of_broken_of_all_version")
         all_seem_word = {}
         for broken_word in broken_word_version:
-            print(broken_word)
             fined_seem_word = self.get_words_of_broken_version(broken_word )
             all_seem_word['|'.join(broken_word)] = fined_seem_word
         self.stop_t("get_words_of_broken_of_all_version")
