@@ -234,13 +234,13 @@ class TestHomeView(unittest.TestCase):
         self.assertEqual(answer, test_word)
 
         # Ему понравилась тема животные
-        app.root.ids['temp_view'].choose_top('Животные')
+        app.root.ids['temp_view'].choose_top('Animals')
 
         # Приложение написало слово по-русски
         ask_word = app.root.ids['temp_view'].header.text
 
         # Ответа не было видно, а были две кнопки учить и ответы
-        test_word = 'Ответы'
+        test_word = 'Знаю'
         answer = app.root.ids['temp_view'].answers.text
         self.assertEqual(answer, test_word)
         test_word = 'Учить'
@@ -294,11 +294,11 @@ class TestHomeView(unittest.TestCase):
 
         # Прогресс темы увеличился
         store = JsonStore('hello.json')
-        topic_know_pr = store.get('user')['user_topics']['Животные']['know_pr']
+        topic_know_pr = store.get('user')['user_topics']['Animals']['know_pr']
         self.assertNotEquals(0.01, topic_know_pr)
 
         # Он опять вернулся в туже тему
-        app.root.ids['temp_view'].choose_top('Животные')
+        app.root.ids['temp_view'].choose_top('Animals')
 
         # Приложение опять написало слово по-русски
         ask_word = app.root.ids['temp_view'].header.text
@@ -374,13 +374,13 @@ class TestHomeView(unittest.TestCase):
 
         # И вышел посмотреть сохранило ли прогресс
         app.root.ids['temp_view'].press_on('back')
-        topic_know_pr = store.get('user')['user_topics']['Животные']['know_pr']
+        topic_know_pr = store.get('user')['user_topics']['Animals']['know_pr']
         store = JsonStore('hello.json')
-        self.assertGreater(store.get('user')['user_topics']['Животные']['hair_pr'],
-                           store.get('user')['user_topics']['Животные']['know_pr'])
+        self.assertGreater(store.get('user')['user_topics']['Animals']['hair_pr'],
+                           store.get('user')['user_topics']['Animals']['know_pr'])
 
         # Он опять вернулся в туже тему
-        app.root.ids['temp_view'].choose_top('Животные')
+        app.root.ids['temp_view'].choose_top('Animals')
 
         # Ванька проработал еще десяток слов
         for n in range(10):
@@ -418,7 +418,7 @@ class TestHomeView(unittest.TestCase):
 
         # Выбрал тему
         app.root.ids['temp_view'].press_on('all_topics')
-        app.root.ids['temp_view'].choose_top('Животные')
+        app.root.ids['temp_view'].choose_top('Animals')
 
         # Кнопки учить уже не было
         must_be = 'Объекты'
@@ -510,7 +510,7 @@ class TestHomeView(unittest.TestCase):
 
         # Выбрал тему
         app.root.ids['temp_view'].press_on('all_topics')
-        app.root.ids['temp_view'].choose_top('Животные')
+        app.root.ids['temp_view'].choose_top('Animals')
 
         # Кнопка учить еще была
         must_be = 'Учить'
@@ -526,7 +526,7 @@ class TestHomeView(unittest.TestCase):
 
         # Выбрал тему
         app.root.ids['temp_view'].press_on('all_topics')
-        app.root.ids['temp_view'].choose_top('Животные')
+        app.root.ids['temp_view'].choose_top('Animals')
 
         # Кнопки учить уже не было
         must_be = 'Объекты'
@@ -542,7 +542,7 @@ class TestHomeView(unittest.TestCase):
 
         # Выбрал тему
         app.root.ids['temp_view'].press_on('all_topics')
-        app.root.ids['temp_view'].choose_top('Животные')
+        app.root.ids['temp_view'].choose_top('Animals')
 
         # Кнопки учить уже не было
         must_be = 'Объекты'
@@ -636,7 +636,7 @@ class TestHomeView(unittest.TestCase):
 
         # Выбрал тему
         app.root.ids['temp_view'].press_on('all_topics')
-        app.root.ids['temp_view'].choose_top('Животные')
+        app.root.ids['temp_view'].choose_top('Animals')
 
         # Кнопка учить еще была
         must_be = 'Учить'
@@ -655,7 +655,7 @@ class TestHomeView(unittest.TestCase):
 
         # Выбрал тему
         app.root.ids['temp_view'].press_on('all_topics')
-        app.root.ids['temp_view'].choose_top('Животные')
+        app.root.ids['temp_view'].choose_top('Animals')
 
         # Кнопки учить уже не было
         must_be = 'Объекты'
@@ -674,7 +674,7 @@ class TestHomeView(unittest.TestCase):
 
         # Выбрал тему
         app.root.ids['temp_view'].press_on('all_topics')
-        app.root.ids['temp_view'].choose_top('Животные')
+        app.root.ids['temp_view'].choose_top('Animals')
 
         # Кнопки учить уже не было
         must_be = 'Объекты'
