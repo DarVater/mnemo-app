@@ -829,6 +829,7 @@ class ViewManager(FloatLayout):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        self.can_choose_topic = None
         self.top_names_to_repeat = None
         self.other_top_names = None
         self.front_top_names = None
@@ -943,16 +944,18 @@ class ViewManager(FloatLayout):
             self.user_topics = self.store.get('user')['user_topics']
             self.can_choose_topic = True
             for top_name in words_by_lvl[self.store.get('user')['lang']].keys():
-                if 0.01 < self.user_topics[top_name]['hair_pr'] < 0.9:
-                    self.can_choose_topic = False
                 time_to_repeat = self.user_topics[top_name]['time_to_repeat']
                 time_now = round(time.time())
                 if time_to_repeat != 0 and time_to_repeat < time_now:
                     self.front_top_names.append(top_name)
                     self.top_names_to_repeat.append(top_name)
+                elif 0.01 < self.user_topics[top_name]['hair_pr']:
+                    self.front_top_names.append(top_name)
+                    if self.user_topics[top_name]['hair_pr'] < 0.9:
+                        self.can_choose_topic = False
                 else:
                     self.other_top_names.append(top_name)
-            self.topic_keys = self.front_top_names +self.other_top_names
+            self.topic_keys = self.front_top_names + self.other_top_names
 
             if self.can_choose_topic:
                 self.ids['temp_view'].alert.opacity = 1

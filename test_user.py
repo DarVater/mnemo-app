@@ -318,7 +318,7 @@ class TestHomeView(unittest.TestCase):
         # Сверху появился ответ
         answer_word = app.root.ids['temp_view'].header.text
         answer = animals[ask_word]
-        self.assertEqual(answer_word, answer)
+        self.assertIn(answer, answer_word)
 
         # Он нажал на первую попавшуюся кнопку
         split_btn = app.root.ids['temp_view'].btn_place.children[-1]
@@ -327,7 +327,7 @@ class TestHomeView(unittest.TestCase):
         # Заголовок не изменился
         answer_word = app.root.ids['temp_view'].header.text
         answer = animals[ask_word]
-        self.assertEqual(answer_word, answer)
+        self.assertIn(answer, answer_word)
 
         # текст кнопки разбился на части
         for part in app.root.ids['temp_view'].part_place.children:
@@ -496,9 +496,9 @@ class TestHomeView(unittest.TestCase):
                     find_btn = version
             app.root.ids['temp_view'].choose_version(find_btn)
 
-        # Кнопки учить появилась
-        must_be = 'Учить'
-        answer_word = app.root.ids['temp_view'].learning.text
+        # Выкинуло в выбор темы
+        must_be = 'Темы и прогресс'
+        answer_word = app.root.ids['temp_view'].header.text
         self.assertEqual(answer_word, must_be)
 
         # Его позвали и он вышел
@@ -622,9 +622,9 @@ class TestHomeView(unittest.TestCase):
                         find_btn = version
                 app.root.ids['temp_view'].choose_version(find_btn)
 
-            # Кнопки учить появилась
-            must_be = 'Учить'
-            answer_word = app.root.ids['temp_view'].learning.text
+            # Выкинуло в выбор темы
+            must_be = 'Темы и прогресс'
+            answer_word = app.root.ids['temp_view'].header.text
             self.assertEqual(answer_word, must_be)
 
         # Его позвали и он вышел
@@ -700,13 +700,12 @@ class TestHomeView(unittest.TestCase):
                     find_btn = version
             app.root.ids['temp_view'].choose_version(find_btn)
 
-        # Кнопки учить появилась
-        must_be = 'Учить'
-        answer_word = app.root.ids['temp_view'].learning.text
+        # Выкинуло в выбор темы
+        must_be = 'Темы и прогресс'
+        answer_word = app.root.ids['temp_view'].header.text
         self.assertEqual(answer_word, must_be)
 
         print(app.root.target_view)
-        print('repeating_list', app.root.ids['temp_view'].repeating_list)
 
 
 def run_time(seconds):
