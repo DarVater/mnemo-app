@@ -332,6 +332,8 @@ class ViewTopic(BoxLayout):
                 else:
                     self.learning_list.pop(self.learning_list.index(self.target_word))
                     user_store['user_topics'][top_name]['etch_top_word'][en_word]['cont_repeat'] = 5
+                self.objects.text = ''
+                self.splited.text = ''
                 user_store['user_topics'][top_name]['etch_top_word'][en_word]['last_word_connect'] = round(
                     time.time())
                 ans_speed = round(time.time()) - self.timer_start
@@ -351,7 +353,7 @@ class ViewTopic(BoxLayout):
                         self.repeating_mod()
                     else:
                         self.repeat = False
-                        self.learning_mod()
+                        self.press_on('back')
                 else:
                     self.learning_mod()
                 self.clear_answers()
@@ -804,7 +806,6 @@ class ViewHome(FloatLayout):
             else:
                 self.progress_hair_text.text = str(round(50 * hair_pr))
 
-
     def topics(self):
         pass
 
@@ -828,6 +829,9 @@ class ViewManager(FloatLayout):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        self.top_names_to_repeat = None
+        self.other_top_names = None
+        self.front_top_names = None
         self.pb = None
         self.store = JsonStore('hello.json')
         self.chose_main_view()
@@ -933,14 +937,30 @@ class ViewManager(FloatLayout):
 
     def add_etch_top(self, time_pass=1):
         if self.started == 0:
+            self.front_top_names = []
+            self.other_top_names = []
+            self.top_names_to_repeat = []
             self.user_topics = self.store.get('user')['user_topics']
             self.can_choose_topic = True
             for top_name in words_by_lvl[self.store.get('user')['lang']].keys():
                 if 0.01 < self.user_topics[top_name]['hair_pr'] < 0.9:
                     self.can_choose_topic = False
-                self.topic_keys.append(top_name)
+                time_to_repeat = self.user_topics[top_name]['time_to_repeat']
+                time_now = round(time.time())
+                if time_to_repeat != 0 and time_to_repeat < time_now:
+                    self.front_top_names.append(top_name)
+                    self.top_names_to_repeat.append(top_name)
+                else:
+                    self.other_top_names.append(top_name)
+            self.topic_keys = self.front_top_names +self.other_top_names
+
             if self.can_choose_topic:
                 self.ids['temp_view'].alert.opacity = 1
+            if len(self.top_names_to_repeat) > 0:
+                self.ids['temp_view'].alert.opacity = 1
+                alert = self.lang.title('TITLE_ALERT_REPEAT_COUNT_TOPICS').replace('{}',
+                                                                                   str(len(self.top_names_to_repeat)))
+                self.ids['temp_view'].alert_text.text = alert
 
         top_name = self.topic_keys[self.started]
         global temp_data
@@ -958,13 +978,25 @@ class ViewManager(FloatLayout):
         if layout.top_info_layout.progress_hair.size_hint_y == 0:
             layout.top_info_layout.progress_hair.size_hint_y = 0.01
         count_words = str(len(self.user_topics[top_name]['etch_top_word']))
-        layout.btn.text = self.lang.title(f"TITLE_TOP_NAME_{top_name.upper()}") + ': ' + count_words
-        layout.btn.top_name = top_name
-        if not self.can_choose_topic and 0.01 == self.user_topics[top_name]['hair_pr']:
-            layout.opacity = 0.5
-            layout.btn.background_down = 'src/topic.png'
+        layout.btn.text = self.lang.title(f"TITLE_TOP_NAME_{top_name.upper()}")
+        if top_name in self.top_names_to_repeat:
+            layout.btn.text += ': ' + self.lang.title("TITLE_TOPIC_NAME_REPEAT")
         else:
-            layout.btn.bind(on_press=layout.press_on_topic)
+            layout.btn.text += ': ' + count_words
+        layout.btn.top_name = top_name
+
+        if len(self.top_names_to_repeat) > 0:
+            if top_name not in self.top_names_to_repeat:
+                layout.opacity = 0.5
+                layout.btn.background_down = 'src/topic.png'
+            else:
+                layout.btn.bind(on_press=layout.press_on_topic)
+        else:
+            if not self.can_choose_topic and 0.01 == self.user_topics[top_name]['hair_pr']:
+                layout.opacity = 0.5
+                layout.btn.background_down = 'src/topic.png'
+            else:
+                layout.btn.bind(on_press=layout.press_on_topic)
         self.ids['temp_view'].topics_grid.add_widget(layout)
         if self.started < 38:
             Clock.schedule_once(self.add_etch_top, 0.001)

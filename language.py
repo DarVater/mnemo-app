@@ -38,7 +38,7 @@ class Language():
                                          "TITLE_TOPIC_BTN_ANSWERS": 'Знаю',
                                          "TITLE_TOPIC_BTN_LEARN": 'Учить',
                                          "TITLE_TOPIC_BTN_NEXT": 'Дальше',
-                                         "TITLE_REMEMBERING_IMAGINATION": 'Представь выбранные объекты!',
+                                         "TITLE_REMEMBERING_IMAGINATION": 'Представь выбранные объекты используя тематику!',
                                          "TITLE_REMEMBERING_RESIZE": 'Уменьшить/увеличить объекты до размера баскетбольного мяча.',
                                          "TITLE_REMEMBERING_ACTION": 'Добавить действие (нелепые, смешные, пошлые)',
                                          "TITLE_REMEMBERING_DETAILS": '6 секунд на детали, добавить (звук, запах, потертости)',
@@ -84,7 +84,10 @@ class Language():
                                          'TITLE_TOP_NAME_APPROXIMATELY': 'На глаз',
                                          'TITLE_TOP_NAME_CONDITION': 'Состояние',
                                          'TITLE_TOP_NAME_QUALITIES': 'Качества',
-                                         'TITLE_TOP_NAME_PRONOUNS': 'Местоимения'
+                                         'TITLE_TOP_NAME_PRONOUNS': 'Местоимения',
+                                         'TITLE_ALERT_REPEAT_COUNT_TOPICS': 'Нужно повторить {} темы!',
+                                         'TITLE_TOPIC_NAME_REPEAT': 'Повторить',
+
                                          },
 
                                   "ua": {"FILE_NOUNS": 'ua_nouns',
@@ -123,7 +126,7 @@ class Language():
                                          "TITLE_TOPIC_BTN_ANSWERS": 'Знаю',
                                          "TITLE_TOPIC_BTN_LEARN": 'Вчити',
                                          "TITLE_TOPIC_BTN_NEXT": 'Далі',
-                                         "TITLE_REMEMBERING_IMAGINATION": 'Уяви вибрані об\'єкти!',
+                                         "TITLE_REMEMBERING_IMAGINATION": 'Уяви вибрані об\'єкти використовуючи тематику!',
                                          "TITLE_REMEMBERING_RESIZE": 'Зменшити/збільшити об\'єкти до розміру баскетбольного м\'яча.',
                                          "TITLE_REMEMBERING_ACTION": 'Додати дію (безглузду, смішну, вульгарну)',
                                          "TITLE_REMEMBERING_DETAILS": '6 секунд на деталі, додати (звук, запах, потертості)',
@@ -169,7 +172,10 @@ class Language():
                                          'TITLE_TOP_NAME_APPROXIMATELY': 'На око',
                                          'TITLE_TOP_NAME_CONDITION': 'Стан',
                                          'TITLE_TOP_NAME_QUALITIES': 'Якості',
-                                         'TITLE_TOP_NAME_PRONOUNS': 'Займенники'
+                                         'TITLE_TOP_NAME_PRONOUNS': 'Займенники',
+                                         'TITLE_ALERT_REPEAT_COUNT_TOPICS': 'Потрібно повторити {} теми!',
+                                         'TITLE_TOPIC_NAME_REPEAT': 'Повторити',
+
                                          },
                                   }
 
