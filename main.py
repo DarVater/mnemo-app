@@ -204,6 +204,7 @@ class ViewSelection(GridLayout):
 
     def selection(self):
         topic_name = self.lang.title(f"TITLE_TOP_NAME_{self.root.target_view[1].upper()}")
+
         self.header.text = topic_name + f"\n{self.root.target_view[2].lower()} = {self.root.target_view[3].lower()}"
         self.next_btn.text = self.lang.title('TITLE_TOPIC_BTN_NEXT')
         ass = Associator()
@@ -290,6 +291,7 @@ class ViewTopic(BoxLayout):
     answer_versions = []
     right_answers = {}
     helpers_by_word = {}
+    btns_to_reload = []
     timer_start = 0
     target_word = ''
     repeat = False
@@ -351,16 +353,26 @@ class ViewTopic(BoxLayout):
                 if self.repeat:
                     if len(self.repeating_list) > 0:
                         self.repeating_mod()
+                        for b in self.btns_to_reload:
+                            b.background_normal = 'src/btn_sup_big.png'
+                            b.background_down = 'src/btn_sup_big_pressed.png'
                     else:
                         self.repeat = False
                         self.press_on('back')
                 else:
-                    self.learning_mod()
+                    if len(self.learning_list) > 0:
+                        self.learning_mod()
+                    else:
+                        self.press_on('back')
                 self.clear_answers()
             else:
                 if self.repeat:
+                    self.btns_to_reload.append(btn)
                     btn.background_normal = 'src/btn_main_other.png'
                     btn.background_down = 'src/btn_main_other.png'
+                    self.splited.text = ', '.join(self.helpers_by_word[self.right_answers[self.target_word]]['word_split'  ])
+                    self.objects.text = ', '.join(self.helpers_by_word[self.right_answers[self.target_word]]['objects'])
+                    self.learning.text = self.lang.title('TITLE_TOPIC_BTN_BAD')
                 else:
                     self.learn_word()
 
@@ -483,7 +495,8 @@ class ViewTopic(BoxLayout):
                     if top['etch_top_word'][word]['last_word_connect'] == 0:
                         self.right_answers[ask_word] = word
                         self.learning_list.append(ask_word)
-                self.learning_mod()
+                if len(self.learning_list) > 0:
+                    self.learning_mod()
         else:
             self.repeat = True
         if self.repeat:
@@ -502,7 +515,6 @@ class ViewTopic(BoxLayout):
                 if top['etch_top_word'][word]['last_word_connect'] == 0:
                     self.learning_list.append(ask_word)
             self.repeating_mod()
-
 
 class ViewChooseTopics(FloatLayout):
     root = []
@@ -564,6 +576,12 @@ class ViewSingUp(FloatLayout):
     age = 0
     lang = Language()
 
+    def __init__(self, **kwargs):
+        super().__init__()
+        self.gander_male = None
+        self.got_it_place = None
+        self.gender = None
+
     def give_root(self, root):
         self.root = root
 
@@ -589,6 +607,7 @@ class ViewSingUp(FloatLayout):
         elif temp_view.header.text == f"{self.name}, {self.lang.title('TITLE_HOW_LOD_ARE_YOU')}":
             answer = temp_view.input.text
             year = datetime.now().year
+            if answer == '': answer = 0
             if int(answer) < year - 100:
                 temp_view.help_text.text = self.lang.title('TITLE_YOU_ARE_FROM_THE_PAST')
             elif int(answer) > year - 6:
@@ -635,10 +654,104 @@ class ViewSingUp(FloatLayout):
         self.view_interface.add_widget(self.gander_female)
 
     def choose_male(self):
-        self.user_register('M')
+        self.gender = 'M'
+        self.show_nuances_1()
 
     def choose_female(self):
-        self.user_register('F')
+        self.gender = 'F'
+        self.show_nuances_1()
+
+    def show_nuances_1(self):
+        for widget in self.root.ids['temp_view'].children:
+            self.root.ids['temp_view'].remove_widget(widget)
+        self.btn = Button()
+        self.btn.background_normal = 'src/topic_choose.png'
+        self.btn.background_down = 'src/topic_choose.png'
+        self.root.ids['temp_view'].add_widget(self.btn)
+        self.got_it_place = FloatLayout()
+        self.got_it = Button()
+        self.got_it.size_hint = 0.5, 0.05
+        self.got_it.pos_hint = {'center_x': .25, 'center_y': .66}
+        self.got_it.background_normal = 'src/transparent.png'
+        self.got_it.background_down = 'src/transparent.png'
+        self.got_it.nuances = 1
+        self.got_it.bind(on_press=self.press_on_got_it)
+        self.got_it_place.add_widget(self.got_it)
+        self.root.ids['temp_view'].add_widget(self.got_it_place)
+
+    def show_nuances_2(self):
+        for widget in self.root.ids['temp_view'].children:
+            self.root.ids['temp_view'].remove_widget(widget)
+        self.btn = Button()
+        self.btn.background_normal = 'src/difficult_selection.png'
+        self.btn.background_down = 'src/difficult_selection.png'
+        self.root.ids['temp_view'].add_widget(self.btn)
+        self.got_it_place = FloatLayout()
+        self.got_it = Button()
+        self.got_it.size_hint = 0.8, 0.06
+        self.got_it.pos_hint = {'center_x': .5, 'center_y': .71}
+        self.got_it.background_normal = 'src/transparent.png'
+        self.got_it.background_down = 'src/transparent.png'
+        self.got_it.nuances = 2
+        self.got_it.bind(on_press=self.press_on_got_it)
+        self.got_it_place.add_widget(self.got_it)
+        self.root.ids['temp_view'].add_widget(self.got_it_place)
+
+    def show_nuances_3(self):
+        for widget in self.root.ids['temp_view'].children:
+            self.root.ids['temp_view'].remove_widget(widget)
+        self.btn = Button()
+        self.btn.background_normal = 'src/can_write.png'
+        self.btn.background_down = 'src/can_write.png'
+        self.root.ids['temp_view'].add_widget(self.btn)
+        self.got_it_place = FloatLayout()
+        self.got_it = Button()
+        self.got_it.size_hint = 0.1, 0.06
+        self.got_it.pos_hint = {'center_x': .86, 'center_y': .70}
+        self.got_it.background_normal = 'src/transparent.png'
+        self.got_it.background_down = 'src/transparent.png'
+        self.got_it.nuances = 3
+        self.got_it.bind(on_press=self.press_on_got_it)
+        self.got_it_place.add_widget(self.got_it)
+        self.root.ids['temp_view'].add_widget(self.got_it_place)
+
+    def show_nuances_4(self):
+        for widget in self.root.ids['temp_view'].children:
+            self.root.ids['temp_view'].remove_widget(widget)
+        self.btn = Button()
+        self.btn.background_normal = 'src/choose_object.jpg'
+        self.btn.background_down = 'src/choose_object.jpg'
+        self.root.ids['temp_view'].add_widget(self.btn)
+        self.got_it_place = FloatLayout()
+        self.got_it = Button()
+        self.got_it.size_hint = 0.3, 0.05
+        self.got_it.pos_hint = {'center_x': .31, 'center_y': .60}
+        self.got_it.background_normal = 'src/transparent.png'
+        self.got_it.background_down = 'src/transparent.png'
+        self.got_it.nuances = 4
+        self.got_it.bind(on_press=self.press_on_got_it)
+        self.got_it_place.add_widget(self.got_it)
+        self.root.ids['temp_view'].add_widget(self.got_it_place)
+        self.got_it2_place = FloatLayout()
+        self.got_it2 = Button()
+        self.got_it2.size_hint = 0.3, 0.05
+        self.got_it2.pos_hint = {'center_x': .31, 'center_y': .24}
+        self.got_it2.background_normal = 'src/transparent.png'
+        self.got_it2.background_down = 'src/transparent.png'
+        self.got_it2.nuances = 4
+        self.got_it2.bind(on_press=self.press_on_got_it)
+        self.got_it2_place.add_widget(self.got_it2)
+        self.root.ids['temp_view'].add_widget(self.got_it2_place)
+
+    def press_on_got_it(self, btn):
+        if btn.nuances == 1:
+            self.show_nuances_2()
+        if btn.nuances == 2:
+            self.show_nuances_3()
+        if btn.nuances == 3:
+            self.show_nuances_4()
+        if btn.nuances == 4:
+            self.user_register()
 
     def create_start_user_topics(self):
         lan = 'ru'
@@ -656,11 +769,11 @@ class ViewSingUp(FloatLayout):
                                 }
         return user_topics
 
-    def user_register(self, gender):
+    def user_register(self):
         user_topics = self.create_start_user_topics()
         self.root.store.put('user',
                             name=self.name,
-                            sex=gender,
+                            sex=self.gender,
                             age=self.age,
                             lang='ru',
                             user_topics=user_topics,
@@ -851,6 +964,7 @@ class ViewManager(FloatLayout):
             self.add_widget(temp_view)
             self.ids['temp_view'].btn.text = self.lang.title('TITLE_BTN_NEXT')
             self.ids['temp_view'].header.text = self.lang.title('TITLE_HI_WHAT_ARE_YOUR_NAME')
+
         elif self.target_view == 'home':
             temp_view = ViewHome()
             temp_view.give_root(self)
@@ -983,23 +1097,24 @@ class ViewManager(FloatLayout):
         count_words = str(len(self.user_topics[top_name]['etch_top_word']))
         layout.btn.text = self.lang.title(f"TITLE_TOP_NAME_{top_name.upper()}")
         if top_name in self.top_names_to_repeat:
-            layout.btn.text += ': ' + self.lang.title("TITLE_TOPIC_NAME_REPEAT")
+            layout.btn.text += f': {self.lang.title("TITLE_TOPIC_NAME_REPEAT")}'
+            layout.btn.bind(on_press=layout.press_on_topic)
         else:
-            layout.btn.text += ': ' + count_words
+            if self.user_topics[top_name]['hair_pr'] == 2:
+                layout.btn.text += f': {self.lang.title("TITLE_TOPIC_NAME_HEARD")}'
+            else:
+                layout.btn.text +=  f' ({count_words})'
+                layout.btn.bind(on_press=layout.press_on_topic)
         layout.btn.top_name = top_name
 
         if len(self.top_names_to_repeat) > 0:
             if top_name not in self.top_names_to_repeat:
                 layout.opacity = 0.5
                 layout.btn.background_down = 'src/topic.png'
-            else:
-                layout.btn.bind(on_press=layout.press_on_topic)
         else:
             if not self.can_choose_topic and 0.01 == self.user_topics[top_name]['hair_pr']:
                 layout.opacity = 0.5
                 layout.btn.background_down = 'src/topic.png'
-            else:
-                layout.btn.bind(on_press=layout.press_on_topic)
         self.ids['temp_view'].topics_grid.add_widget(layout)
         if self.started < 38:
             Clock.schedule_once(self.add_etch_top, 0.001)

@@ -81,8 +81,7 @@ class Associator():
         self.start_t("get_letters_type")
         ru_vowels = ['а', 'е', 'ё', 'и', 'о', 'у', 'ы', 'э', 'ю', 'я', 'і', 'е']
         ru_consonant = ['б', 'в', 'г', 'д', 'ж', 'з', 'й', 'к', 'л', 'м', 'н', 'п', 'р', 'с', 'т', 'ф', 'х', 'ц', 'ч',
-                        'ш',
-                        'щ', 'ъ', 'ь']
+                        'ш', 'щ', 'ъ', 'ь']
         for vowel in ru_consonant:
             china_word = china_word.replace(vowel, 'с')
         for vowel in ru_vowels:
@@ -175,10 +174,12 @@ class Associator():
         all_syllables_version = {}
         loos_try = 0
         while True:
+            print(all_syllables)
             start_count_versions = len(all_syllables_version)
             for one_syllables in all_syllables:
-                collection_of_syllables = self.collect_syllables(one_syllables)
-                all_syllables_version[collection_of_syllables] = ''
+                if type(one_syllables) != None:
+                    collection_of_syllables = self.collect_syllables(one_syllables)
+                    all_syllables_version[collection_of_syllables] = ''
             if len(all_syllables_version) == start_count_versions:
                 loos_try += 1
             if loos_try > 10:

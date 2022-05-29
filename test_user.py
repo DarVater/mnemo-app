@@ -396,7 +396,7 @@ class TestHomeView(unittest.TestCase):
                     split_btn = app.root.ids['temp_view'].btn_place.children[-1]
                     app.root.ids['temp_view'].choose_split(split_btn)
                 except:
-                    if n < 8:
+                    if n < 15:
                         split_btn = app.root.ids['temp_view'].btn_place.children[0]
                         app.root.ids['temp_view'].choose_split(split_btn)
 
@@ -413,7 +413,6 @@ class TestHomeView(unittest.TestCase):
         # Почувствовал усталость вышел
         app.root.ids['temp_view'].press_on('back')
         app.root.ids['temp_view'].press_on('back')
-
         run_time(60 * 30)
 
         # Выбрал тему
@@ -708,6 +707,68 @@ class TestHomeView(unittest.TestCase):
         print(app.root.target_view)
 
 
+class TestDictionary(unittest.TestCase):
+
+    def test_avery_word_hes_transcription(self):
+        word_trans_dict = load_dict('word_trans_dict')
+        from word_by_topics import words_by_lvl_A1
+        for top_name in words_by_lvl_A1['ru']:
+            for word in words_by_lvl_A1['ru'][top_name]:
+                self.assertIn(word, word_trans_dict)
+
+    def test_ru_china_transcription(self):
+        ru_china_trans = load_dict('ru_china_trans')
+        word_trans_dict = load_dict('word_trans_dict')
+        from word_by_topics import words_by_lvl_A1
+        for top_name in words_by_lvl_A1['ru']:
+            for word in words_by_lvl_A1['ru'][top_name]:
+                trans = word_trans_dict[word]
+                now = ''
+                for t in trans:
+                    if t not in ru_china_trans['complex'] and t.lower() not in ru_china_trans['simple'] and t not in \
+                            ru_china_trans['simple']:
+                        print(t not in ru_china_trans['complex'], t.lower() not in ru_china_trans['simple'],
+                              t not in ru_china_trans['simple'])
+                        print(trans)
+                        print(now, f"'{t}'")
+                        self.assertIn(t, ru_china_trans['simple'])
+                    else:
+                        now += t
+
+    def test_ua_china_transcription(self):
+        ua_china_trans = load_dict('ua_china_trans')
+        word_trans_dict = load_dict('word_trans_dict')
+        from word_by_topics import words_by_lvl_A1
+        for top_name in words_by_lvl_A1['ru']:
+            for word in words_by_lvl_A1['ru'][top_name]:
+                trans = word_trans_dict[word]
+                now = ''
+                for t in trans:
+                    if t not in ua_china_trans['complex'] and t.lower() not in ua_china_trans['simple'] and t not in \
+                            ua_china_trans['simple']:
+                        print(t not in ua_china_trans['complex'], t.lower() not in ua_china_trans['simple'],
+                              t not in ua_china_trans['simple'])
+                        print(trans)
+                        print(now, f"'{t}'")
+                        self.assertIn(t, ua_china_trans['simple'])
+                    else:
+                        now += t
+
+    def test_vowels_n_consonant(self):
+        ua_china_trans = load_dict('ua_china_trans')
+        ru_china_trans = load_dict('ru_china_trans')
+        all_letters = ''
+        for china in ua_china_trans['complex']: all_letters += ua_china_trans['complex'][china]
+        for china in ua_china_trans['simple']: all_letters += ua_china_trans['simple'][china]
+        for china in ru_china_trans['complex']: all_letters += ru_china_trans['complex'][china]
+        for china in ru_china_trans['simple']: all_letters += ru_china_trans['simple'][china]
+        vowels_consonant = ['а', 'е', 'ё', 'и', 'о', 'у', 'ы', 'э', 'ю', 'я', 'і', 'е', 'б', 'в', 'г', 'д', 'ж', 'з',
+                            'й', 'к', 'л', 'м', 'н', 'п', 'р', 'с', 'т', 'ф', 'х', 'ц', 'ч',
+                            'ш', 'щ', 'ъ', 'ь', ' ']
+        for one_letter in all_letters:
+            self.assertIn(one_letter, vowels_consonant)
+
+
 def run_time(seconds):
     with open('hello.json', 'r') as file:
         text = file.read()
@@ -722,6 +783,17 @@ def run_time(seconds):
     new_text = ' '.join(new_text_list)
     with open('hello.json', 'w') as file:
         file.write(new_text)
+
+
+def load_dict(name: str):
+    '''
+    load dict from data file
+    :param name:
+    :return:
+    '''
+    with open(f'{name}.data', 'r') as file:
+        ret = json.loads(file.read())
+        return ret
 
 
 if __name__ == '__main__':

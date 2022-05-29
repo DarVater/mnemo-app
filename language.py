@@ -42,7 +42,7 @@ class Language():
                                          "TITLE_REMEMBERING_RESIZE": 'Уменьшить/увеличить объекты до размера баскетбольного мяча.',
                                          "TITLE_REMEMBERING_ACTION": 'Добавить действие (нелепые, смешные, пошлые)',
                                          "TITLE_REMEMBERING_DETAILS": '6 секунд на детали, добавить (звук, запах, потертости)',
-                                         "TITLE_REMEMBERING_SPEAK": 'Глядя вверх 3 раза повторить слово по-английски',
+                                         "TITLE_REMEMBERING_SPEAK": 'Глядя вверх в голос 3 раза повторить слово по-английски',
                                          "TITLE_REMEMBERING_READY": 'Есть',
                                          "TITLE_TOPIC_BTN_OBJECTS": 'Объекты',
                                          "TITLE_TOPIC_BTN_FORGET": 'Забыл',
@@ -87,6 +87,7 @@ class Language():
                                          'TITLE_TOP_NAME_PRONOUNS': 'Местоимения',
                                          'TITLE_ALERT_REPEAT_COUNT_TOPICS': 'Нужно повторить {} темы!',
                                          'TITLE_TOPIC_NAME_REPEAT': 'Повторить',
+                                         'TITLE_TOPIC_NAME_HEARD': 'Прошёл',
 
                                          },
 
@@ -130,7 +131,7 @@ class Language():
                                          "TITLE_REMEMBERING_RESIZE": 'Зменшити/збільшити об\'єкти до розміру баскетбольного м\'яча.',
                                          "TITLE_REMEMBERING_ACTION": 'Додати дію (безглузду, смішну, вульгарну)',
                                          "TITLE_REMEMBERING_DETAILS": '6 секунд на деталі, додати (звук, запах, потертості)',
-                                         "TITLE_REMEMBERING_SPEAK": 'Дивлячись вгору 3 рази повторити слово англійською',
+                                         "TITLE_REMEMBERING_SPEAK": 'Дивлячись вгору в голос 3 рази повторити слово англійською',
                                          "TITLE_REMEMBERING_READY": 'Готово',
                                          "TITLE_TOPIC_BTN_OBJECTS": 'Об\'єкти',
                                          "TITLE_TOPIC_BTN_FORGET": 'Забув',
@@ -175,6 +176,7 @@ class Language():
                                          'TITLE_TOP_NAME_PRONOUNS': 'Займенники',
                                          'TITLE_ALERT_REPEAT_COUNT_TOPICS': 'Потрібно повторити {} теми!',
                                          'TITLE_TOPIC_NAME_REPEAT': 'Повторити',
+                                         'TITLE_TOPIC_NAME_HEARD': 'Пройшов',
 
                                          },
                                   }
