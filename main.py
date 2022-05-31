@@ -1111,6 +1111,11 @@ class ViewManager(FloatLayout):
         else:
             if self.user_topics[top_name]['hair_pr'] == 2:
                 layout.btn.text += f': {self.lang.title("TITLE_TOPIC_NAME_HEARD")}'
+            elif self.user_topics[top_name]['hair_pr'] == 0.01:
+                layout.btn.text += f' ({count_words})'
+                if self.ids['temp_view'].alert_text.text == self.lang.title('TITLE_TOPIC_UNBLOCK_CHOOSE_TOPIC'):
+                    if self.ids['temp_view'].alert.opacity == 1:
+                        layout.btn.bind(on_press=layout.press_on_topic)
             else:
                 layout.btn.text += f' ({count_words})'
                 layout.btn.bind(on_press=layout.press_on_topic)
