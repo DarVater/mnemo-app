@@ -1166,7 +1166,7 @@ class ViewManager(FloatLayout):
 
     def server_connect(self):
         if self.ids['temp_view'].synchronize.text == self.lang.title('TITLE_BTN_SYNCHRONIZE'):
-            url = 'http://192.168.1.6:8001/'
+            url = 'http://darvater.pythonanywhere.com/'
             try:
                 with urllib.request.urlopen(f'{url}?is=online') as response:
                     html = response.read().decode('utf-8')
