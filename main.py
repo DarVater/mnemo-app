@@ -18,7 +18,7 @@ from language import Language
 from word_by_topics import words_by_lvl
 from assosiator import Associator
 
-error_catch = True  # False True
+error_catch = False  # False True
 if not error_catch:
     Window.size = 540, 960
 
@@ -865,8 +865,6 @@ class ViewHome(FloatLayout):
     def press_on(self, text):
         if text == 'Exit':
             App.get_running_app().stop()
-        if text == 'synchronize':
-            self.root.server_connect()
         elif text == 'how_it_works':
             self.root.target_view = 'how_it_works'
             self.root.remove_w('temp_view')
@@ -982,7 +980,6 @@ class ViewManager(FloatLayout):
             self.lang.set_lang(self.store.get('user')['lang'])
             self.ids['temp_view'].header.text = self.lang.title(f"TITLE_HOME_HEADER_{words_by_lvl['en_lvl']}")
             self.ids['temp_view'].exit.text = self.lang.title('TITLE_BTN_EXIT')
-            self.ids['temp_view'].synchronize.text = self.lang.title('TITLE_BTN_SYNCHRONIZE')
             self.ids['temp_view'].choose_language.text = self.lang.title('TITLE_BTN_CHOOSE_LANGUAGE')
             self.ids['temp_view'].how_it_works.text = self.lang.title('TITLE_BTN_HOW_IT_WORKS')
             self.ids['temp_view'].topics.text = self.lang.title('TITLE_BTN_TOPICS')
@@ -1159,6 +1156,7 @@ class ViewManager(FloatLayout):
         self.ids['temp_view'].view_interface.height = scroll_h * ((skaler - 1) * 1.5 + 1)
 
     def chose_main_view(self):
+        self.server_connect()
         if 'user' in self.store:
             self.target_view = 'home'  # home
             # ['splitting', 'Животные', 'cow', 'корова']
@@ -1170,35 +1168,34 @@ class ViewManager(FloatLayout):
         self.root.append(root)
 
     def server_connect(self):
-        if self.ids['temp_view'].synchronize.text == self.lang.title('TITLE_BTN_SYNCHRONIZE'):
-            url = 'http://darvater.pythonanywhere.com/'
-            try:
-                with urllib.request.urlopen(f'{url}?is=online') as response:
-                    html = response.read().decode('utf-8')
-                if html == 'True':
-                    req = urllib.request.Request(f'{url}send/')
-                    req.add_header('Content-Type', 'application/json; charset=utf-8')
-                    jsondata = json.dumps(self.store.get('user'))
-                    jsondataasbytes = jsondata.encode('utf-8')  # needs to be bytes
-                    req.add_header('Content-Length', len(jsondataasbytes))
-                    response = urllib.request.urlopen(req, jsondataasbytes)
-                    resp = response.read().decode('utf-8')
-                    user_store = json.loads(resp)
-                    self.store.put('user',
-                                   name=user_store['name'],
-                                   sex=user_store['sex'],
-                                   age=user_store['age'],
-                                   lang=user_store['lang'],
-                                   user_topics=user_store['user_topics'],
-                                   amail=user_store['amail']
-                                   )
-                    self.store = JsonStore(f'hello_{words_by_lvl["en_lvl"]}.json')
-                    self.remove_w('temp_view')
-                    self.draw_view()
-                    self.ids['temp_view'].synchronize.text = self.lang.title('TITLE_LOAD_FROM_SERVER')
-                    print(self.lang.title('TITLE_LOAD_FROM_SERVER'))
-            except:
-                self.ids['temp_view'].synchronize.text = self.lang.title('TITLE_NOT_AVAILABLE_SERVER')
+        url = 'http://darvater.pythonanywhere.com/'
+        try:
+            with urllib.request.urlopen(f'{url}?is=online') as response:
+                html = response.read().decode('utf-8')
+            if html == 'True':
+                req = urllib.request.Request(f'{url}send/')
+                req.add_header('Content-Type', 'application/json; charset=utf-8')
+                jsondata = json.dumps(self.store.get('user'))
+                jsondataasbytes = jsondata.encode('utf-8')  # needs to be bytes
+                req.add_header('Content-Length', len(jsondataasbytes))
+                response = urllib.request.urlopen(req, jsondataasbytes)
+                resp = response.read().decode('utf-8')
+                user_store = json.loads(resp)
+                self.store.put('user',
+                               name=user_store['name'],
+                               sex=user_store['sex'],
+                               age=user_store['age'],
+                               lang=user_store['lang'],
+                               user_topics=user_store['user_topics'],
+                               amail=user_store['amail']
+                               )
+                self.store = JsonStore(f'hello_{words_by_lvl["en_lvl"]}.json')
+                self.remove_w('temp_view')
+                self.draw_view()
+                self.ids['temp_view'].synchronize.text = self.lang.title('TITLE_LOAD_FROM_SERVER')
+                print(self.lang.title('TITLE_LOAD_FROM_SERVER'))
+        except:
+            pass
 
 class ViewExcept(BoxLayout):
     pass
