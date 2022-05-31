@@ -6,8 +6,9 @@ import unittest
 from functools import partial
 from kivy.clock import Clock
 from kivy.storage.jsonstore import JsonStore
+from kivy.uix.button import Button
 
-from main import MyApp
+from main import MyApp, words_by_lvl
 
 
 class TestSingUpView(unittest.TestCase):
@@ -32,16 +33,16 @@ class TestSingUpView(unittest.TestCase):
 
     def test_sing_up(self):
         try:
-            path = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'hello.json')
+            path = os.path.join(os.path.abspath(os.path.dirname(__file__)), f'hello_{words_by_lvl["en_lvl"]}.json')
             os.remove(path)
         except:
-            print("Don`t have 'hello.json' file to delete")
+            print(f"Don`t have hello_{words_by_lvl['en_lvl']}.json file to delete")
         app = MyApp()
         p = partial(self.run_test, app)
         Clock.schedule_once(p, 0.000001)
         app.run()
 
-        # дополнительных надписей небыло
+        # дополнительных надписей не было
         start_help_text = app.root.ids['temp_view'].help_text.text
         self.assertEqual(start_help_text, '')
 
@@ -144,6 +145,11 @@ class TestSingUpView(unittest.TestCase):
         # Он назал на кнопку 'Мужской'
         app.root.ids['temp_view'].view_interface.ids['gander_male'].on_press()
 
+        # И прошёл обучение
+        btn = Button()
+        btn.nuances = 4
+        app.root.ids['temp_view'].press_on_got_it(btn)
+
         # Ванька увидел экран домашней страницы
         answer_no_user = 'home'
         test_view = app.root.target_view
@@ -192,7 +198,7 @@ class TestHomeView(unittest.TestCase):
         answer_no_user = 'home'
         test_view = app.root.target_view
         self.assertEqual(test_view, answer_no_user)
-
+        asdf
         # Поинтересовался Ванька какие языки еще есть
         app.root.ids['temp_view'].press_on('choose_language')
 
@@ -208,17 +214,17 @@ class TestHomeView(unittest.TestCase):
         app.root.ids['temp_view'].press_on('back')
 
         # Он заметил, что в главном окне изменилась надпись на Украинский язык
-        test_word = 'Слова рівня А1'
+        test_word = 'Слова рівня'
         answer = app.root.ids['temp_view'].header.text
-        self.assertEqual(answer, test_word)
+        self.assertIn( test_word, answer)
 
         # Ваника поменял обратно
         app.root.ids['temp_view'].press_on('choose_language')
         app.root.ids['temp_view'].press_on('ru')
         app.root.ids['temp_view'].press_on('back')
-        test_word = 'Слова уровня А1'
+        test_word = 'Слова уровня'
         answer = app.root.ids['temp_view'].header.text
-        self.assertEqual(answer, test_word)
+        self.assertIn(test_word, answer)
 
         # Потом он нажал на темы
         app.root.ids['temp_view'].press_on('all_topics')
@@ -293,7 +299,7 @@ class TestHomeView(unittest.TestCase):
         self.assertEqual(answer, test_word)
 
         # Прогресс темы увеличился
-        store = JsonStore('hello.json')
+        store = JsonStore(f'hello_{words_by_lvl["en_lvl"]}.json')
         topic_know_pr = store.get('user')['user_topics']['Animals']['know_pr']
         self.assertNotEquals(0.01, topic_know_pr)
 
@@ -375,7 +381,7 @@ class TestHomeView(unittest.TestCase):
         # И вышел посмотреть сохранило ли прогресс
         app.root.ids['temp_view'].press_on('back')
         topic_know_pr = store.get('user')['user_topics']['Animals']['know_pr']
-        store = JsonStore('hello.json')
+        store = JsonStore(f'hello_{words_by_lvl["en_lvl"]}.json')
         self.assertGreater(store.get('user')['user_topics']['Animals']['hair_pr'],
                            store.get('user')['user_topics']['Animals']['know_pr'])
 
@@ -770,7 +776,7 @@ class TestDictionary(unittest.TestCase):
 
 
 def run_time(seconds):
-    with open('hello.json', 'r') as file:
+    with open(f'hello_{words_by_lvl["en_lvl"]}.json', 'r') as file:
         text = file.read()
     new_text_list = []
     for part in text.split(' '):
@@ -781,7 +787,7 @@ def run_time(seconds):
             pass
         new_text_list.append(part)
     new_text = ' '.join(new_text_list)
-    with open('hello.json', 'w') as file:
+    with open(f'hello_{words_by_lvl["en_lvl"]}.json', 'w') as file:
         file.write(new_text)
 
 

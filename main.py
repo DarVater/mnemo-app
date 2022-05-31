@@ -1,6 +1,8 @@
+import json
 import random
 import time
 from datetime import datetime
+import urllib.request
 
 from kivy.app import App
 from kivy.clock import Clock
@@ -13,7 +15,7 @@ from kivy.uix.gridlayout import GridLayout
 from kivy.uix.label import Label
 
 from language import Language
-from word_by_topics import words_by_lvl_A1 as words_by_lvl
+from word_by_topics import words_by_lvl
 from assosiator import Associator
 
 error_catch = False  # False True
@@ -26,7 +28,7 @@ class SelectionPart(BoxLayout):
         text = btn.parent.children[1].text
         if len(text) > 1:
             btn.parent.children[1].background_normal = 'src/lighted.png'
-            root = btn.parent.parent.parent.parent.parent.parent
+            root = btn.parent.parent.parent.parent.parent.parent.parent
             index_part = btn.parent.parent.children[10].index
             root.kit[index_part] = text
             for n in range(10):
@@ -299,13 +301,13 @@ class ViewTopic(BoxLayout):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.store = JsonStore('hello.json')
+        self.store = JsonStore(f'hello_{words_by_lvl["en_lvl"]}.json')
         self.lang.set_lang(self.store.get('user')['lang'])
 
     def choose_version(self, btn):
         if self.check_answers:  # Check was showing answers
             if self.right_answers[self.target_word] == btn.text:
-                self.store = JsonStore('hello.json')
+                self.store = JsonStore(f'hello_{words_by_lvl["en_lvl"]}.json')
                 user_store = self.root.store.get('user')
                 top_name = self.root.target_view[1]
                 en_word = self.right_answers[self.target_word]
@@ -370,7 +372,8 @@ class ViewTopic(BoxLayout):
                     self.btns_to_reload.append(btn)
                     btn.background_normal = 'src/btn_main_other.png'
                     btn.background_down = 'src/btn_main_other.png'
-                    self.splited.text = ', '.join(self.helpers_by_word[self.right_answers[self.target_word]]['word_split'  ])
+                    self.splited.text = ', '.join(
+                        self.helpers_by_word[self.right_answers[self.target_word]]['word_split'])
                     self.objects.text = ', '.join(self.helpers_by_word[self.right_answers[self.target_word]]['objects'])
                     self.learning.text = self.lang.title('TITLE_TOPIC_BTN_BAD')
                 else:
@@ -461,6 +464,8 @@ class ViewTopic(BoxLayout):
         self.check_answers = False
         for ver in self.versions.children:
             ver.text = ''
+            ver.background_normal = 'src/btn_sup_big.png'
+            ver.background_down = 'src/btn_sup_big_pressed.png'
 
     def show_answers(self):
         self.timer_start = round(time.time())
@@ -515,6 +520,7 @@ class ViewTopic(BoxLayout):
                 if top['etch_top_word'][word]['last_word_connect'] == 0:
                     self.learning_list.append(ask_word)
             self.repeating_mod()
+
 
 class ViewChooseTopics(FloatLayout):
     root = []
@@ -859,6 +865,8 @@ class ViewHome(FloatLayout):
     def press_on(self, text):
         if text == 'Exit':
             App.get_running_app().stop()
+        if text == 'synchronize':
+            self.root.server_connect()
         elif text == 'how_it_works':
             self.root.target_view = 'how_it_works'
             self.root.remove_w('temp_view')
@@ -874,7 +882,7 @@ class ViewHome(FloatLayout):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.store = JsonStore('hello.json')
+        self.store = JsonStore(f'hello_{words_by_lvl["en_lvl"]}.json')
 
     def give_root(self, root):
         self.root = root
@@ -947,7 +955,7 @@ class ViewManager(FloatLayout):
         self.other_top_names = None
         self.front_top_names = None
         self.pb = None
-        self.store = JsonStore('hello.json')
+        self.store = JsonStore(f'hello_{words_by_lvl["en_lvl"]}.json')
         self.chose_main_view()
         self.draw_view()
         self.user_topics = None
@@ -972,8 +980,9 @@ class ViewManager(FloatLayout):
             self.ids['temp_view'] = temp_view
             self.add_widget(temp_view)
             self.lang.set_lang(self.store.get('user')['lang'])
-            self.ids['temp_view'].header.text = self.lang.title('TITLE_HOME_HEADER')
+            self.ids['temp_view'].header.text = self.lang.title(f"TITLE_HOME_HEADER_{words_by_lvl['en_lvl']}")
             self.ids['temp_view'].exit.text = self.lang.title('TITLE_BTN_EXIT')
+            self.ids['temp_view'].synchronize.text = self.lang.title('TITLE_BTN_SYNCHRONIZE')
             self.ids['temp_view'].choose_language.text = self.lang.title('TITLE_BTN_CHOOSE_LANGUAGE')
             self.ids['temp_view'].how_it_works.text = self.lang.title('TITLE_BTN_HOW_IT_WORKS')
             self.ids['temp_view'].topics.text = self.lang.title('TITLE_BTN_TOPICS')
@@ -1030,7 +1039,7 @@ class ViewManager(FloatLayout):
             self.ids['temp_view'] = temp_view
             self.add_widget(temp_view)
             self.ids['temp_view'].header.text = self.lang.title('TITLE_TOPIC_HEADER')
-            self.store = JsonStore('hello.json')
+            self.store = JsonStore(f'hello_{words_by_lvl["en_lvl"]}.json')
             self.user_topics = self.store.get('user')['user_topics']
             self.ids['temp_view'].check_top_action(self.user_topics[self.target_view[1]], self.target_view[1])
 
@@ -1103,7 +1112,7 @@ class ViewManager(FloatLayout):
             if self.user_topics[top_name]['hair_pr'] == 2:
                 layout.btn.text += f': {self.lang.title("TITLE_TOPIC_NAME_HEARD")}'
             else:
-                layout.btn.text +=  f' ({count_words})'
+                layout.btn.text += f' ({count_words})'
                 layout.btn.bind(on_press=layout.press_on_topic)
         layout.btn.top_name = top_name
 
@@ -1155,6 +1164,32 @@ class ViewManager(FloatLayout):
     def give_root(self, root):
         self.root.append(root)
 
+    def server_connect(self):
+        url = 'http://192.168.1.6:8001/'
+        with urllib.request.urlopen(f'{url}?is=online') as response:
+            html = response.read().decode('utf-8')
+        if html == 'True':
+            req = urllib.request.Request(f'{url}send/')
+            req.add_header('Content-Type', 'application/json; charset=utf-8')
+            jsondata = json.dumps(self.store.get('user'))
+            jsondataasbytes = jsondata.encode('utf-8')  # needs to be bytes
+            req.add_header('Content-Length', len(jsondataasbytes))
+            response = urllib.request.urlopen(req, jsondataasbytes)
+            resp = response.read().decode('utf-8')
+            user_store = json.loads(resp)
+            print(type(user_store))
+            self.store.put('user',
+                           name=user_store['name'],
+                           sex=user_store['sex'],
+                           age=user_store['age'],
+                           lang=user_store['lang'],
+                           user_topics=user_store['user_topics'],
+                           amail=user_store['amail']
+                           )
+            self.store = JsonStore(f'hello_{words_by_lvl["en_lvl"]}.json')
+            self.ids['temp_view'].synchronize.text = "Ok"
+            self.remove_w('temp_view')
+            self.draw_view()
 
 class ViewExcept(BoxLayout):
     pass

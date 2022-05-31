@@ -3,6 +3,7 @@ from random import randint
 import time
 
 from kivy.storage.jsonstore import JsonStore
+from word_by_topics import words_by_lvl
 
 from language import Language
 
@@ -47,7 +48,7 @@ class Associator():
         :return:
         '''
         self.start_t("china_trans")
-        store = JsonStore('hello.json')
+        store = JsonStore(f'hello_{words_by_lvl["en_lvl"]}.json')
         lang = Language()
         lang.set_lang(store.get('user')['lang'])
         china_dict = self.load_dict(lang.title('FILE_CHINA_TRANS'))
@@ -328,7 +329,7 @@ class Associator():
         self.start_t("get_words_of_broken_version")
         all_compares = []
         if not self.ru_nouns:
-            store = JsonStore('hello.json')
+            store = JsonStore(f'hello_{words_by_lvl["en_lvl"]}.json')
             lang = Language()
             lang.set_lang(store.get('user')['lang'])
             self.ru_nouns = self.load_dict(lang.title('FILE_NOUNS'))
