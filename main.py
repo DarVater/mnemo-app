@@ -18,7 +18,7 @@ from language import Language
 from word_by_topics import words_by_lvl
 from assosiator import Associator
 
-error_catch = False  # False True
+error_catch = True  # False True
 if not error_catch:
     Window.size = 540, 960
 
@@ -1165,31 +1165,35 @@ class ViewManager(FloatLayout):
         self.root.append(root)
 
     def server_connect(self):
-        url = 'http://192.168.1.6:8001/'
-        with urllib.request.urlopen(f'{url}?is=online') as response:
-            html = response.read().decode('utf-8')
-        if html == 'True':
-            req = urllib.request.Request(f'{url}send/')
-            req.add_header('Content-Type', 'application/json; charset=utf-8')
-            jsondata = json.dumps(self.store.get('user'))
-            jsondataasbytes = jsondata.encode('utf-8')  # needs to be bytes
-            req.add_header('Content-Length', len(jsondataasbytes))
-            response = urllib.request.urlopen(req, jsondataasbytes)
-            resp = response.read().decode('utf-8')
-            user_store = json.loads(resp)
-            print(type(user_store))
-            self.store.put('user',
-                           name=user_store['name'],
-                           sex=user_store['sex'],
-                           age=user_store['age'],
-                           lang=user_store['lang'],
-                           user_topics=user_store['user_topics'],
-                           amail=user_store['amail']
-                           )
-            self.store = JsonStore(f'hello_{words_by_lvl["en_lvl"]}.json')
-            self.ids['temp_view'].synchronize.text = "Ok"
-            self.remove_w('temp_view')
-            self.draw_view()
+        if self.ids['temp_view'].synchronize.text == self.lang.title('TITLE_BTN_SYNCHRONIZE'):
+            url = 'http://192.168.1.6:8001/'
+            try:
+                with urllib.request.urlopen(f'{url}?is=online') as response:
+                    html = response.read().decode('utf-8')
+                if html == 'True':
+                    req = urllib.request.Request(f'{url}send/')
+                    req.add_header('Content-Type', 'application/json; charset=utf-8')
+                    jsondata = json.dumps(self.store.get('user'))
+                    jsondataasbytes = jsondata.encode('utf-8')  # needs to be bytes
+                    req.add_header('Content-Length', len(jsondataasbytes))
+                    response = urllib.request.urlopen(req, jsondataasbytes)
+                    resp = response.read().decode('utf-8')
+                    user_store = json.loads(resp)
+                    self.store.put('user',
+                                   name=user_store['name'],
+                                   sex=user_store['sex'],
+                                   age=user_store['age'],
+                                   lang=user_store['lang'],
+                                   user_topics=user_store['user_topics'],
+                                   amail=user_store['amail']
+                                   )
+                    self.store = JsonStore(f'hello_{words_by_lvl["en_lvl"]}.json')
+                    self.remove_w('temp_view')
+                    self.draw_view()
+                    self.ids['temp_view'].synchronize.text = self.lang.title('TITLE_LOAD_FROM_SERVER')
+                    print(self.lang.title('TITLE_LOAD_FROM_SERVER'))
+            except:
+                self.ids['temp_view'].synchronize.text = self.lang.title('TITLE_NOT_AVAILABLE_SERVER')
 
 class ViewExcept(BoxLayout):
     pass
