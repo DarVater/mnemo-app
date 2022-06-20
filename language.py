@@ -1,5 +1,6 @@
 class Language():
     language = 'ru'
+
     def __init__(self):
         self.title_by_language = {"ru": {"FILE_NOUNS": 'ru_nouns',
                                          "FILE_CHINA_TRANS": 'ru_china_trans',
@@ -51,23 +52,36 @@ class Language():
                                          "TITLE_TOPIC_BTN_FORGET": 'Забыл',
                                          "TITLE_TOPIC_BTN_BAD": 'Плохо',
                                          'TITLE_TOP_NAME_TOPIC_TOWN': 'Город',
+                                         'TITLE_TOP_NAME_CITY': 'Город',
                                          'TITLE_TOP_NAME_HOME': 'Дом',
+                                         'TITLE_TOP_NAME_HOUSE': 'Дом',
                                          'TITLE_TOP_NAME_FOOD': 'Еда',
                                          'TITLE_TOP_NAME_NATURE': 'Природа',
                                          'TITLE_TOP_NAME_HUMAN': 'Человек',
                                          'TITLE_TOP_NAME_RELATIONS': 'Отношения',
                                          'TITLE_TOP_NAME_VEHICLE': 'Транспорт',
+                                         'TITLE_TOP_NAME_TRANSPORT': 'Транспорт',
                                          'TITLE_TOP_NAME_ANIMALS': 'Животные',
                                          'TITLE_TOP_NAME_SPORT': 'Спорт',
                                          'TITLE_TOP_NAME_COLORS': 'Цвета',
                                          'TITLE_TOP_NAME_WORK': 'Работа',
                                          'TITLE_TOP_NAME_PROFESSIONS': 'Профессии',
+                                         'TITLE_TOP_NAME_SCHOOL': 'Изучение',
                                          'TITLE_TOP_NAME_LEARNING': 'Изучение',
                                          'TITLE_TOP_NAME_ENTERTAINMENT': 'Развлечения',
                                          'TITLE_TOP_NAME_CLOCK': 'Время',
                                          'TITLE_TOP_NAME_CALENDAR': 'Календарь',
                                          'TITLE_TOP_NAME_CLOTHING': 'Одежда',
                                          'TITLE_TOP_NAME_HOBBY': 'Хобби',
+                                         'TITLE_TOP_NAME_MOVIE': 'Кино',
+                                         'TITLE_TOP_NAME_WAR': 'Война',
+                                         'TITLE_TOP_NAME_INTERNET': 'Интернет',
+                                         'TITLE_TOP_NAME_COMMERCE': 'Коммерция',
+                                         'TITLE_TOP_NAME_JUSTICE': 'Правосудие',
+                                         'TITLE_TOP_NAME_TECHNIQUE': 'Техника',
+                                         'TITLE_TOP_NAME_TRAVEL': 'Путешествие',
+                                         'TITLE_TOP_NAME_MEDICINE': 'Медицина',
+                                         'TITLE_TOP_NAME_HOUSEHOLD': 'Хозяйство',
                                          'TITLE_TOP_NAME_OTHER': 'Другое',
                                          'TITLE_TOP_NAME_POINTERS': 'Указатели',
                                          'TITLE_TOP_NAME_EXCLAMATION': 'Восклицание',
@@ -88,6 +102,7 @@ class Language():
                                          'TITLE_TOP_NAME_CONDITION': 'Состояние',
                                          'TITLE_TOP_NAME_QUALITIES': 'Качества',
                                          'TITLE_TOP_NAME_PRONOUNS': 'Местоимения',
+                                         'TITLE_TOP_NAME_KITCHEN': 'Кухня',
                                          'TITLE_ALERT_REPEAT_COUNT_TOPICS': 'Нужно повторить {} темы!',
                                          'TITLE_TOPIC_NAME_REPEAT': 'Повторить',
                                          'TITLE_TOPIC_NAME_HEARD': 'Прошёл',
@@ -95,6 +110,20 @@ class Language():
                                          },
 
                                   "ua": {"FILE_NOUNS": 'ua_nouns',
+                                         "TITLE_TOP_NAME_CITY": 'Місто',
+                                         "TITLE_TOP_NAME_HOUSE": 'Будинок',
+                                         "TITLE_TOP_NAME_TRANSPORT": 'Транспорт',
+                                         "TITLE_TOP_NAME_SCHOOL": 'Вивчення',
+                                         "TITLE_TOP_NAME_MOVIE": 'Кіно',
+                                         "TITLE_TOP_NAME_WAR": 'Війна',
+                                         "TITLE_TOP_NAME_INTERNET": 'Інтернет',
+                                         "TITLE_TOP_NAME_COMMERCE": 'Комерція',
+                                         "TITLE_TOP_NAME_JUSTICE": 'Правосуддя',
+                                         "TITLE_TOP_NAME_TECHNIQUE": 'Техніка',
+                                         "TITLE_TOP_NAME_TRAVEL": 'Подорож',
+                                         "TITLE_TOP_NAME_MEDICINE": 'Медицина',
+                                         "TITLE_TOP_NAME_HOUSEHOLD": 'Господарство',
+                                         "TITLE_TOP_NAME_KITCHEN": 'Кухня',
                                          "FILE_CHINA_TRANS": 'ua_china_trans',
                                          "TITLE_BTN_NEXT": 'Наступний',
                                          "TITLE_NAME_ONLY_CHARACTERS": "Ім'я тільки з букв",
@@ -195,44 +224,22 @@ class Language():
         return self.title_by_language[self.language][title]
 
 
-{'know_pr': 0.12, 'repeat_pr': 0.12, 'hair_pr': 1.5, 'time_to_repeat': 1652945705.8, 'etch_top_word': {
-    'animal': {'cont_repeat': 0, 'last_word_connect': 1652944508, 'ans_speed': 64, 'objects': ['гЕНИй', 'МЕд'],
-               'word_split': ['эни', 'мэл']}, 'elephant': {'cont_repeat': 0, 'last_word_connect': 0, 'ans_speed': 64},
-    'horse': {'cont_repeat': 0, 'last_word_connect': 1652944509, 'ans_speed': 64, 'objects': ['уХО', 'ОЗеро'],
-              'word_split': ['хо', 'ос']},
-    'lion': {'cont_repeat': 0, 'last_word_connect': 1652944508, 'ans_speed': 64, 'objects': ['ЛАпа', 'чИН'],
-             'word_split': ['ла', 'иэн']},
-    'mouse': {'cont_repeat': 0, 'last_word_connect': 1652944507, 'ans_speed': 64, 'objects': ['УС'],
-              'word_split': ['маус']},
-    'pig': {'cont_repeat': 0, 'last_word_connect': 1652944508, 'ans_speed': 64, 'objects': ['ИГла'],
-            'word_split': ['пиг']},
-    'bird': {'cont_repeat': 0, 'last_word_connect': 1652944508, 'ans_speed': 64, 'objects': ['БЕДа'],
-             'word_split': ['бэд']}, 'kind': {'cont_repeat': 0, 'last_word_connect': 0, 'ans_speed': 64},
-    'sheep': {'cont_repeat': 5, 'last_word_connect': 1652944507, 'ans_speed': 0},
-    'fish': {'cont_repeat': 0, 'last_word_connect': 1652944509, 'ans_speed': 64, 'objects': ['ВИд'],
-             'word_split': ['фиш']}, 'snake': {'cont_repeat': 5, 'last_word_connect': 1652944508, 'ans_speed': 0},
-    'cat': {'cont_repeat': 0, 'last_word_connect': 0, 'ans_speed': 64},
-    'chicken': {'cont_repeat': 0, 'last_word_connect': 1652944509, 'ans_speed': 64, 'objects': ['ЧИн', 'КИНо'],
-                'word_split': ['чи', 'кин']},
-    'cow': {'cont_repeat': 0, 'last_word_connect': 1652944509, 'ans_speed': 64, 'objects': ['КАдр'],
-            'word_split': ['кау']},
-    'dog': {'cont_repeat': 0, 'last_word_connect': 1652944508, 'ans_speed': 64, 'objects': ['ДОлГ'],
-            'word_split': ['дог']}, 'farm': {'cont_repeat': 0, 'last_word_connect': 0, 'ans_speed': 64}}}
-
-{'know_pr': 0.06, 'repeat_pr': 0.06, 'hair_pr': 0.06, 'time_to_repeat': 1684480507,
- 'etch_top_word': {'animal': {'cont_repeat': 0, 'last_word_connect': 0, 'ans_speed': 64},
-                   'elephant': {'cont_repeat': 0, 'last_word_connect': 0, 'ans_speed': 64},
-                   'horse': {'cont_repeat': 0, 'last_word_connect': 0, 'ans_speed': 64},
-                   'lion': {'cont_repeat': 0, 'last_word_connect': 0, 'ans_speed': 64},
-                   'mouse': {'cont_repeat': 0, 'last_word_connect': 0, 'ans_speed': 64},
-                   'pig': {'cont_repeat': 0, 'last_word_connect': 0, 'ans_speed': 64},
-                   'bird': {'cont_repeat': 0, 'last_word_connect': 0, 'ans_speed': 64},
-                   'kind': {'cont_repeat': 0, 'last_word_connect': 0, 'ans_speed': 64},
-                   'sheep': {'cont_repeat': 5, 'last_word_connect': 1652944507, 'ans_speed': 0},
-                   'fish': {'cont_repeat': 0, 'last_word_connect': 0, 'ans_speed': 64},
-                   'snake': {'cont_repeat': 0, 'last_word_connect': 0, 'ans_speed': 64},
-                   'cat': {'cont_repeat': 0, 'last_word_connect': 0, 'ans_speed': 64},
-                   'chicken': {'cont_repeat': 0, 'last_word_connect': 0, 'ans_speed': 64},
-                   'cow': {'cont_repeat': 0, 'last_word_connect': 0, 'ans_speed': 64},
-                   'dog': {'cont_repeat': 0, 'last_word_connect': 0, 'ans_speed': 64},
-                   'farm': {'cont_repeat': 0, 'last_word_connect': 0, 'ans_speed': 64}}}
+if __name__ == '__main__':
+    lang = Language()
+    name_list = {}
+    old_lang_name = ''
+    for lang_name in lang.title_by_language.keys():
+        if name_list == {}:
+            name_list[lang_name] = {}
+            old_lang_name = lang_name
+            for name in lang.title_by_language[lang_name].keys():
+                name_list[lang_name][name] = ''
+        else:
+            for name in lang.title_by_language[lang_name].keys():
+                if name not in name_list[old_lang_name]:
+                    print(name)
+                else:
+                    name_list[old_lang_name][name] = '+'
+    for name in name_list[old_lang_name]:
+        if name_list[old_lang_name][name] != '+':
+            print(name, ':', name_list[old_lang_name][name])

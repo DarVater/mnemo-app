@@ -175,10 +175,9 @@ class Associator():
         all_syllables_version = {}
         loos_try = 0
         while True:
-            print(all_syllables)
             start_count_versions = len(all_syllables_version)
             for one_syllables in all_syllables:
-                if type(one_syllables) != None:
+                if type(one_syllables) != type(None):
                     collection_of_syllables = self.collect_syllables(one_syllables)
                     all_syllables_version[collection_of_syllables] = ''
             if len(all_syllables_version) == start_count_versions:

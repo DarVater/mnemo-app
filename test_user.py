@@ -9,6 +9,7 @@ from kivy.storage.jsonstore import JsonStore
 from kivy.uix.button import Button
 
 from main import MyApp, words_by_lvl
+from word_by_topics import words_by_lvl_A2, words_by_lvl_A1
 
 
 class TestSingUpView(unittest.TestCase):
@@ -198,7 +199,6 @@ class TestHomeView(unittest.TestCase):
         answer_no_user = 'home'
         test_view = app.root.target_view
         self.assertEqual(test_view, answer_no_user)
-        asdf
         # Поинтересовался Ванька какие языки еще есть
         app.root.ids['temp_view'].press_on('choose_language')
 
@@ -216,7 +216,7 @@ class TestHomeView(unittest.TestCase):
         # Он заметил, что в главном окне изменилась надпись на Украинский язык
         test_word = 'Слова рівня'
         answer = app.root.ids['temp_view'].header.text
-        self.assertIn( test_word, answer)
+        self.assertIn(test_word, answer)
 
         # Ваника поменял обратно
         app.root.ids['temp_view'].press_on('choose_language')
@@ -261,7 +261,13 @@ class TestHomeView(unittest.TestCase):
         # Ванька знал это слово и нажимать на кнопку учить не хотел
         animals = {'животное': 'animal', 'слон': 'elephant', 'лошадь': 'horse', 'лев': 'lion', 'мышь': 'mouse',
                    'свинья': 'pig', 'птица': 'bird', 'вид': 'kind', 'овца': 'sheep', 'рыба': 'fish', 'змея': 'snake',
-                   'Кот': 'cat', 'курица': 'chicken', 'корова': 'cow', 'собака': 'dog', 'ферма': 'farm'}
+                   'Кот': 'cat', 'курица': 'chicken', 'корова': 'cow', 'собака': 'dog', 'ферма': 'farm',
+                   'медведь': 'bear', 'домашнее животное': 'pet',
+                   'население': 'population', 'муха': 'fly', 'индивидуум': 'individual',
+                   'обезьяна': 'monkey', 'насекомое': 'insect',
+                   'паук': 'spider', 'лягушка': 'frog', 'ребенок (разговорный)': 'kid',
+                    }
+
         answer_word = animals[ask_word]
 
         # Он нажал на ответы
@@ -389,7 +395,8 @@ class TestHomeView(unittest.TestCase):
         app.root.ids['temp_view'].choose_top('Animals')
 
         # Ванька проработал еще десяток слов
-        for n in range(10):
+        for n in range(6):
+            print('range(',n,')')
             # Он нажал на ответы
             app.root.ids['temp_view'].show_answers()
 
@@ -402,7 +409,7 @@ class TestHomeView(unittest.TestCase):
                     split_btn = app.root.ids['temp_view'].btn_place.children[-1]
                     app.root.ids['temp_view'].choose_split(split_btn)
                 except:
-                    if n < 15:
+                    if n < 8:
                         split_btn = app.root.ids['temp_view'].btn_place.children[0]
                         app.root.ids['temp_view'].choose_split(split_btn)
 
@@ -675,7 +682,7 @@ class TestHomeView(unittest.TestCase):
         app.root.ids['temp_view'].press_on('back')
 
         # Прошло еще 91 минут
-        run_time(60 * 91)
+        run_time(60 * 92)
 
         # Выбрал тему
         app.root.ids['temp_view'].press_on('all_topics')
@@ -714,6 +721,7 @@ class TestHomeView(unittest.TestCase):
 
 
 class TestDictionary(unittest.TestCase):
+    lvl_words = {}
 
     def test_avery_word_hes_transcription(self):
         word_trans_dict = load_dict('word_trans_dict')
@@ -773,6 +781,110 @@ class TestDictionary(unittest.TestCase):
                             'ш', 'щ', 'ъ', 'ь', ' ']
         for one_letter in all_letters:
             self.assertIn(one_letter, vowels_consonant)
+
+    def get_all_lwl_words(self):
+        lvl_dir = '/home/bilcko/AndroidProgects/EnglishTeacher/research/words_by_level/All words by lvl and types/'
+        lvl_files = ['A1', 'A2']  #
+        for file_name in lvl_files:
+            with open(f'{lvl_dir}{file_name}.txt') as file:
+                all_rows = file.read().split('\n')
+            self.lvl_words[file_name] = {}
+            for row in all_rows:
+                if ' ' in row:
+                    self.lvl_words[file_name][row.partition(' ')[0]] = ''
+
+    def test_all_need_word_exist(self):
+        if self.lvl_words == {}:
+            self.get_all_lwl_words()
+        not_fined_words = []
+        black_list = ['ice cream', 'CD', 'bar', 'DVD', 'yourself', 'next to', 'no one', 'TV', 'cannot', 'online',
+                      'internet', 'photo', 'laughter', 'according', 'ah', 'electrical', 'happily', 'loudly', 'math',
+                      'may', 'normally', 'wooden', 'wow', 'worse', 'advertising']
+        for lvl in self.lvl_words:
+            for word in self.lvl_words[lvl]:
+                self.lvl_words[lvl][word] = False
+        dont_need_words = {}
+        for lang in ['ru', 'ua']:
+            for words_by_lvl in [words_by_lvl_A1, words_by_lvl_A2]:  #
+                for top_name in words_by_lvl[lang]:
+                    for top_word in words_by_lvl[lang][top_name]:
+                        # list of avery word in avery top in avery lvl
+                        was = False
+                        for lvl in self.lvl_words:
+                            if top_word in self.lvl_words[lvl]:
+                                self.lvl_words[lvl][top_word] = True
+                                was = True
+                        if not was and top_word not in black_list:
+                            dont_need_words[top_word] = ''
+        for lvl in self.lvl_words:
+            for word in self.lvl_words[lvl]:
+                if self.lvl_words[lvl][word] == False:
+                    if word not in black_list:
+                        not_fined_words.append(word)
+        if 0 != len(dont_need_words):
+            print('\n', len(dont_need_words), 'dont_need_words', dont_need_words)
+        self.assertEqual(len(dont_need_words), 0)
+        if 0 != len(not_fined_words):
+            print('\n', len(not_fined_words), 'not_fined_words', not_fined_words)
+        self.assertEqual(len(not_fined_words), 0)
+
+    def test_equivalents_topics_in_languages(self):
+        for top_name in words_by_lvl['ru']:
+            count_words_in_topic = {}
+            for lang in words_by_lvl:
+                if lang != 'en_lvl':
+                    count_words_in_topic[len(words_by_lvl[lang][top_name])] = ''
+            if len(count_words_in_topic) != 1:
+                # Look avery top word
+                for lang2 in words_by_lvl:
+                    if lang2 != 'en_lvl':
+                        for word2 in words_by_lvl[lang2][top_name]:
+                            # In avery equivalent languages
+                            fined = False
+
+                            for lang3 in words_by_lvl:
+                                if lang3 != 'en_lvl':
+                                    if word2 not in words_by_lvl[lang3][top_name]:
+                                        fined = lang3
+                            if fined:
+                                print()
+                                print('++++++++++++++++++++++++++++++++++')
+                                print('+ Not fined !')
+                                print('+ Word: ', word2)
+                                print('+ Lang: ', fined)
+                                print('+ Top name: ', top_name)
+                                print('++++++++++++++++++++++++++++++++++')
+            self.assertEqual(len(count_words_in_topic), 1)
+
+    def test_translate_not_repeat(self):
+        translated_and_words = {}
+        translated = {}
+        was_repeat = []
+        translate_was_repeat = []
+        all_words_by_lvl = {'A1': words_by_lvl_A1, 'A2': words_by_lvl_A2}
+        for lvl in all_words_by_lvl:
+            each_words_by_lvl = all_words_by_lvl[lvl]
+            for lang in each_words_by_lvl:
+                if lang != 'en_lvl':
+                    for top_name in each_words_by_lvl[lang]:
+                        for word in each_words_by_lvl[lang][top_name]:
+                            word_nad_translate = f'{lang}, {word} = {each_words_by_lvl[lang][top_name][word]}'
+                            if word_nad_translate not in translated_and_words:
+                                translated_and_words[word_nad_translate] = ''
+                            else:
+                                was_repeat.append(word_nad_translate)
+                                print()
+                                print(f'{lvl}-{lang} "{word_nad_translate}" was repeat!')
+                            trans = f'{lang} {each_words_by_lvl[lang][top_name][word]}'
+                            if trans not in translated:
+                                translated[trans] = f'{lang} {word}'
+                            else:
+                                translate_was_repeat.append(trans)
+                                print()
+                                print(f'{lvl}-{lang} "{translated[trans]}" и "{lang} {word}" = "{trans}" was repeat!')
+        self.assertEqual(len(was_repeat), 0)
+        print(len(translate_was_repeat))
+        self.assertEqual(len(translate_was_repeat), 0)
 
 
 def run_time(seconds):

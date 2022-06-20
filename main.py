@@ -1,8 +1,10 @@
 import json
 import random
+import sys
 import time
 from datetime import datetime
 import urllib.request
+import logging
 
 from kivy.app import App
 from kivy.clock import Clock
@@ -18,8 +20,11 @@ from language import Language
 from word_by_topics import words_by_lvl
 from assosiator import Associator
 
-error_catch = False  # False True
-if not error_catch:
+server_connect = True  # True
+error_catch = False  # False
+run_on_pc = False  # False
+
+if run_on_pc:
     Window.size = 540, 960
 
 
@@ -103,6 +108,7 @@ class ViewSelection(GridLayout):
                             name=user_store['name'],
                             sex=user_store['sex'],
                             age=user_store['age'],
+                            lvl=words_by_lvl['en_lvl'],
                             lang=user_store['lang'],
                             user_topics=user_store['user_topics'],
                             amail=user_store['amail'],
@@ -347,6 +353,7 @@ class ViewTopic(BoxLayout):
                                     name=user_store['name'],
                                     sex=user_store['sex'],
                                     age=user_store['age'],
+                                    lvl=words_by_lvl['en_lvl'],
                                     lang=user_store['lang'],
                                     user_topics=user_store['user_topics'],
                                     amail=user_store['amail']
@@ -781,6 +788,7 @@ class ViewSingUp(FloatLayout):
                             name=self.name,
                             sex=self.gender,
                             age=self.age,
+                            lvl=words_by_lvl['en_lvl'],
                             lang='ru',
                             user_topics=user_topics,
                             amail=self.amail)
@@ -828,10 +836,12 @@ class ViewLanguage(FloatLayout):
             self.root.ids['temp_view'].ru.background_normal = 'src/btn_main.png'
             user_store = self.root.store.get('user')
             user_store['lang'] = 'ru'
+            print(words_by_lvl['en_lvl'])
             self.root.store.put('user',
                                 name=user_store['name'],
                                 sex=user_store['sex'],
                                 age=user_store['age'],
+                                lvl=words_by_lvl['en_lvl'],
                                 lang=user_store['lang'],
                                 user_topics=user_store['user_topics'],
                                 amail=user_store['amail']
@@ -846,6 +856,7 @@ class ViewLanguage(FloatLayout):
                                 name=user_store['name'],
                                 sex=user_store['sex'],
                                 age=user_store['age'],
+                                lvl=words_by_lvl['en_lvl'],
                                 lang=user_store['lang'],
                                 user_topics=user_store['user_topics'],
                                 amail=user_store['amail']
@@ -972,6 +983,7 @@ class ViewManager(FloatLayout):
             self.ids['temp_view'].header.text = self.lang.title('TITLE_HI_WHAT_ARE_YOUR_NAME')
 
         elif self.target_view == 'home':
+            if server_connect: self.server_connect()
             temp_view = ViewHome()
             temp_view.give_root(self)
             temp_view.size = 333, 333
@@ -1084,7 +1096,6 @@ class ViewManager(FloatLayout):
                 alert = self.lang.title('TITLE_ALERT_REPEAT_COUNT_TOPICS').replace('{}',
                                                                                    str(len(self.top_names_to_repeat)))
                 self.ids['temp_view'].alert_text.text = alert
-
         top_name = self.topic_keys[self.started]
         global temp_data
         self.started += 1
@@ -1127,7 +1138,7 @@ class ViewManager(FloatLayout):
                 layout.opacity = 0.5
                 layout.btn.background_down = 'src/topic.png'
         self.ids['temp_view'].topics_grid.add_widget(layout)
-        if self.started < 38:
+        if self.started < len(self.topic_keys):
             Clock.schedule_once(self.add_etch_top, 0.001)
         else:
             self.started = 0
@@ -1156,7 +1167,6 @@ class ViewManager(FloatLayout):
         self.ids['temp_view'].view_interface.height = scroll_h * ((skaler - 1) * 1.5 + 1)
 
     def chose_main_view(self):
-        self.server_connect()
         if 'user' in self.store:
             self.target_view = 'home'  # home
             # ['splitting', 'Животные', 'cow', 'корова']
@@ -1169,10 +1179,14 @@ class ViewManager(FloatLayout):
 
     def server_connect(self):
         url = 'http://darvater.pythonanywhere.com/'
+        # url = 'http://192.168.1.6:7000/'
+        if True:
+            pass
         try:
             with urllib.request.urlopen(f'{url}?is=online') as response:
                 html = response.read().decode('utf-8')
             if html == 'True':
+                print('Connect')
                 req = urllib.request.Request(f'{url}send/')
                 req.add_header('Content-Type', 'application/json; charset=utf-8')
                 jsondata = json.dumps(self.store.get('user'))
@@ -1185,17 +1199,23 @@ class ViewManager(FloatLayout):
                                name=user_store['name'],
                                sex=user_store['sex'],
                                age=user_store['age'],
+                               lvl=words_by_lvl['en_lvl'],
                                lang=user_store['lang'],
                                user_topics=user_store['user_topics'],
                                amail=user_store['amail']
                                )
                 self.store = JsonStore(f'hello_{words_by_lvl["en_lvl"]}.json')
-                self.remove_w('temp_view')
-                self.draw_view()
-                self.ids['temp_view'].synchronize.text = self.lang.title('TITLE_LOAD_FROM_SERVER')
+                if 'temp_view' in self.ids:
+                    self.remove_w('temp_view')
+                    self.draw_view()
+                    self.ids['temp_view'].synchronize.text = self.lang.title('TITLE_LOAD_FROM_SERVER')
                 print(self.lang.title('TITLE_LOAD_FROM_SERVER'))
-        except:
+            else:
+                print('Not connect')
             pass
+        except:
+            print('Error connect')
+
 
 class ViewExcept(BoxLayout):
     pass
@@ -1219,7 +1239,10 @@ class MyApp(App):
         return self.view_manager
 
     def send_error(self, btn):
-        self.view_manager
+        global exeption
+        print(exeption)
+        exeption = ''
+        App.get_running_app().stop()
 
 
 exeption = ''
