@@ -359,8 +359,13 @@ class Associator():
 
     def get_broken_word(self, word):
         self.start_t("get_broken_word")
-        self.given_word = word
-        word_trans = self.load_dict('word_trans_dict')[self.given_word]
+        word_trans_dict = self.load_dict('word_trans_dict')
+        self.given_word = word.lower()
+        if self.given_word in word_trans_dict:
+            word_trans = word_trans_dict[self.given_word]
+        else:
+            self.given_word = word.lower()[0].upper() + word.lower()[1::]
+            word_trans = word_trans_dict[self.given_word]
         self.china_trans(word_trans)
         self.broken_versions = self.find_broken_word_versions(self.china_word)
         self.stop_t("get_broken_word")

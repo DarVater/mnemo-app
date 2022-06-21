@@ -1,10 +1,8 @@
 import json
 import random
-import sys
 import time
 from datetime import datetime
 import urllib.request
-import logging
 
 from kivy.app import App
 from kivy.clock import Clock
@@ -22,7 +20,7 @@ from assosiator import Associator
 
 server_connect = True  # True
 error_catch = False  # False
-run_on_pc = False  # False
+run_on_pc = True  # False
 
 if run_on_pc:
     Window.size = 540, 960
@@ -1215,6 +1213,8 @@ class ViewManager(FloatLayout):
             pass
         except:
             print('Error connect')
+        global server_connect
+        server_connect = False
 
 
 class ViewExcept(BoxLayout):
