@@ -383,7 +383,7 @@ class Associator():
 
 if __name__ == '__main__':
     ass = Associator()
-    broken_word = ass.get_broken_word('house')
+    broken_word = ass.get_broken_word('of')
     for n in broken_word:
         print(f"{n}) {broken_word[n]}")
     print('Enter need version: ')

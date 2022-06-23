@@ -18,7 +18,7 @@ from language import Language
 from word_by_topics import words_by_lvl
 from assosiator import Associator
 
-server_connect = True  # True
+server_connect = False  # True
 error_catch = False  # False
 run_on_pc = True  # False
 
@@ -280,6 +280,7 @@ class ViewSplitWord(FloatLayout):
 
     def give_root(self, root):
         self.root = root
+        self.lang.set_lang(self.root.store.get('user')['lang'])
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -480,6 +481,8 @@ class ViewTopic(BoxLayout):
             for ver in self.versions.children:
                 ver.bind(on_press=self.choose_version)
                 ver.text = self.answer_versions[random.randint(0, len(self.answer_versions)) - 1]
+                ver.background_normal = 'src/btn_sup_big.png'
+                ver.background_down = 'src/btn_sup_big_pressed.png'
                 if self.right_answers[self.target_word] == ver.text:
                     not_ketch = False
 
