@@ -287,7 +287,7 @@ class Associator():
                 miss_l += 1
             if up_l == score:
                 break
-        return [score, miss_l + (similar_scores / 2), see_known_word]
+        return [score, (miss_l /2) + (similar_scores / 2), see_known_word]
 
     def get_best_version(self, all_word_parts: dict) -> list:
         self.start_t("get_best_version")
@@ -383,7 +383,7 @@ class Associator():
 
 if __name__ == '__main__':
     ass = Associator()
-    broken_word = ass.get_broken_word('of')
+    broken_word = ass.get_broken_word('building')
     for n in broken_word:
         print(f"{n}) {broken_word[n]}")
     print('Enter need version: ')
