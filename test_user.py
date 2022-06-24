@@ -414,13 +414,8 @@ class TestHomeView(unittest.TestCase):
                     if app.root.target_view[0] != 'topic':
 
                         # выбрал разбиение
-                        try:
-                            split_btn = app.root.ids['temp_view'].btn_place.children[-1]
-                            app.root.ids['temp_view'].choose_split(split_btn)
-                        except:
-                            if n < 8:
-                                split_btn = app.root.ids['temp_view'].btn_place.children[0]
-                                app.root.ids['temp_view'].choose_split(split_btn)
+                        split_btn = app.root.ids['temp_view'].btn_place.children[-1]
+                        app.root.ids['temp_view'].choose_split(split_btn)
 
                         # Ванька подобрал опять по слову
                         for word_list in app.root.ids['temp_view'].word_place.children:

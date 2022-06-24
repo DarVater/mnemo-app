@@ -294,7 +294,11 @@ class Associator():
         # get best score versions plus miss letters to find the lowest
         race_participants = {}
         best_len = max(all_word_parts.keys())
-        for burden in range(3):
+        if best_len > 3:
+            burdens = 3
+        else:
+            burdens = best_len
+        for burden in range(burdens):
             for version in all_word_parts[best_len - burden]:
                 if version[0] + version[1] + burden * 2 in race_participants:
                     race_participants[version[0] + version[1] + burden * 2].append(version)
