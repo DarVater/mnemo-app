@@ -266,7 +266,7 @@ class TestHomeView(unittest.TestCase):
                    'население': 'population', 'муха': 'fly', 'индивидуум': 'individual',
                    'обезьяна': 'monkey', 'насекомое': 'insect',
                    'паук': 'spider', 'лягушка': 'frog', 'ребенок (разговорный)': 'kid',
-                    }
+                   }
 
         answer_word = animals[ask_word]
 
@@ -391,44 +391,58 @@ class TestHomeView(unittest.TestCase):
         self.assertGreater(store.get('user')['user_topics']['Animals']['hair_pr'],
                            store.get('user')['user_topics']['Animals']['know_pr'])
 
-        # Он опять вернулся в туже тему
-        app.root.ids['temp_view'].choose_top('Animals')
-#################################################################
+        #################################################################
         try_catch_float_bug = 1
         if try_catch_float_bug:
-            # Ванька проработал все слова
-            for n in range(70):
-                print('range(',n,')')
-                # Он нажал на ответы
-                app.root.ids['temp_view'].show_answers()
+            time.sleep(5)
+            need_topics = ['topic_town', 'home', 'food', 'nature', 'human', 'relations', 'vehicle', 'Animals', 'Sport',
+                           'Colors', 'Work', 'Professions', 'learning', 'Entertainment', 'clock', 'Calendar',
+                           'Clothing', 'Hobby', 'Other', 'Pointers', 'Exclamation', 'unions', 'numbers', 'preposition',
+                           'Adverb', 'Availability', 'Operations', 'Communication', 'Stages', 'Movements', 'Thinking',
+                           'Other_verbs', 'Emotions', 'Abstract', 'Approximately', 'Condition', 'Qualities', 'Pronouns']
 
-                # И сделал выбор
-                app.root.ids['temp_view'].choose_version(app.root.ids['temp_view'].versions.children[0])
-                if app.root.target_view[0] != 'topic':
+            for top in need_topics:
+                app.root.ids['temp_view'].choose_top(top)
+                # Ванька проработал все слова
+                for n in range(70):
+                    print('range(', n, ')')
+                    # Он нажал на ответы
+                    app.root.ids['temp_view'].show_answers()
 
-                    # выбрал разбиение
-                    try:
-                        split_btn = app.root.ids['temp_view'].btn_place.children[-1]
-                        app.root.ids['temp_view'].choose_split(split_btn)
-                    except:
-                        if n < 8:
-                            split_btn = app.root.ids['temp_view'].btn_place.children[0]
+                    # И сделал выбор
+                    app.root.ids['temp_view'].choose_version(app.root.ids['temp_view'].versions.children[0])
+                    if app.root.target_view[0] != 'topic':
+
+                        # выбрал разбиение
+                        try:
+                            split_btn = app.root.ids['temp_view'].btn_place.children[-1]
                             app.root.ids['temp_view'].choose_split(split_btn)
+                        except:
+                            if n < 8:
+                                split_btn = app.root.ids['temp_view'].btn_place.children[0]
+                                app.root.ids['temp_view'].choose_split(split_btn)
 
-                    # Ванька подобрал опять по слову
-                    for word_list in app.root.ids['temp_view'].word_place.children:
-                        app.root.ids['temp_view'].choose_word(word_list.children[0])
+                        # Ванька подобрал опять по слову
+                        for word_list in app.root.ids['temp_view'].word_place.children:
+                            app.root.ids['temp_view'].choose_word(word_list.children[0])
 
-                    app.root.ids['temp_view'].press_on_next(app.root.ids['temp_view'].next_btn.text)
+                        app.root.ids['temp_view'].press_on_next(app.root.ids['temp_view'].next_btn.text)
 
-                    # Ванька следовал всем указаниям по запоминанию
-                    app.root.ids['temp_view'].save_learn_word()
-                    app.root.ids['temp_view'].return_on_topic()
-###################################################################
+                        # Ванька следовал всем указаниям по запоминанию
+                        app.root.ids['temp_view'].save_learn_word()
+                        app.root.ids['temp_view'].return_on_topic()
+                        if app.root.target_view == 'all_topics':
+                            break
+
+
+        ###################################################################
         else:
+            # Он опять вернулся в туже тему
+            app.root.ids['temp_view'].choose_top('Animals')
+
             # Ванька проработал еще десяток слов
             for n in range(6):
-                print('range(',n,')')
+                print('range(', n, ')')
                 # Он нажал на ответы
                 app.root.ids['temp_view'].show_answers()
 

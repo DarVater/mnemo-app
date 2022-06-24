@@ -440,6 +440,7 @@ class ViewTopic(BoxLayout):
 
     def give_root(self, root):
         self.root = root
+        self.lang.set_lang(self.root.store.get('user')['lang'])
 
     def learning_mod(self):
         self.learning.text = self.lang.title('TITLE_TOPIC_BTN_LEARN')
@@ -1046,12 +1047,18 @@ class ViewManager(FloatLayout):
             temp_view = ViewTopic()
             temp_view.give_root(self)
             temp_view.size = 333, 333
-            self.ids['temp_view'] = temp_view
-            self.add_widget(temp_view)
-            self.ids['temp_view'].header.text = self.lang.title('TITLE_TOPIC_HEADER')
-            self.store = JsonStore(f'hello_{words_by_lvl["en_lvl"]}.json')
-            self.user_topics = self.store.get('user')['user_topics']
-            self.ids['temp_view'].check_top_action(self.user_topics[self.target_view[1]], self.target_view[1])
+            try:
+                self.ids['temp_view'] = temp_view
+                self.add_widget(temp_view)
+                self.ids['temp_view'].header.text = self.lang.title('TITLE_TOPIC_HEADER')
+                self.store = JsonStore(f'hello_{words_by_lvl["en_lvl"]}.json')
+                self.user_topics = self.store.get('user')['user_topics']
+                self.ids['temp_view'].check_top_action(self.user_topics[self.target_view[1]], self.target_view[1])
+            except:
+                self.target_view = 'all_topics'
+                self.remove_w('temp_view')
+                self.draw_view()
+
 
         elif self.target_view[0] == 'splitting':
             temp_view = ViewSplitWord()

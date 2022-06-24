@@ -124,7 +124,7 @@ class Associator():
         :return:
         '''
         self.start_t("find_all_version")
-        all_syllables_version = {}
+        all_syllables_version = {root_syllables: ''}
         loos_try = 0
         while True:
             start_count_versions = len(all_syllables_version)
