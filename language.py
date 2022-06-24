@@ -106,6 +106,7 @@ class Language():
                                          'TITLE_ALERT_REPEAT_COUNT_TOPICS': 'Нужно повторить {} темы!',
                                          'TITLE_TOPIC_NAME_REPEAT': 'Повторить',
                                          'TITLE_TOPIC_NAME_HEARD': 'Прошёл',
+                                         'TITLE_TOPIC_NAME_LEARN': 'Выучил',
 
                                          },
 
@@ -213,6 +214,7 @@ class Language():
                                          'TITLE_ALERT_REPEAT_COUNT_TOPICS': 'Потрібно повторити {} теми!',
                                          'TITLE_TOPIC_NAME_REPEAT': 'Повторити',
                                          'TITLE_TOPIC_NAME_HEARD': 'Пройшов',
+                                         'TITLE_TOPIC_NAME_LEARN': 'Вивчив',
 
                                          },
                                   }

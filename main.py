@@ -1114,12 +1114,16 @@ class ViewManager(FloatLayout):
             layout.top_info_layout.progress_hair.size_hint_y = 0.01
         count_words = str(len(self.user_topics[top_name]['etch_top_word']))
         layout.btn.text = self.lang.title(f"TITLE_TOP_NAME_{top_name.upper()}")
+
         if top_name in self.top_names_to_repeat:
             layout.btn.text += f': {self.lang.title("TITLE_TOPIC_NAME_REPEAT")}'
             layout.btn.bind(on_press=layout.press_on_topic)
         else:
             if self.user_topics[top_name]['hair_pr'] == 2:
-                layout.btn.text += f': {self.lang.title("TITLE_TOPIC_NAME_HEARD")}'
+                if self.user_topics[top_name]['know_pr'] == 2:
+                    layout.btn.text += f': {self.lang.title("TITLE_TOPIC_NAME_LEARN")}'
+                else:
+                    layout.btn.text += f': {self.lang.title("TITLE_TOPIC_NAME_HEARD")}'
             elif self.user_topics[top_name]['hair_pr'] == 0.01:
                 layout.btn.text += f' ({count_words})'
                 if self.ids['temp_view'].alert_text.text == self.lang.title('TITLE_TOPIC_UNBLOCK_CHOOSE_TOPIC'):
