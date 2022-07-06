@@ -11,8 +11,12 @@ from kivy.uix.button import Button
 from main import MyApp, words_by_lvl
 from word_by_topics import words_by_lvl_A2, words_by_lvl_A1
 
+def change_test_settings(allover):
+    with open('test_settings.txt', 'w') as f:
+        allover = f.write(allover)
 
 class TestSingUpView(unittest.TestCase):
+    change_test_settings('-')
     def pause(*args):
         time.sleep(0.000001)
 
@@ -392,29 +396,30 @@ class TestHomeView(unittest.TestCase):
                            store.get('user')['user_topics']['Animals']['know_pr'])
 
         #################################################################
-        try_catch_float_bug = 1
+        try_catch_float_bug = 0
         if try_catch_float_bug:
-            time.sleep(5)
-            need_topics = ['topic_town', 'home', 'food', 'nature', 'human', 'relations', 'vehicle', 'Animals', 'Sport',
+            need_topics = ['vehicle', 'home', 'food', 'nature', 'human', 'relations', 'topic_town', 'Animals', 'Sport',
                            'Colors', 'Work', 'Professions', 'learning', 'Entertainment', 'clock', 'Calendar',
                            'Clothing', 'Hobby', 'Other', 'Pointers', 'Exclamation', 'unions', 'numbers', 'preposition',
                            'Adverb', 'Availability', 'Operations', 'Communication', 'Stages', 'Movements', 'Thinking',
                            'Other_verbs', 'Emotions', 'Abstract', 'Approximately', 'Condition', 'Qualities', 'Pronouns']
-
+            words_added = 0
             for top in need_topics:
                 app.root.ids['temp_view'].choose_top(top)
                 # Ванька проработал все слова
                 for n in range(70):
-                    print('range(', n, ')')
+                    words_added += 1
+                    print(words_added, 'range(', n, ')')
                     # Он нажал на ответы
                     app.root.ids['temp_view'].show_answers()
 
                     # И сделал выбор
                     app.root.ids['temp_view'].choose_version(app.root.ids['temp_view'].versions.children[0])
-                    if app.root.target_view[0] != 'topic':
+                    if app.root.target_view[0] == 'splitting':
 
                         # выбрал разбиение
                         split_btn = app.root.ids['temp_view'].btn_place.children[-1]
+                        print('!!!!IndexError!!!', split_btn.text)
                         app.root.ids['temp_view'].choose_split(split_btn)
 
                         # Ванька подобрал опять по слову
@@ -426,8 +431,8 @@ class TestHomeView(unittest.TestCase):
                         # Ванька следовал всем указаниям по запоминанию
                         app.root.ids['temp_view'].save_learn_word()
                         app.root.ids['temp_view'].return_on_topic()
-                        if app.root.target_view == 'all_topics':
-                            break
+                    if app.root.target_view == 'all_topics':
+                        break
 
 
         ###################################################################
@@ -760,16 +765,21 @@ class TestHomeView(unittest.TestCase):
 
             print(app.root.target_view)
 
+        change_test_settings('+')
 
 class TestDictionary(unittest.TestCase):
     lvl_words = {}
 
-    def test_avery_word_hes_transcription(self):
+    def test_avery_word_has_transcription(self):
         word_trans_dict = load_dict('word_trans_dict')
-        from word_by_topics import words_by_lvl_A1
-        for top_name in words_by_lvl_A1['ru']:
-            for word in words_by_lvl_A1['ru'][top_name]:
-                self.assertIn(word, word_trans_dict)
+        from word_by_topics import words_by_lvl_A2
+        for top_name in words_by_lvl_A2['ru']:
+            for word in words_by_lvl_A2['ru'][top_name]:
+                if 0:
+                    if word not in word_trans_dict:
+                        print(word)
+                else:
+                    self.assertIn(word, word_trans_dict)
 
     def test_ru_china_transcription(self):
         ru_china_trans = load_dict('ru_china_trans')
@@ -955,5 +965,7 @@ def load_dict(name: str):
         return ret
 
 
+
 if __name__ == '__main__':
     unittest.MyApp()
+

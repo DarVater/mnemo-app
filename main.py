@@ -3,6 +3,7 @@ import random
 import time
 from datetime import datetime
 import urllib.request
+import threading
 
 from kivy.app import App
 from kivy.clock import Clock
@@ -18,13 +19,14 @@ from language import Language
 from word_by_topics import words_by_lvl
 from assosiator import Associator
 
-server_connect = False  # True
+#https://play.google.com/apps/testing/mnemochoice.bilcko.ddns.com.mnemochoice1
+#https://play.google.com/store/apps/details?id=mnemochoice.bilcko.ddns.com.mnemochoice1
+
+
 error_catch = False  # False
-run_on_pc = True  # False
 
-if run_on_pc:
+if Window.size == (800, 600):
     Window.size = 540, 960
-
 
 class SelectionPart(BoxLayout):
     def write_word(self, btn):
@@ -223,7 +225,11 @@ class ViewSelection(GridLayout):
             self.part_place.add_widget(word_part)
             selection_part = SelectionPart()
             word_index = self.root.target_view[4].index(part)
-            for n in range(10):
+            if len(self.all_compares[word_index]) >= 10:
+                btn_filler = 10
+            else:
+                btn_filler = len(self.all_compares[word_index])
+            for n in range(btn_filler):
                 part_word = self.all_compares[word_index][n]
                 self.words_by_group[part_word[2]] = word_index
                 selection_part.children[n].text = part_word[2]
@@ -453,8 +459,11 @@ class ViewTopic(BoxLayout):
         self.learning.text = self.lang.title('TITLE_TOPIC_BTN_OBJECTS')
         self.learning.bind(on_release=self.show_helper)
         self.answers.text = self.lang.title('TITLE_TOPIC_BTN_ANSWERS')
-        self.target_word = self.repeating_list[random.randint(0, len(self.repeating_list)) - 1]
-        self.header.text = self.target_word
+        if len(self.repeating_list) < 1:
+            self.press_on('back')
+        else:
+            self.target_word = self.repeating_list[random.randint(0, len(self.repeating_list)) - 1]
+            self.header.text = self.target_word
 
     def show_helper(self, btn):
         if btn.text == self.lang.title('TITLE_TOPIC_BTN_BAD'):
@@ -985,7 +994,9 @@ class ViewManager(FloatLayout):
             self.ids['temp_view'].header.text = self.lang.title('TITLE_HI_WHAT_ARE_YOUR_NAME')
 
         elif self.target_view == 'home':
-            if server_connect: self.server_connect()
+            if check_test_settings():
+                x = threading.Thread(target=self.thread_server_connect, args=())
+                x.start()
             temp_view = ViewHome()
             temp_view.give_root(self)
             temp_view.size = 333, 333
@@ -1047,13 +1058,15 @@ class ViewManager(FloatLayout):
             temp_view = ViewTopic()
             temp_view.give_root(self)
             temp_view.size = 333, 333
-            try:
+            if 1:
                 self.ids['temp_view'] = temp_view
                 self.add_widget(temp_view)
                 self.ids['temp_view'].header.text = self.lang.title('TITLE_TOPIC_HEADER')
                 self.store = JsonStore(f'hello_{words_by_lvl["en_lvl"]}.json')
                 self.user_topics = self.store.get('user')['user_topics']
                 self.ids['temp_view'].check_top_action(self.user_topics[self.target_view[1]], self.target_view[1])
+            try:
+                1
             except:
                 self.target_view = 'all_topics'
                 self.remove_w('temp_view')
@@ -1189,7 +1202,7 @@ class ViewManager(FloatLayout):
     def give_root(self, root):
         self.root.append(root)
 
-    def server_connect(self):
+    def thread_server_connect(self):
         url = 'http://darvater.pythonanywhere.com/'
         # url = 'http://192.168.1.6:7000/'
         if True:
@@ -1217,18 +1230,12 @@ class ViewManager(FloatLayout):
                                amail=user_store['amail']
                                )
                 self.store = JsonStore(f'hello_{words_by_lvl["en_lvl"]}.json')
-                if 'temp_view' in self.ids:
-                    self.remove_w('temp_view')
-                    self.draw_view()
-                    self.ids['temp_view'].synchronize.text = self.lang.title('TITLE_LOAD_FROM_SERVER')
                 print(self.lang.title('TITLE_LOAD_FROM_SERVER'))
             else:
                 print('Not connect')
             pass
         except:
             print('Error connect')
-        global server_connect
-        server_connect = False
 
 
 class ViewExcept(BoxLayout):
@@ -1240,7 +1247,7 @@ class MyApp(App):
 
     def build(self):
         global exeption
-        self.icon = 'src/Logo.png'
+        self.icon = 'src/LogoA1.png'
         if exeption == '':
             self.view_manager = ViewManager()
         else:
@@ -1258,6 +1265,16 @@ class MyApp(App):
         exeption = ''
         App.get_running_app().stop()
 
+def check_test_settings():
+    try:
+        with open('test_settings.txt') as f:
+            allover = f.read()
+        if '+' in allover:
+            return True
+        else:
+            return False
+    except:
+        return True
 
 exeption = ''
 if __name__ == '__main__':

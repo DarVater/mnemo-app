@@ -67,6 +67,7 @@ class Associator():
         :return:
         '''
         self.start_t("check_other_letters")
+        print(letters_type)
         for letter in letters_type:
             if letter not in ['г', 'с']:
                 print(f"ERROR! Not expected letter '{letter}' !")
@@ -124,17 +125,20 @@ class Associator():
         :return:
         '''
         self.start_t("find_all_version")
-        all_syllables_version = {root_syllables: ''}
+        all_syllables_version = {}
         loos_try = 0
         while True:
             start_count_versions = len(all_syllables_version)
             syllables_version = self.find_version(root_syllables)
-            all_syllables_version[syllables_version] = ''
+            if syllables_version is not None:
+                all_syllables_version[syllables_version] = ''
             if len(all_syllables_version) == start_count_versions:
                 loos_try += 1
             if loos_try > 15:
                 break
         self.stop_t("find_all_version")
+        if all_syllables_version == {}:
+            all_syllables_version = {root_syllables: ''}
         return all_syllables_version
 
     def break_a_word_into_syllables(self, china_word: str):
@@ -293,17 +297,16 @@ class Associator():
         self.start_t("get_best_version")
         # get best score versions plus miss letters to find the lowest
         race_participants = {}
-        best_len = max(all_word_parts.keys())
-        if best_len > 3:
-            burdens = 3
-        else:
-            burdens = best_len
-        for burden in range(burdens):
-            for version in all_word_parts[best_len - burden]:
-                if version[0] + version[1] + burden * 2 in race_participants:
-                    race_participants[version[0] + version[1] + burden * 2].append(version)
+        burdens = sorted(all_word_parts.keys(), reverse=True)
+        best_len = len(all_word_parts.keys())
+        if len(burdens) > 3:
+            burdens = burdens[0:3]
+        for burden in burdens:
+            for version in all_word_parts[burden]:
+                if version[0] + version[1] + (best_len - burden - 1) * 2 in race_participants:
+                    race_participants[version[0] + version[1] + (best_len - burden - 1) * 2].append(version)
                 else:
-                    race_participants[version[0] + version[1] + burden * 2] = [version]
+                    race_participants[version[0] + version[1] + (best_len - burden - 1) * 2] = [version]
 
         # get best version and find the shorter
         tails_race = {}
@@ -365,12 +368,13 @@ class Associator():
         self.start_t("get_broken_word")
         word_trans_dict = self.load_dict('word_trans_dict')
         self.given_word = word.lower()
+
         if self.given_word in word_trans_dict:
-            word_trans = word_trans_dict[self.given_word]
+            word_trans = word_trans_dict[self.given_word.lower()]
         else:
             self.given_word = word.lower()[0].upper() + word.lower()[1::]
             word_trans = word_trans_dict[self.given_word]
-        self.china_trans(word_trans)
+        self.china_trans(word_trans.lower().replace(' ', ''))
         self.broken_versions = self.find_broken_word_versions(self.china_word)
         self.stop_t("get_broken_word")
         return self.broken_versions
@@ -387,7 +391,7 @@ class Associator():
 
 if __name__ == '__main__':
     ass = Associator()
-    broken_word = ass.get_broken_word('building')
+    broken_word = ass.get_broken_word('learn')
     for n in broken_word:
         print(f"{n}) {broken_word[n]}")
     print('Enter need version: ')
